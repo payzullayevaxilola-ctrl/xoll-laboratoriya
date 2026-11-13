@@ -1,0 +1,1425 @@
+<title>Tunnel diod laboratoriyasi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=STIX+Two+Text:ital@0;1&display=swap">
+<style>
+/* Layout: laboratoriya stoli — chapda 3D stend va lupa, o'ngda boshqaruv tokchasi, pastda o'lchov jurnali */
+:root{
+  --bg:#edf0f2; --surface:#ffffff; --surface2:#f5f7f8; --ink:#17212b; --muted:#5a6672; --line:#d5dbe0;
+  --accent:#0d6e7a; --accent-ink:#ffffff; --accent-soft:#dcedef;
+  --electron:#2563d9; --hole:#d9412f; --copper:#b26a2e; --steel:#7f8c97;
+  --fb:#c77700; --fe:#7a3fd1;
+  --lcd-bg:#121a20; --lcd-fg:#ffb23e; --lcd-dim:#7d6338;
+  --ok:#1e8449; --bad:#c0392b; --warn:#a86a00;
+  --f-display:"Archivo","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --f-math:"STIX Two Text","Cambria Math",Cambria,Georgia,serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1317; --surface:#151c22; --surface2:#1b242b; --ink:#e2e8ed; --muted:#93a0ab; --line:#2a353e;
+    --accent:#45b8c6; --accent-ink:#06191c; --accent-soft:#163238;
+    --electron:#6ea2ff; --hole:#ff6d5c; --copper:#d1884a; --steel:#9aa7b2;
+    --fb:#f0a030; --fe:#b18cff;
+    --lcd-bg:#070b0e; --lcd-fg:#ffb23e; --lcd-dim:#6a5228;
+    --ok:#4cc27e; --bad:#ff6b5e; --warn:#e0a33a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1317; --surface:#151c22; --surface2:#1b242b; --ink:#e2e8ed; --muted:#93a0ab; --line:#2a353e;
+  --accent:#45b8c6; --accent-ink:#06191c; --accent-soft:#163238;
+  --electron:#6ea2ff; --hole:#ff6d5c; --copper:#d1884a; --steel:#9aa7b2;
+  --fb:#f0a030; --fe:#b18cff;
+  --lcd-bg:#070b0e; --lcd-fg:#ffb23e; --lcd-dim:#6a5228;
+  --ok:#4cc27e; --bad:#ff6b5e; --warn:#e0a33a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1260px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.5rem,3.2vw,2.1rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.35rem;font-weight:700;margin-bottom:.6rem}
+h3{font-size:1.02rem;font-weight:700}
+h4{font-size:.98rem;font-weight:700}
+p{margin:.4rem 0 .8rem}
+a{color:var(--accent)}
+.top{border-bottom:1px solid var(--line);background:var(--surface)}
+.top .wrap{padding-block:18px 0}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.title-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.title-row p{margin:.2rem 0 0;color:var(--muted);max-width:66ch}
+nav.tabs{display:flex;gap:2px;margin-top:16px;overflow-x:auto;scrollbar-width:thin}
+nav.tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:500;padding:10px 14px;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs a:hover{color:var(--ink)}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.tabs a:focus-visible,.btn:focus-visible,button:focus-visible,canvas:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main .wrap{padding-block:22px 48px}
+[hidden]{display:none!important}
+.prose{max-width:78ch}
+.prose h2{margin-top:1.6rem}
+.prose h2:first-child{margin-top:0}
+.prose h3{margin-top:1.2rem;margin-bottom:.3rem}
+.prose ul,.prose ol{padding-left:1.3rem;margin:.4rem 0 .9rem}
+.prose li{margin:.25rem 0}
+.prose table{margin:.5rem 0 1rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.card-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-bottom:12px}
+.hint{font-size:.84rem;color:var(--muted);margin:.5rem 0 0}
+.eq{font-family:var(--f-math);font-size:1.18rem;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:.6rem 0 .9rem;overflow-x:auto;white-space:nowrap}
+.eq mjx-container[display="true"]{margin:0!important;display:inline-block!important}
+.tbl-wrap{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.78rem;letter-spacing:.02em}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.simgrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+.col-main,.col-side{display:grid;gap:16px;min-width:0}
+@media (max-width:980px){.simgrid{grid-template-columns:minmax(0,1fr)}}
+#appCv{width:100%;aspect-ratio:760/440;display:block;border-radius:8px;max-width:100%}
+.stage{position:relative;border-radius:8px;outline-offset:2px}
+#app3d{width:100%;aspect-ratio:760/500;border-radius:8px;overflow:hidden;touch-action:none;background:var(--surface2);max-width:100%}
+#app3d canvas{display:block;width:100%!important;height:100%!important}
+#lensCv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.viewbtns{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:10px}
+.lens-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:.86rem}
+#microCv{width:100%;aspect-ratio:640/340;display:block;border-radius:8px;border:1px solid var(--line);max-width:100%}
+.micro-ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:10px;font-size:.86rem}
+.micro-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:14px}
+.phase{border-left:3px solid var(--accent);padding:2px 0 2px 12px}
+.phase-step{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.phase h4{margin:.15rem 0 .25rem}
+.phase p{margin:0;font-size:.92rem}
+#ivCv{width:100%;height:170px;display:block;border:1px solid var(--line);border-radius:6px;background:var(--surface2)}
+dl.live{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:10px 0 0;font-size:.84rem}
+dl.live dt{color:var(--muted)}
+dl.live dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--muted);margin-top:8px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+.sw.e{background:var(--electron)}
+.sw.h{border:2px dashed var(--hole)}
+.sw.ve{width:7px;height:7px;background:var(--electron)}
+.sw.ionp{border-radius:1px;border:1.5px solid var(--hole)}
+.sw.ionn{border-radius:1px;border:1.5px solid var(--electron)}
+.sw.ph{background:#e8402a;border-radius:2px;height:3px;width:16px;vertical-align:3px}
+.ctl{display:grid;gap:12px}
+.ctl label.f,.ctl .f{display:grid;gap:4px;font-size:.86rem;font-weight:500}
+.ctl .row{display:flex;align-items:center;gap:8px}
+.ctl .row input[type=range]{flex:1;min-width:0}
+.val{font-family:var(--f-mono);font-size:.84rem;min-width:66px;text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{accent-color:var(--accent)}
+select,input[type=text]{font:inherit;font-size:.9rem;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
+select:disabled,input:disabled{opacity:.55}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg.two{grid-template-columns:repeat(2,1fr)}
+.seg button{font:inherit;font-size:.82rem;font-weight:500;padding:8px 6px;border:0;background:var(--surface2);color:var(--muted);cursor:pointer;line-height:1.25}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.pol{font:inherit;font-size:.8rem;font-family:var(--f-mono);border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:6px;padding:6px 8px;cursor:pointer;white-space:nowrap}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:.86rem}
+.check input{margin-top:3px;accent-color:var(--accent)}
+.lockmsg{font-size:.78rem;color:var(--warn)}
+.lcds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.lcd{background:var(--lcd-bg);border-radius:7px;padding:7px 10px 8px;min-width:0}
+.lcd .lab{font-size:.7rem;color:var(--lcd-dim);font-family:var(--f-mono);letter-spacing:.04em;display:flex;justify-content:space-between;gap:6px}
+.lcd .dig{font-family:var(--f-mono);font-weight:500;font-size:1.32rem;color:var(--lcd-fg);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lcd.off .dig{color:var(--lcd-dim)}
+.lcd.warn .dig{color:#ff5a4a}
+.btn{font:inherit;font-weight:600;font-size:.9rem;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:7px;padding:9px 14px;cursor:pointer}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.sm{font-size:.8rem;padding:5px 10px}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:#fff}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.status{font-size:.86rem;margin-top:10px;min-height:1.3em}
+.status.ok{color:var(--ok)} .status.bad{color:var(--bad)} .status.info{color:var(--muted)}
+.data{display:grid;gap:16px;margin-top:16px}
+.data-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.data-grid{grid-template-columns:minmax(0,1fr)}}
+.tbl-scroll{max-height:330px;overflow:auto}
+canvas.plot{width:100%;height:270px;display:block;border:1px solid var(--line);border-radius:8px;background:var(--surface2)}
+.delbtn{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.95rem;padding:0 4px}
+.delbtn:hover{color:var(--bad)}
+.analysis{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.given{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.86rem;margin:.4rem 0 .8rem}
+.given span b{font-family:var(--f-mono);font-weight:500}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 14px}
+.form-grid label{display:grid;gap:4px;font-size:.84rem;font-weight:500}
+.fb-list{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:4px;font-size:.88rem}
+.fb-list li.ok::before{content:"✓ ";color:var(--ok);font-weight:700}
+.fb-list li.bad::before{content:"✗ ";color:var(--bad);font-weight:700}
+.callout{background:var(--accent-soft);border-radius:8px;padding:10px 14px;font-size:.9rem;margin:.6rem 0}
+.callout.warn{background:color-mix(in srgb,var(--warn) 14%,var(--surface))}
+.quiz{display:grid;gap:14px;max-width:820px}
+.q{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:14px 16px}
+.q legend{font-weight:600;padding:0;margin-bottom:6px}
+.q fieldset{border:0;margin:0;padding:0;min-width:0}
+.q label{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:.92rem;cursor:pointer}
+.q label input{margin-top:4px;accent-color:var(--accent)}
+.q .ex{font-size:.86rem;margin-top:6px;padding-left:10px;border-left:3px solid var(--line)}
+.q.right .ex{border-color:var(--ok)} .q.wrong .ex{border-color:var(--bad)}
+.score{font-family:var(--f-display);font-size:1.1rem;font-weight:700}
+.fig{margin:1rem 0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;overflow-x:auto}
+.fig svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto}
+.fig figcaption{font-size:.82rem;color:var(--muted);text-align:center;margin-top:6px}
+.s-ink{stroke:var(--ink)} .s-e{stroke:var(--electron)} .s-h{stroke:var(--hole)} .s-fb{stroke:var(--fb)} .s-fe{stroke:var(--fe)} .s-acc{stroke:var(--accent)} .s-mut{stroke:var(--muted)}
+.f-ink{fill:var(--ink)} .f-e{fill:var(--electron)} .f-h{fill:var(--hole)} .f-surf{fill:var(--surface2)} .f-none{fill:none} .f-fb{fill:var(--fb)} .f-fe{fill:var(--fe)} .f-mut{fill:var(--muted)} .f-acc{fill:var(--accent)}
+.svgtxt{font-family:var(--f-body);font-size:13px}
+.svgmath{font-family:var(--f-math);font-style:italic;font-size:15px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ai-fab{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;align-items:center;gap:8px;font:inherit;font-weight:600;font-size:.92rem;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 16px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.ai-fab:focus-visible,.ai-x:focus-visible,.chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ai-panel{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:41;width:min(410px,calc(100vw - 32px));height:min(640px,calc(100vh - 32px));background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}
+.ai-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--surface2)}
+.ai-head b{font-family:var(--f-display);display:block}
+.ai-sub{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);letter-spacing:.04em}
+.ai-x{border:0;background:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px}
+.ai-log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.msg{max-width:92%;padding:9px 12px;border-radius:10px;font-size:.9rem;line-height:1.5;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:3px;white-space:pre-wrap}
+.msg.bot{align-self:flex-start;background:var(--surface2);border:1px solid var(--line);border-bottom-left-radius:3px}
+.msg.bot ul,.msg.bot ol{margin:.3rem 0;padding-left:1.1rem}
+.msg.typing{color:var(--muted);letter-spacing:.2em}
+.ai-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-top:1px solid var(--line)}
+.chip{font:inherit;font-size:.78rem;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:999px;padding:4px 10px;cursor:pointer;text-align:left}
+.chip:hover{background:var(--accent-soft)}
+.ai-form{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.ai-form input{flex:1;min-width:0;font:inherit;font-size:.9rem;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:8px 10px}
+@media (max-width:520px){.ai-panel{right:0;left:0;bottom:0;width:100%;height:min(78vh,640px);border-radius:12px 12px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">Yarimo'tkazgichlar fizikasi · Virtual laboratoriya ishi</div>
+    <div class="title-row">
+      <div>
+        <h1>Tunnel diodning volt-amper xarakteristikasini o'rganish</h1>
+        <p>3D o'lchash stendi, uchta tunnel diod (Ge, GaAs, Si), N-shaklidagi VAX, manfiy differensial qarshilik, yuklama chizig'i va gisterezis, «tunnel oynasi»ni ko'rsatuvchi lupa.</p>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Laboratoriya bo'limlari">
+      <a href="#maqsad" data-t="maqsad">Maqsad</a>
+      <a href="#nazariya" data-t="nazariya">Nazariya</a>
+      <a href="#tartib" data-t="tartib">Ish tartibi</a>
+      <a href="#simulyator" data-t="simulyator">Simulyator</a>
+      <a href="#sinov" data-t="sinov">O'z-o'zini tekshirish</a>
+      <a href="#adabiyot" data-t="adabiyot">Adabiyotlar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<!-- ============ MAQSAD ============ -->
+<section class="tab" id="tab-maqsad" hidden>
+  <div class="prose">
+    <h2>Ishning maqsadi</h2>
+    <ol>
+      <li>Tunnel effekti va aynigan (kuchli legirlangan) p-n o'tishning energetik diagrammasi bilan tanishish.</li>
+      <li>Tunnel diodning to'g'ri va teskari yo'nalishdagi VAX ni o'lchash.</li>
+      <li>Asosiy parametrlarni aniqlash:
+        <ul>
+          <li>cho'qqi toki va kuchlanishi \(I_p\), \(V_p\);</li>
+          <li>vodiy toki va kuchlanishi \(I_v\), \(V_v\);</li>
+          <li>\(I_p/I_v\) nisbati;</li>
+          <li>manfiy differensial qarshilik \(r_-\).</li>
+        </ul></li>
+      <li>Yuklama chizig'i usuli bilan ish nuqtasining barqarorligini, sakrashlar va gisterezisni o'rganish.</li>
+      <li>Ge, GaAs va Si tunnel diodlarini solishtirish.</li>
+      <li>\(I_p\) va \(I_v\) ning haroratga bog'liqligini o'rganish.</li>
+      <li>Lupa yordamida «tunnel oynasi» — to'lgan va bo'sh holatlarning ustma-ust tushishini kuzatish.</li>
+    </ol>
+    <h2>Virtual jihozlar</h2>
+    <ul>
+      <li><b>Past kuchlanishli manba:</b> 0–3 V, 1 mV qadam, qutbni almashtirgich bilan, tok cheklovi 100 mA.</li>
+      <li><b>Ketma-ket rezistor \(R\) magazini:</b> 1 Ω, 10 Ω, 100 Ω, 1 kΩ. Kichik \(R\) manbani «kuchlanish manbai» rejimiga yaqinlashtiradi.</li>
+      <li><b>Raqamli milliampermetr:</b> 0–20 mA, ichki qarshiligi \(R_A = 2\ \Omega\).</li>
+      <li><b>Raqamli voltmetr:</b> \(R_V = 10\ \text{M}\Omega\), 0.1 mV aniqlik.</li>
+      <li><b>Termostolik va harorat regulyatori:</b> 230–400 K.</li>
+      <li><b>Tunnel diodlar:</b> Ge (1N3716 / ГИ103 tipidagi), GaAs (АИ301 tipidagi), Si.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ NAZARIYA ============ -->
+<section class="tab" id="tab-nazariya" hidden>
+  <div class="prose">
+    <h2>1. Tunnel diod va uning tarixi</h2>
+    <p>Tunnel diodni 1957–1958-yillarda L. Esaki kashf etgan (1973-yilda Nobel mukofoti olgan). U ikkala sohasi juda kuchli legirlangan (\(N_A, N_D \sim 10^{19}\text{–}10^{20}\ \text{sm}^{-3}\)) p-n o'tishdan iborat. Bunday yarimo'tkazgich <b>aynigan</b> bo'ladi: Fermi sathi n-sohada o'tkazuvchanlik zonasi ichida, p-sohada esa valent zona ichida yotadi.</p>
+    <p>Kambag'allashgan soha juda ingichka, \(W \approx 5\text{–}15\ \text{nm}\), shuning uchun elektronlar potensial to'siqni oshib o'tmasdan, uning orqali kvant-mexanik <b>tunnellab</b> o'tishi mumkin. Uchburchak to'siq uchun tunnellash ehtimoli (VKB yaqinlashishi):</p>
+    <div class="eq">\[ T_t \approx \exp\!\left(-\frac{4\sqrt{2m^{*}}\,E_g^{3/2}}{3q\hbar\,\mathcal{E}}\right) \]</div>
+    <p>Bu yerda \(\mathcal{E} \sim 10^{8}\ \text{V/m}\) — o'tishdagi maydon. \(E_g\) va \(m^{*}\) kichik bo'lsa, tunnellash kuchli bo'ladi: Ge va GaAs da tok katta, Si da kichikroq.</p>
+
+    <h2>2. «Tunnel oynasi» va N-shaklidagi VAX</h2>
+    <p>Tunnellash faqat bir tomondagi <b>to'lgan</b> holatlar ikkinchi tomondagi <b>bo'sh</b> holatlar bilan bir xil energiyada bo'lganda ro'y beradi:</p>
+    <ol>
+      <li><b>\(V = 0\):</b> Fermi sathi bir xil, ikkala yo'nalishdagi tunnel oqimlari teng, tok nolga teng.</li>
+      <li><b>\(0 < V < V_p\):</b> n-sohaning to'lgan o'tkazuvchanlik zonasi p-sohaning bo'sh valent holatlari (kovaklar) qarshisiga ko'tariladi. Elektronlar n → p tunnellaydi va tok tez ortadi.</li>
+      <li><b>\(V = V_p\):</b> ustma-ust tushish eng katta, tok \(I_p\) ga yetadi (cho'qqi).</li>
+      <li><b>\(V_p < V < V_v\):</b> to'lgan holatlar taqiqlangan zona qarshisiga o'ta boshlaydi va «oyna» torayadi. Kuchlanish ortgani sari tok <b>kamayadi</b>. Bu <b>manfiy differensial qarshilik</b> sohasi.</li>
+      <li><b>\(V \approx V_v\):</b> oyna yopiladi. Faqat kirishma va nuqson sathlari orqali o'tadigan ortiqcha (excess) tok \(I_v\) qoladi (vodiy).</li>
+      <li><b>\(V > V_v\):</b> to'siq pasayadi va oddiy diodning diffuziya toki boshlanadi.</li>
+      <li><b>\(V < 0\):</b> p-sohaning to'lgan valent zonasi n-sohaning bo'sh holatlari qarshisiga ko'tariladi. Elektronlar p → n tunnellaydi va teskari tok juda katta bo'ladi: tunnel diod teskari yo'nalishda ham yaxshi o'tkazadi.</li>
+    </ol>
+    <p>Empirik model (simulyatorda ishlatiladi):</p>
+    <div class="eq">\[ I = I_{tun} + I_{ort} + I_{dif} \]</div>
+    <div class="eq">\[ I_{tun} = I_p\left[\frac{V}{V_p}\exp\!\left(1-\frac{V}{V_p}\right)\right]^{m},\qquad I_{ort} = I_{x}\,e^{K(V-V_v)},\qquad I_{dif} = I_s\left[e^{qV/nkT}-1\right] \]</div>
+
+    <h2>3. Asosiy parametrlar</h2>
+    <ul>
+      <li>\(I_p\), \(V_p\) — cho'qqi toki va kuchlanishi (Ge: ~65 mV, GaAs: ~150 mV).</li>
+      <li>\(I_v\), \(V_v\) — vodiy toki va kuchlanishi (Ge: ~0.35 V, GaAs: ~0.5 V).</li>
+      <li>\(I_p/I_v\) — tok nisbati, sifat ko'rsatkichi: Ge 6–10, GaAs 10–30, Si 3–4.</li>
+      <li>\(V_{fp}\) — diffuziya tarmog'ida tok yana \(I_p\) ga teng bo'ladigan kuchlanish (Ge ~0.5 V, GaAs ~1.1 V).</li>
+      <li>Manfiy differensial qarshilik:
+        <div class="eq">\[ r_- = \frac{dV}{dI} < 0,\qquad |r_-|_{min}\ \text{— eng tik joyida} \]</div></li>
+    </ul>
+
+    <h2>4. Yuklama chizig'i, barqarorlik va gisterezis</h2>
+    <p>Zanjir: manba \(E\) → rezistor \(R\) (ampermetr bilan \(R + R_A\)) → diod. Ish nuqtasi diod VAX ning yuklama chizig'i bilan kesishgan nuqtasi:</p>
+    <div class="eq">\[ I = \frac{E - V}{R + R_A} \]</div>
+    <ul>
+      <li>Agar \(R + R_A < |r_-|_{min}\) bo'lsa, yuklama chizig'i VAX dan tikroq va har doim bitta kesishma bor. Butun xarakteristikani, jumladan manfiy qismini ham o'lchash mumkin. Bu <b>kuchlanish manbai</b> rejimi.</li>
+      <li>Agar \(R + R_A > |r_-|_{min}\) bo'lsa, ma'lum \(E\) oralig'ida <b>uchta</b> kesishma bo'ladi. O'rtadagisi (manfiy qismda) beqaror. \(E\) oshirilganda nuqta cho'qqidan diffuziya tarmog'iga <b>sakraydi</b>, kamaytirilganda vodiydan tunnel tarmog'iga qaytib sakraydi, lekin boshqa \(E\) da. Natijada <b>gisterezis</b> paydo bo'ladi.</li>
+    </ul>
+    <p>Real o'lchashlarda manfiy qism sim induktivligi tufayli GHz chastotali parazit tebranishlarni qo'zg'atishi mumkin, shuning uchun diodga kondensator parallel ulanadi. Aynan shu xususiyat tunnel diodni o'ta yuqori chastotali generator, kuchaytirgich va tez kalit sifatida ishlatish imkonini beradi.</p>
+
+    <h2>5. Haroratga bog'liqlik</h2>
+    <p>Tunnel toki issiqlik aktivatsiyasini talab qilmaydi, shuning uchun \(I_p\) haroratga juda kam bog'liq. Bu tunnel diodning muhim afzalligi. Vodiy toki (nuqsonlar orqali tunnellash) va diffuziya toki esa harorat bilan ortadi. Natijada \(I_p/I_v\) nisbati kamayadi va diffuziya tarmog'i chapga suriladi.</p>
+
+    <h2>6. Diodlar parametrlari (simulyator modeli, 300 K)</h2>
+    <div class="tbl-wrap"><table><thead><tr><th>Diod</th><th class="num">\(I_p\), mA</th><th class="num">\(V_p\), mV</th><th class="num">\(I_v\), mA</th><th class="num">\(V_v\), mV</th><th class="num">\(I_p/I_v\)</th><th class="num">\(V_{fp}\), V</th><th class="num">\(|r_-|_{min}\), Ω</th></tr></thead><tbody id="dTable"></tbody></table></div>
+
+    <h2>7. Lupa nimani ko'rsatadi</h2>
+    <p>Yuqorida kristall kesimi: kuchli legirlangan p⁺ va n⁺ sohalar va juda ingichka kambag'allashgan soha. Tunnellash elektronning to'siq orqali «sakrashi» (uzuq strelka) sifatida ko'rsatilgan.</p>
+    <p>Pastda energetik diagramma:</p>
+    <ul>
+      <li>n-sohada o'tkazuvchanlik zonasining to'lgan qismi (ko'k);</li>
+      <li>p-sohada valent zonaning bo'sh qismi (qizil shtrix — kovaklar);</li>
+      <li>ular bir xil energiyada bo'lgan joy — «tunnel oynasi» (sariq strelkalar).</li>
+    </ul>
+    <p>Kuchlanishni 0 dan \(V_v\) gacha oshirib, oyna avval kengayib, keyin yopilishini kuzating.</p>
+    <p class="callout"><b>Kovak proton emas.</b> Kovak — valent zonadagi bo'sh holat (bog'dagi bo'sh joy). Atom yadrolari va ionlar joyida qoladi.</p>
+  </div>
+</section>
+
+<!-- ============ TARTIB ============ -->
+<section class="tab" id="tab-tartib" hidden>
+  <div class="prose">
+    <h2>Tayyorgarlik</h2>
+    <ol>
+      <li>3D stend bilan tanishing. Zanjir: manba (+) → milliampermetr → diod anodi → katod → rezistor \(R\) → manba (−). Voltmetr diodga parallel ulangan.</li>
+      <li>Lupani diod ustiga olib boring va zonalar diagrammasini kuzating.</li>
+    </ol>
+    <h2>A bosqich · VAX ni to'liq o'lchash</h2>
+    <ol>
+      <li>«A · VAX» rejimi, diodni tanlang, \(R\) = 1 Ω (kuchlanish manbai rejimi).</li>
+      <li>\(E\) ni 0 dan 1 mV / 10 mV qadamlar bilan oshirib, \(V\) va \(I\) ni yozing. Cho'qqi va vodiy atrofida qadamni kichraytiring. Jami 25–35 nuqta oling (Ge uchun 0–0.6 V, GaAs uchun 0–1.2 V).</li>
+      <li>Qutbni «teskari» ga o'tkazib, −0.2 V gacha 5–6 nuqta yozing.</li>
+      <li>Grafikdan \(I_p, V_p, I_v, V_v\), \(I_p/I_v\) va \(|r_-|_{min}\) ni toping va «Tekshirish» ni bosing.</li>
+    </ol>
+    <h2>B bosqich · Yuklama chizig'i va gisterezis</h2>
+    <ol>
+      <li>«B · Gisterezis» rejimi, \(R\) = 100 Ω.</li>
+      <li>\(E\) ni 0 dan sekin (10 mV qadam) oshirib, har qadamda yozing. Kuchlanish keskin sakragan joyni belgilang.</li>
+      <li>So'ng \(E\) ni sekin kamaytirib, yana yozing. Qaytish sakrashi boshqa \(E\) da bo'lishiga e'tibor bering.</li>
+      <li>Gisterezis kengligi \(\Delta E = E_\uparrow - E_\downarrow\) ni toping. \(R\) = 10 Ω da takrorlab, gisterezis yo'qolishini tekshiring.</li>
+    </ol>
+    <h2>C bosqich · Harorat ta'siri</h2>
+    <ol>
+      <li>«C · Harorat» rejimi. Har bir haroratda «Avtomatik: \(I_p\) va \(I_v\)» tugmasini bosing. Asbob \(R\) = 1 Ω da VAX ni skanerlab, cho'qqi va vodiyni topadi.</li>
+      <li>230–400 K oralig'ida 8–10 nuqta oling. \(I_p(T)\), \(I_v(T)\) va \(I_p/I_v\) ni tahlil qiling.</li>
+    </ol>
+    <h2>Hisobot uchun</h2>
+    <ul>
+      <li>VAX jadvali va grafigi, parametrlar jadvali, uch xil diodni solishtirish.</li>
+      <li>Gisterezis grafigi (↑ va ↓), sakrash kuchlanishlari, \(R\) ning ta'siri haqida xulosa.</li>
+      <li>\(I_p(T)\), \(I_v(T)\) grafiklari.</li>
+      <li>Tunnel oynasining energetik diagrammalar orqali tushuntirilishi.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ SIMULYATOR ============ -->
+<section class="tab" id="tab-simulyator" hidden>
+  <div class="simgrid">
+    <div class="col-main">
+      <div class="card">
+        <div class="card-head">
+          <h3 id="appTitle">Laboratoriya stoli</h3>
+          <div class="lens-ctl">
+            <label class="check"><input type="checkbox" id="chkLens" checked> Lupa</label>
+            <button class="btn ghost sm" id="btnLensHome" type="button">Lupani diodga qo'yish</button>
+          </div>
+        </div>
+        <div class="stage" id="stage" tabindex="0" aria-label="Laboratoriya qurilmasi. Lupani suring yoki strelka tugmalari bilan siljiting.">
+          <div id="app3d" hidden></div>
+          <canvas id="lensCv" hidden></canvas>
+          <canvas id="appCv" aria-label="O'lchash sxemasi"></canvas>
+        </div>
+        <div class="viewbtns" id="viewBtns" hidden>
+          <span class="eyebrow">Kamera:</span>
+          <button class="btn ghost sm" type="button" data-view="umumiy">Umumiy ko'rinish</button>
+          <button class="btn ghost sm" type="button" data-view="diod">Tunnel diod</button>
+          <button class="btn ghost sm" type="button" data-view="asbob">Asboblar</button>
+        </div>
+        <p class="hint" id="appHint">Lupani suring (klaviaturada ← ↑ → ↓).</p>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Mikro-ko'rinish: tunnel o'tish ichida</h3>
+          <span class="eyebrow" id="microTag">kristall kesimi va zonalar diagrammasi</span>
+        </div>
+        <canvas id="microCv" aria-label="Tunnel o'tishdagi elektronlar tunnellashi va energetik zonalar diagrammasi"></canvas>
+        <div class="micro-ctl">
+          <button class="btn sm" id="btnPlay" type="button">Pauza</button>
+          <button class="btn ghost sm" id="btnReset" type="button">Qaytadan</button>
+          <label style="display:flex;gap:6px;align-items:center">Tezlik <input type="range" id="speedR" min="0.25" max="2" step="0.25" value="1" style="width:90px"></label>
+          <label class="check"><input type="checkbox" id="chkBand" checked> Zonalar diagrammasi</label>
+        </div>
+        <div class="micro-info">
+          <div>
+            <div class="phase">
+              <span class="phase-step" id="phaseStep"></span>
+              <h4 id="phaseTitle"></h4>
+              <p id="phaseText"></p>
+            </div>
+            <div class="legend">
+              <span><i class="sw e"></i>elektron</span>
+              <span><i class="sw h"></i>kovak — bo'sh holat</span>
+              <span><i class="sw ve"></i>valent elektron sakrashi</span>
+              <span><i class="sw ionp"></i>akseptor ioni (−)</span>
+              <span><i class="sw ionn"></i>donor ioni (+)</span>
+              <span><i class="sw ph" style="background:#e0a800"></i>tunnel oynasi</span>
+            </div>
+            <p class="hint">Kesim sxematik va masshtabsiz. Tunnellash va diffuziya jadalligi tok tarkibiy qismlariga logarifmik bog'langan.</p>
+          </div>
+          <div>
+            <canvas id="ivCv" aria-label="Tunnel diod VAX va yuklama chizig'i, ish nuqtasi"></canvas>
+            <dl class="live" id="liveNums"></dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="col-side">
+      <div class="card ctl">
+        <h3>Boshqaruv paneli</h3>
+        <div class="seg" role="group" aria-label="Tajriba bosqichi">
+          <button type="button" data-mode="A" aria-pressed="true">A · VAX</button>
+          <button type="button" data-mode="B" aria-pressed="false">B · Gisterezis</button>
+          <button type="button" data-mode="C" aria-pressed="false">C · Harorat</button>
+        </div>
+        <label class="f">Tunnel diod
+          <select id="selD"></select>
+        </label>
+        <div class="f">
+          <span>Manba kuchlanishi \(E\)</span>
+          <span class="row"><input type="range" id="rngE" min="0" max="3" step="0.001" value="0" aria-label="Manba kuchlanishi"><span class="val" id="valE">0.000 V</span></span>
+          <span class="row" style="flex-wrap:wrap">
+            <button type="button" class="pol" data-de="-0.1">−0.1</button><button type="button" class="pol" data-de="-0.01">−0.01</button><button type="button" class="pol" data-de="-0.001">−1 mV</button><button type="button" class="pol" data-de="0.001">+1 mV</button><button type="button" class="pol" data-de="0.01">+0.01</button><button type="button" class="pol" data-de="0.1">+0.1</button>
+          </span>
+          <span class="row"><button type="button" class="pol" id="polE" aria-label="Manba qutbi">Qutb: to'g'ri (+ anodga)</button></span>
+        </div>
+        <label class="f">Ketma-ket rezistor \(R\)
+          <select id="selR"><option value="1" selected>1 Ω (kuchlanish manbai)</option><option value="10">10 Ω</option><option value="100">100 Ω</option><option value="1000">1 kΩ (tok manbai)</option></select>
+        </label>
+        <label class="f"><span>Harorat \(T\)</span>
+          <span class="row"><input type="range" id="rngTemp" min="230" max="400" step="5" value="300"><span class="val" id="valTemp">300 K</span></span>
+        </label>
+        <label class="check"><input type="checkbox" id="chkIdeal"> <span>Ideal asboblar (\(R_A = 0\), shovqinsiz, qizishsiz). Faqat taqqoslash uchun.</span></label>
+        <div class="lockmsg" id="lockMsg" hidden></div>
+        <button class="btn danger" type="button" id="btnNew" hidden>Yangi diod o'rnatish</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:10px">O'lchov asboblari</h3>
+        <div class="lcds">
+          <div class="lcd" id="lcdE"><div class="lab"><span>MANBA E</span><span>V</span></div><div class="dig">0.000</div></div>
+          <div class="lcd" id="lcdA"><div class="lab"><span>MILLIAMPERMETR</span><span>mA</span></div><div class="dig">0.000</div></div>
+          <div class="lcd" id="lcdV"><div class="lab"><span>VOLTMETR</span><span>mV</span></div><div class="dig">0.0</div></div>
+          <div class="lcd" id="lcdT"><div class="lab"><span>DIOD HARORATI</span><span>K</span></div><div class="dig">300.0</div></div>
+        </div>
+        <div class="btnrow">
+          <button class="btn" type="button" id="btnRec">Yozib olish</button>
+          <button class="btn" type="button" id="btnAuto" hidden>Avtomatik: \(I_p\) va \(I_v\)</button>
+        </div>
+        <div class="status info" id="status" role="status"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="data">
+    <div class="card" id="dataA">
+      <div class="card-head">
+        <h3>A bosqich · Volt-amper xarakteristikasi</h3>
+        <button class="btn ghost sm" type="button" id="clrA">Jadvalni tozalash</button>
+      </div>
+      <div class="data-grid">
+        <div class="tbl-wrap tbl-scroll"><table id="tblA"></table></div>
+        <div style="display:grid;gap:12px"><canvas class="plot" id="plotA1" aria-label="Tunnel diod VAX"></canvas><canvas class="plot" id="plotA2" aria-label="Differensial o'tkazuvchanlik"></canvas></div>
+      </div>
+      <div class="analysis">
+        <h4>Parametrlarni aniqlash</h4>
+        <div class="given" id="givenA"></div>
+        <div class="form-grid">
+          <label><span>Cho'qqi toki \(I_p\), mA</span><input type="text" id="inIp" inputmode="decimal" placeholder="masalan 4.70"></label>
+          <label><span>Cho'qqi kuchlanishi \(V_p\), mV</span><input type="text" id="inVp" inputmode="decimal" placeholder="masalan 65"></label>
+          <label><span>Vodiy toki \(I_v\), mA</span><input type="text" id="inIv" inputmode="decimal" placeholder="masalan 0.60"></label>
+          <label><span>Vodiy kuchlanishi \(V_v\), mV</span><input type="text" id="inVv" inputmode="decimal" placeholder="masalan 330"></label>
+          <label><span>\(I_p/I_v\)</span><input type="text" id="inRat" inputmode="decimal" placeholder="masalan 7.8"></label>
+          <label><span>\(|r_-|_{min}\), Ω</span><input type="text" id="inRn" inputmode="decimal" placeholder="masalan 40"></label>
+        </div>
+        <p class="hint">Javoblar sizning o'z jadvalingiz bo'yicha tekshiriladi: toklar ±3 %, kuchlanishlar ±8 %, \(|r_-|\) ±20 %.</p>
+        <div class="btnrow"><button class="btn" type="button" id="btnCheckA">Tekshirish</button></div>
+        <div id="feedA"></div>
+      </div>
+    </div>
+
+    <div class="card" id="dataB">
+      <div class="card-head">
+        <h3>B bosqich · Yuklama chizig'i va gisterezis</h3>
+        <button class="btn ghost sm" type="button" id="clrB">Jadvalni tozalash</button>
+      </div>
+      <div class="data-grid">
+        <div class="tbl-wrap tbl-scroll"><table id="tblB"></table></div>
+        <div style="display:grid;gap:12px"><canvas class="plot" id="plotB1" aria-label="Diod kuchlanishining manba kuchlanishiga bog'liqligi, gisterezis"></canvas><canvas class="plot" id="plotB2" aria-label="Oshirish va kamaytirishda o'lchangan VAX"></canvas></div>
+      </div>
+      <div class="analysis">
+        <div class="given" id="givenB"></div>
+        <div class="form-grid">
+          <label><span>Gisterezis kengligi \(\Delta E = E_\uparrow - E_\downarrow\), V</span><input type="text" id="inDE" inputmode="decimal" placeholder="masalan 0.31"></label>
+        </div>
+        <div class="btnrow"><button class="btn" type="button" id="btnCheckB">Tekshirish</button></div>
+        <div id="feedB"></div>
+      </div>
+    </div>
+
+    <div class="card" id="dataC">
+      <div class="card-head">
+        <h3>C bosqich · Harorat ta'siri</h3>
+        <button class="btn ghost sm" type="button" id="clrC">Jadvalni tozalash</button>
+      </div>
+      <div class="tbl-wrap"><table id="tblC"></table></div>
+      <div class="grid2" style="margin-top:14px">
+        <canvas class="plot" id="plotC1" aria-label="Cho'qqi va vodiy toklarining haroratga bog'liqligi"></canvas>
+        <canvas class="plot" id="plotC2" aria-label="Ip/Iv nisbatining haroratga bog'liqligi"></canvas>
+      </div>
+      <p class="hint" id="resC"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SINOV ============ -->
+<section class="tab" id="tab-sinov" hidden>
+  <div class="prose"><h2>O'z-o'zini tekshirish</h2><p>Har bir savolga javob belgilang va oxirida natijani tekshiring. Har bir javobga izoh beriladi.</p></div>
+  <form class="quiz" id="quiz"></form>
+  <div class="btnrow"><button class="btn" type="button" id="btnQuiz">Javoblarni tekshirish</button><button class="btn ghost" type="button" id="btnQuizReset">Qaytadan</button></div>
+  <p class="score" id="quizScore" role="status"></p>
+</section>
+
+<!-- ============ ADABIYOTLAR ============ -->
+<section class="tab" id="tab-adabiyot" hidden>
+  <div class="prose">
+    <h2>Adabiyotlar</h2>
+    <ol>
+      <li>L. Esaki. New phenomenon in narrow germanium p-n junctions. <i>Physical Review</i>, 109 (1958), 603–604.</li>
+      <li>L. Esaki. Long journey into tunneling. Nobel ma'ruzasi, 1973. <i>Reviews of Modern Physics</i>, 46 (1974), 237–244.</li>
+      <li>S. M. Sze, K. K. Ng. <i>Physics of Semiconductor Devices</i>, 3-nashr. Wiley, 2007. 8-bob (Tunnel devices).</li>
+      <li>B. G. Streetman, S. K. Banerjee. <i>Solid State Electronic Devices</i>, 7-nashr. Pearson, 2015. 5.4.3-bo'lim (tunnel diode).</li>
+      <li>D. K. Roy. <i>Tunnelling and Negative Resistance Phenomena in Semiconductors</i>. Pergamon, 1977.</li>
+      <li>General Electric. <i>Tunnel Diode Manual</i>. 1961.</li>
+      <li>R. F. Pierret. <i>Semiconductor Device Fundamentals</i>. Addison-Wesley, 1996.</li>
+    </ol>
+  </div>
+</section>
+
+</div>
+</main>
+
+<button class="ai-fab" id="aiFab" type="button" aria-expanded="false" aria-controls="aiPanel">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="10.5" r="1.2" fill="currentColor"/><circle cx="12" cy="10.5" r="1.2" fill="currentColor"/><circle cx="15" cy="10.5" r="1.2" fill="currentColor"/></svg>
+  <span>Yordamchi</span>
+</button>
+<aside class="ai-panel" id="aiPanel" hidden aria-label="Laboratoriya yordamchisi">
+  <div class="ai-head">
+    <div><b>Laboratoriya yordamchisi</b><span class="ai-sub">oflayn · internet kerak emas</span></div>
+    <button type="button" class="ai-x" id="aiClose" aria-label="Yordamchini yopish">✕</button>
+  </div>
+  <div class="ai-log" id="aiLog" role="log" aria-live="polite"></div>
+  <div class="ai-chips" id="aiChips"></div>
+  <form class="ai-form" id="aiForm" autocomplete="off">
+    <label for="aiIn" class="sr">Savol</label>
+    <input type="text" id="aiIn" placeholder="Savol yoki qiymatlar: Ip=4.7 mA, Iv=0.6 mA…">
+    <button class="btn" type="submit">Yuborish</button>
+  </form>
+</aside>
+
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},svg:{fontCache:"global"},options:{enableMenu:false}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+"use strict";
+/* ---------- konstantalar va tunnel diodlar ---------- */
+var E=1.602176634e-19, KB=8.617333262e-5, RV=1e7, RA=2, IMAX=0.02, ILIM=0.1;
+// I = I_tun + I_ort + I_dif. I_tun = Ip*x*exp((1-x^m)/m), x = V/Vp (cho'qqi aniq V = Vp da); teskari: Ip*x*e^(1/m)*exp(-V/Vr)
+var DIODES={
+  ge:{label:"Ge tunnel diodi (1N3716 / ГИ103 tipidagi)",short:"Ge tunnel diod",Ip:4.7e-3,Vp:0.065,m:1.0,Vv:0.35,Ix:0.2e-3,Kx:6,Is:8e-9,N:1.4,Eg:0.67,Rs:1.0,tcp:-4e-4,tcx:4e-3,Vr:0.25,Pmax:0.025,Rth:500,col:"#c9ced3",dot:"#2e9c5a",degen:0.13,W0:0.010},
+  gaas:{label:"GaAs tunnel diodi (АИ301 tipidagi)",short:"GaAs tunnel diod",Ip:10e-3,Vp:0.15,m:2.0,Vv:0.5,Ix:0.4e-3,Kx:4,Is:1e-13,N:1.6,Eg:1.42,Rs:1.5,tcp:-3e-4,tcx:3e-3,Vr:0.3,Pmax:0.025,Rth:400,col:"#d8c27a",dot:"#c0392b",degen:0.22,W0:0.008},
+  si:{label:"Si tunnel diodi",short:"Si tunnel diod",Ip:2.2e-3,Vp:0.065,m:0.9,Vv:0.42,Ix:0.55e-3,Kx:5,Is:1e-10,N:1.5,Eg:1.12,Rs:2.0,tcp:-5e-4,tcx:5e-3,Vr:0.2,Pmax:0.025,Rth:500,col:"#a7b0b8",dot:"#2563d9",degen:0.13,W0:0.012}
+};
+function parts(d,V,T){
+  var Vt=KB*T, Ip=d.Ip*(1+d.tcp*(T-300)), x=V/d.Vp, It;
+  if(V>=0) It=Ip*x*Math.exp((1-Math.pow(x,d.m))/d.m);
+  else It=Ip*x*Math.exp(1/d.m)*Math.exp(-V/d.Vr);
+  var Ix0=d.Ix*Math.exp(d.tcx*(T-300)), Ix=Ix0*(Math.exp(d.Kx*(V-d.Vv))-Math.exp(-d.Kx*d.Vv));
+  var Is=d.Is*Math.pow(T/300,3/d.N)*Math.exp(d.Eg/(d.N*KB)*(1/300-1/T)), Idf=Is*(Math.exp(Math.min(80,V/(d.N*Vt)))-1);
+  return {t:It,x:Ix,d:Idf,I:It+Ix+Idf};
+}
+function diodeI(d,V,T){return parts(d,V,T).I;}
+// diod parametrlari (o'tish kuchlanishi bo'yicha, datasheet uslubida)
+function tdParams(d,T){
+  var dv=0.0005, prev=diodeI(d,0,T), pk=null, vl=null, gmin=0, Vfp=null;
+  for(var V=dv;V<=2.0;V+=dv){
+    var I=diodeI(d,V,T), g=(I-prev)/dv;
+    if(!pk&&I<prev) pk={V:V-dv,I:prev};
+    if(pk&&!vl&&I>prev) vl={V:V-dv,I:prev};
+    if(pk&&!vl&&g<gmin) gmin=g;
+    if(vl&&Vfp===null&&I>=pk.I) Vfp=V;
+    prev=I; if(Vfp!==null) break;
+  }
+  return {Ip:pk.I,Vp:pk.V,Iv:vl.I,Vv:vl.V,ratio:pk.I/vl.I,rmin:gmin<0?-1/gmin:null,Vfp:Vfp};
+}
+function gauss(){var u=1-Math.random(),v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+/* ---------- formatlash ---------- */
+var SUP={"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+function minus(s){return String(s).replace(/^-/,"−");}
+function sci(x,d){
+  d=d||3; if(x===null||x===undefined||!isFinite(x)) return "—"; if(x===0) return "0";
+  var e=Math.floor(Math.log10(Math.abs(x)));
+  if(e>=-2&&e<=3) return minus(String(+x.toPrecision(d)));
+  var m=x/Math.pow(10,e); if(Math.abs(m)>=9.995){m/=10;e+=1;}
+  return minus(m.toFixed(d-1))+"·10"+String(e).split("").map(function(c){return SUP[c];}).join("");
+}
+function vmv(v){return minus((v*1000).toFixed(1));}
+function ima(i){return minus((i*1000).toFixed(3));}
+function vstr(v){return vmv(v)+" mV";}
+function istr(i){var a=Math.abs(i);if(a<1e-3)return minus((i*1e6).toFixed(1))+" μA";return minus((i*1e3).toFixed(3))+" mA";}
+function parseNum(s){
+  if(!s) return NaN;
+  s=String(s).trim().replace(/\s+/g,"").replace(/[−–]/g,"-").replace(/,/g,".");
+  s=s.replace(/[×x·*]10\^?\(?([-+]?\d+)\)?$/i,"e$1");
+  if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+  return Number(s);
+}
+function Rlabel(R){return R>=1000?(R/1000)+" kΩ":R+" Ω";}
+
+/* ---------- holat ---------- */
+var st={mode:"A",di:"ge",E:0,pol:1,R:1,T:300,ideal:false,lensOn:true,burned:false,vj:0,dir:1,
+  tabA:{meta:null,rows:[]},tabB:{meta:null,rows:[]},tabC:{meta:null,rows:[]},read:null};
+var heat=0;
+var SAVE_KEY="tunnel-diod-lab-v1";
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({tabA:st.tabA,tabB:st.tabB,tabC:st.tabC}));}catch(e){}}
+function load(){try{var d=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");if(d){["tabA","tabB","tabC"].forEach(function(k){if(d[k]&&d[k].rows)st[k]=d[k];});}}catch(e){}}
+
+/* ---------- zanjirni yechish (bir nechta ildiz — gisterezis) ---------- */
+// Manba → R → ampermetr (R_A) → diod ∥ voltmetr. f(Vj) = It(R+R_A) + Vd − E; ildizlardan avvalgi holatga eng yaqini tanlanadi.
+function evalAt(Vj,Es,T,ideal){
+  var d=DIODES[st.di], ra=ideal?0:RA, rv=ideal?1e30:RV, p=st.burned?{t:0,x:0,d:0,I:0}:parts(d,Vj,T), Id=p.I, Vd=st.burned?Vj:Vj+Id*d.Rs, It=Id+Vd/rv;
+  return {r:It*(st.R+ra)+Vd-Es,Id:Id,Vd:Vd,It:It,Vj:Vj,p:p};
+}
+function rootsAt(Es,T,ideal){
+  var lo=Math.max(-1,Math.min(Es,0)-0.05), hi=Math.min(2.4,Math.max(Es,0)+0.05), n=1500, dv=(hi-lo)/n, out=[], a=evalAt(lo,Es,T,ideal);
+  for(var k=1;k<=n;k++){
+    var v=lo+k*dv, b=evalAt(v,Es,T,ideal);
+    if((a.r<=0&&b.r>0)||(a.r>=0&&b.r<0)){var x0=v-dv,x1=v,fa=a.r;for(var j=0;j<50;j++){var xm=(x0+x1)/2,fm=evalAt(xm,Es,T,ideal).r;if((fa<=0)===(fm<=0)){x0=xm;fa=fm;}else x1=xm;}out.push((x0+x1)/2);}
+    a=b;
+  }
+  if(!out.length) out.push(Math.abs(a.r)<1e-9?hi:0);
+  return out;
+}
+function solve(Es,T,ideal,commit){
+  var rs=rootsAt(Es,T,ideal), best=rs[0];
+  rs.forEach(function(v){if(Math.abs(v-st.vj)<Math.abs(best-st.vj))best=v;});
+  var m=evalAt(best,Es,T,ideal); m.roots=rs; m.cc=false;
+  if(Math.abs(m.It)>ILIM){ m.cc=true; }
+  if(commit) st.vj=best;
+  return m;
+}
+function measure(noisy,commit){
+  var Es=st.pol*st.E, Tj=st.T+(st.ideal?0:heat), m=solve(Es,Tj,st.ideal,commit);
+  m.Tj=Tj; m.P=Math.abs(m.Id*m.Vd); m.Es=Es; m.Vm=m.Vd; m.Im=m.It;
+  if(noisy&&!st.ideal){ m.Vm+=gauss()*5e-5; m.Im+=gauss()*(1.5e-6+5e-4*Math.abs(m.Im)); }
+  m.ol=Math.abs(m.Im)>IMAX;
+  return m;
+}
+
+var $=function(s){return document.querySelector(s);};
+var mjQ=null;
+function mjx(el){
+  if(!el||!window.MathJax) return;
+  if(!mjQ) mjQ=(MathJax.startup&&MathJax.startup.promise)||Promise.resolve();
+  mjQ=mjQ.then(function(){ return MathJax.typesetPromise?MathJax.typesetPromise([el]):null; }).catch(function(){});
+}
+function setMath(el,html){ if(!el||el._raw===html) return; el._raw=html; el.innerHTML=html; mjx(el); }
+
+/* ---------- ranglar ---------- */
+var C={};
+function readColors(){
+  var cs=getComputedStyle(document.documentElement);
+  ["bg","surface","surface2","ink","muted","line","accent","electron","hole","copper","steel","fb","fe","ok","bad","warn"].forEach(function(k){C[k]=cs.getPropertyValue("--"+k).trim()||"#888";});
+}
+readColors();
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",readColors);}catch(e){}
+new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme","class","style"]});
+var FONT='"IBM Plex Sans","Segoe UI",system-ui,sans-serif', MONO='"IBM Plex Mono",Consolas,monospace', MATHF='"STIX Two Text",Cambria,Georgia,serif';
+
+/* ---------- bo'limlar ---------- */
+var TABS=["maqsad","nazariya","tartib","simulyator","sinov","adabiyot"], curTab="simulyator";
+function showTab(){
+  var h=(location.hash||"").replace("#","");
+  curTab=TABS.indexOf(h)>=0?h:"simulyator";
+  TABS.forEach(function(t){$("#tab-"+t).hidden=(t!==curTab);});
+  document.querySelectorAll("nav.tabs a").forEach(function(a){if(a.dataset.t===curTab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
+  if(curTab==="simulyator"){resizeAll();renderAll();}
+}
+window.addEventListener("hashchange",showTab);
+
+/* ---------- nazariya jadvali ---------- */
+(function(){
+  var rows="";
+  Object.keys(DIODES).forEach(function(k){var d=DIODES[k], p=tdParams(d,300);
+    rows+="<tr><td>"+d.label+"</td><td class='num'>"+(p.Ip*1e3).toFixed(2)+"</td><td class='num'>"+(p.Vp*1e3).toFixed(0)+"</td><td class='num'>"+(p.Iv*1e3).toFixed(3)+"</td><td class='num'>"+(p.Vv*1e3).toFixed(0)+"</td><td class='num'>"+p.ratio.toFixed(1)+"</td><td class='num'>"+(p.Vfp?p.Vfp.toFixed(3):"—")+"</td><td class='num'>"+(p.rmin?p.rmin.toFixed(0):"—")+"</td></tr>";});
+  $("#dTable").innerHTML=rows;
+  var sel=$("#selD"); Object.keys(DIODES).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=DIODES[k].label;sel.appendChild(o);});
+})();
+
+/* ---------- canvas o'lchamlari ---------- */
+var appCv=$("#appCv"), actx=appCv.getContext("2d"), microCv=$("#microCv"), mctx=microCv.getContext("2d"), ivCv=$("#ivCv"), ictx=ivCv.getContext("2d");
+var AW=760, AH=440, MW=640, MH=340, aS=1, mS=1;
+function resizeAll(){
+  var dpr=Math.min(2,window.devicePixelRatio||1);
+  var w=appCv.clientWidth; if(w>0){appCv.width=Math.round(w*dpr);appCv.height=Math.round(w*AH/AW*dpr);aS=appCv.width/AW;}
+  var mw=microCv.clientWidth; if(mw>0){microCv.width=Math.round(mw*dpr);microCv.height=Math.round(mw*MH/MW*dpr);mS=microCv.width/MW;}
+  if(ivCv.clientWidth>0){ivCv.width=Math.round(ivCv.clientWidth*dpr);ivCv.height=Math.round(ivCv.clientHeight*dpr);}
+  renderData();
+}
+if(window.ResizeObserver){new ResizeObserver(function(){resizeAll();}).observe(document.body);}else window.addEventListener("resize",resizeAll);
+
+/* ---------- boshqaruv ---------- */
+var el={selD:$("#selD"),rngE:$("#rngE"),valE:$("#valE"),polE:$("#polE"),selR:$("#selR"),rngTemp:$("#rngTemp"),valTemp:$("#valTemp"),chkIdeal:$("#chkIdeal"),lockMsg:$("#lockMsg"),status:$("#status"),btnNew:$("#btnNew")};
+var MODE_NAME={A:"A · VAX",B:"B · Yuklama chizig'i va gisterezis",C:"C · Harorat ta'siri"};
+function setStatus(msg,kind){el.status.textContent=msg||"";el.status.className="status "+(kind||"info");}
+function applyInputs(){el.selD.value=st.di;el.rngE.value=st.E;el.selR.value=String(st.R);el.rngTemp.value=st.T;el.chkIdeal.checked=st.ideal;}
+function syncLabels(){
+  el.valE.textContent=minus((st.pol*st.E).toFixed(3))+" V"; el.valTemp.textContent=st.T+" K";
+  el.polE.textContent=st.pol>0?"Qutb: to'g'ri (+ anodga)":"Qutb: teskari (− anodga)";
+  document.querySelectorAll("[data-mode]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode));});
+  el.btnNew.hidden=!st.burned; $("#btnAuto").hidden=st.mode!=="C"; $("#btnRec").hidden=st.mode==="C";
+}
+function tableFor(m){return m==="A"?st.tabA:m==="B"?st.tabB:st.tabC;}
+function updateLocks(){
+  var tb=tableFor(st.mode), L={};
+  if(tb.rows.length){ if(st.mode==="A")L={di:1,T:1}; else if(st.mode==="B")L={di:1,T:1,R:1}; else L={di:1}; }
+  el.selD.disabled=!!L.di; el.rngTemp.disabled=!!L.T; el.selR.disabled=!!L.R;
+  var nm=[]; if(L.di)nm.push("diod"); if(L.T)nm.push("harorat"); if(L.R)nm.push("rezistor");
+  el.lockMsg.hidden=!nm.length; el.lockMsg.textContent=nm.length?"Bu bosqich jadvalida ma'lumot bor, shuning uchun "+nm.join(", ")+" qulflangan. O'zgartirish uchun jadvalni tozalang.":"";
+}
+function setMode(m){
+  st.mode=m; var tb=tableFor(m);
+  if(tb.meta&&tb.rows.length){var me=tb.meta; st.di=me.di; ["T","R"].forEach(function(k){if(me[k]!==undefined)st[k]=me[k];});}
+  else { if(m==="A"||m==="C")st.R=1; if(m==="B"){st.R=100;st.E=0;st.vj=0;} }
+  if(m!=="A") st.pol=1;
+  applyInputs(); renderAll(); updateMeters(); M.need=true;
+}
+function setE(v){var nv=Math.max(0,Math.min(3,Math.round(v*1000)/1000)); if(nv!==st.E) st.dir=nv>st.E?1:-1; st.E=nv; el.rngE.value=st.E; syncLabels(); updateMeters();}
+document.querySelectorAll("[data-mode]").forEach(function(b){b.addEventListener("click",function(){setMode(b.dataset.mode);});});
+document.querySelectorAll("[data-de]").forEach(function(b){b.addEventListener("click",function(){setE(st.E+parseFloat(b.dataset.de));});});
+el.selD.addEventListener("change",function(){st.di=this.value;st.burned=false;heat=0;st.vj=0;syncLabels();updateMeters();M.need=true;if(T3)buildDiode();renderAll();});
+el.rngE.addEventListener("input",function(){setE(parseFloat(this.value));});
+el.polE.addEventListener("click",function(){if(st.mode!=="A"){setStatus("Teskari yo'nalish faqat A bosqichida o'lchanadi.","info");return;}st.pol=-st.pol;syncLabels();updateMeters();M.need=true;});
+el.selR.addEventListener("change",function(){st.R=+this.value;updateMeters();});
+el.rngTemp.addEventListener("input",function(){st.T=parseInt(this.value,10);syncLabels();updateMeters();});
+el.chkIdeal.addEventListener("change",function(){st.ideal=this.checked;if(st.ideal)heat=0;updateMeters();});
+el.btnNew.addEventListener("click",function(){st.burned=false;heat=0;st.E=0;st.vj=0;applyInputs();syncLabels();updateMeters();if(T3)buildDiode();setStatus("Yangi diod o'rnatildi.","ok");});
+
+function setLcd(id,txt,cls){var d=$(id);d.querySelector(".dig").textContent=txt;d.className="lcd"+(cls?" "+cls:"");}
+var lastJump=0;
+function updateMeters(){
+  var prevV=st.read?st.read.Vd:0, r=measure(true,true), d=DIODES[st.di]; st.read=r;
+  if(!st.burned&&!st.ideal&&r.P>2*d.Pmax){
+    st.burned=true; heat=0; syncLabels(); if(T3)buildDiode();
+    setStatus("Diod kuydi! Quvvat "+(r.P*1000).toFixed(0)+" mW, ruxsat etilgani "+(d.Pmax*1000)+" mW edi. Tunnel diodlar juda kam quvvatga mo'ljallangan. «Yangi diod o'rnatish» ni bosing.","bad");
+    r=measure(true,true); st.read=r;
+  }
+  setLcd("#lcdE",minus(r.Es.toFixed(3)),r.cc?"warn":"");
+  setLcd("#lcdA",r.ol?"OL":ima(r.Im),r.ol?"warn":""); setLcd("#lcdV",vmv(r.Vm)); setLcd("#lcdT",r.Tj.toFixed(1),r.P>d.Pmax?"warn":"");
+  var jumped=Math.abs(r.Vd-prevV)>0.08&&!st.burned;
+  if(jumped&&performance.now()-lastJump>300){lastJump=performance.now(); setStatus("Sakrash! Kuchlanish "+vmv(prevV)+" → "+vmv(r.Vd)+" mV ga keskin o'zgardi: yuklama chizig'i VAX ning boshqa tarmog'iga o'tdi"+(r.roots.length>1?" (hozir "+r.roots.length+" ta kesishma bor)":"")+".","info");}
+  else if(r.cc&&!st.burned) setStatus("Manba tok cheklovi (100 mA): tok juda katta.","bad");
+  else if(r.ol&&!st.burned&&!/Sakrash/.test(el.status.textContent)) setStatus("Milliampermetr diapazoni (20 mA) oshdi — E ni kamaytiring.","bad");
+  else if(!st.burned&&r.P>d.Pmax) setStatus("Diod quvvati "+(r.P*1000).toFixed(1)+" mW — ruxsat etilganidan ("+(d.Pmax*1000)+" mW) katta!","bad");
+  panels3D(r);
+}
+
+/* ---------- yozib olish ---------- */
+function metaNow(m){ if(m==="A")return {di:st.di,T:st.T}; if(m==="B")return {di:st.di,T:st.T,R:st.R}; return {di:st.di}; }
+$("#btnRec").addEventListener("click",function(){
+  if(st.burned){setStatus("Diod kuygan — avval yangisini o'rnating.","bad");return;}
+  var r=st.read||measure(true,true);
+  if(r.ol){setStatus("Ampermetr diapazonidan chiqdi (OL): yozib bo'lmaydi.","bad");return;}
+  var tb=tableFor(st.mode); if(!tb.meta||!tb.rows.length) tb.meta=metaNow(st.mode);
+  var row={E:r.Es,V:r.Vm,I:r.Im,R:st.R,dir:st.dir};
+  tb.rows.push(row);
+  if(st.mode==="A") tb.rows.sort(function(a,b){return a.V-b.V;});
+  save(); renderAll();
+  setStatus("Yozildi: E = "+r.Es.toFixed(3)+" V, V = "+vmv(r.Vm)+" mV, I = "+ima(r.Im)+" mA"+(st.mode==="B"?" ("+(st.dir>0?"↑ oshirish":"↓ kamaytirish")+")":"")+".","ok");
+});
+$("#btnAuto").addEventListener("click",function(){
+  if(st.burned){setStatus("Diod kuygan — avval yangisini o'rnating.","bad");return;}
+  var d=DIODES[st.di], p=tdParams(d,st.T), n=st.ideal?0:1;
+  var row={T:st.T,Ip:p.Ip*(1+n*gauss()*0.002),Vp:p.Vp+n*gauss()*0.0005,Iv:p.Iv*(1+n*gauss()*0.004),Vv:p.Vv+n*gauss()*0.002};
+  var tb=st.tabC; if(!tb.meta||!tb.rows.length) tb.meta=metaNow("C");
+  tb.rows=tb.rows.filter(function(x){return x.T!==st.T;}); tb.rows.push(row); tb.rows.sort(function(a,b){return a.T-b.T;});
+  save(); renderAll();
+  setStatus("Skanerlandi (R = 1 Ω): I_p = "+(row.Ip*1e3).toFixed(3)+" mA, I_v = "+(row.Iv*1e3).toFixed(3)+" mA, T = "+st.T+" K.","ok");
+});
+["A","B","C"].forEach(function(t){$("#clr"+t).addEventListener("click",function(){var tb=tableFor(t);if(!tb.rows.length)return;if(!confirm("Jadvaldagi barcha qatorlar o'chiriladi. Davom etasizmi?"))return;tb.rows=[];tb.meta=null;save();renderAll();});});
+document.addEventListener("click",function(e){var b=e.target.closest("[data-del]");if(!b)return;var tb=tableFor(b.dataset.del);tb.rows.splice(+b.dataset.i,1);if(!tb.rows.length)tb.meta=null;save();renderAll();});
+
+/* ---------- grafiklar ---------- */
+function niceStep(range,n){var raw=range/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),r=raw/mag;return (r<1.5?1:r<3?2:r<7?5:10)*mag;}
+function tickFmt(v,step){if(Math.abs(v)<step*1e-6)return "0";var a=Math.abs(v);if(a>=1e4||a<1e-2)return sci(v,2);var dec=Math.max(0,-Math.floor(Math.log10(step)));return minus(v.toFixed(Math.min(dec,4)));}
+function linfit(pts){var n=pts.length;if(n<2)return null;var sx=0,sy=0,sxx=0,sxy=0;pts.forEach(function(p){sx+=p[0];sy+=p[1];sxx+=p[0]*p[0];sxy+=p[0]*p[1];});var d=n*sxx-sx*sx;if(Math.abs(d)<1e-30)return null;var m=(n*sxy-sx*sy)/d;return {m:m,b:(sy-m*sx)/n};}
+function plot(cv,o){
+  if(!cv.clientWidth) return;
+  var dpr=Math.min(2,window.devicePixelRatio||1); if(cv.width!==Math.round(cv.clientWidth*dpr)){cv.width=Math.round(cv.clientWidth*dpr);cv.height=Math.round(cv.clientHeight*dpr);}
+  var g=cv.getContext("2d"),W=cv.width,H=cv.height; if(!W||!H) return;
+  var s=W/cv.clientWidth; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,W,H); g.setTransform(s,0,0,s,0,0);
+  var w=cv.clientWidth,h=cv.clientHeight,L=62,R=14,T=26,Bm=40;
+  g.fillStyle=C.ink; g.font="600 12px "+FONT; g.textAlign="left"; g.fillText(o.title||"",L,16);
+  var all=[]; o.series.forEach(function(se){se.pts.forEach(function(p){all.push(p);});});
+  if(!all.length){g.fillStyle=C.muted;g.font="13px "+FONT;g.textAlign="center";g.fillText(o.empty||"Hali ma'lumot yo'q",w/2,h/2);return;}
+  var xs_=all.map(function(p){return p[0];}), ys_=all.map(function(p){return p[1];});
+  var x0=Math.min.apply(null,xs_), x1=Math.max.apply(null,xs_), y0=Math.min.apply(null,ys_), y1=Math.max.apply(null,ys_);
+  if(o.xmin!==undefined)x0=Math.min(x0,o.xmin); if(o.xmax!==undefined)x1=Math.max(x1,o.xmax); if(o.ymin!==undefined)y0=Math.min(y0,o.ymin); if(o.ymax!==undefined)y1=Math.max(y1,o.ymax);
+  if(o.fixY){y0=o.fixY[0];y1=o.fixY[1];}
+  if(x1-x0<1e-30){x0-=1;x1+=1;} if(y1-y0<1e-30){var dy=Math.abs(y0)*0.2||1;y0-=dy;y1+=dy;}
+  var px=(x1-x0)*0.05,py=(y1-y0)*0.08; if(o.xmin===undefined)x0-=px; if(o.xmax===undefined)x1+=px; if(o.ymin===undefined&&!o.fixY)y0-=py; if(!o.fixY)y1+=py;
+  var X=function(v){return L+(v-x0)/(x1-x0)*(w-L-R);}, Y=function(v){return h-Bm-(v-y0)/(y1-y0)*(h-Bm-T);};
+  var xs=niceStep(x1-x0,5), ys=niceStep(y1-y0,5);
+  g.font="11px "+MONO; g.lineWidth=1;
+  for(var v=Math.ceil(x0/xs)*xs;v<=x1+1e-12;v+=xs){g.strokeStyle=C.line;g.globalAlpha=.7;g.beginPath();g.moveTo(X(v),T);g.lineTo(X(v),h-Bm);g.stroke();g.globalAlpha=1;g.fillStyle=C.muted;g.textAlign="center";g.fillText(tickFmt(v,xs),X(v),h-Bm+15);}
+  for(var u=Math.ceil(y0/ys)*ys;u<=y1+1e-12*Math.abs(y1);u+=ys){g.strokeStyle=C.line;g.globalAlpha=.7;g.beginPath();g.moveTo(L,Y(u));g.lineTo(w-R,Y(u));g.stroke();g.globalAlpha=1;g.fillStyle=C.muted;g.textAlign="right";g.fillText(tickFmt(u,ys),L-6,Y(u)+4);}
+  if(y0<0&&y1>0){g.strokeStyle=C.ink;g.globalAlpha=.5;g.beginPath();g.moveTo(L,Y(0));g.lineTo(w-R,Y(0));g.stroke();g.globalAlpha=1;}
+  if(x0<0&&x1>0){g.strokeStyle=C.ink;g.globalAlpha=.5;g.beginPath();g.moveTo(X(0),T);g.lineTo(X(0),h-Bm);g.stroke();g.globalAlpha=1;}
+  g.strokeStyle=C.ink; g.globalAlpha=.8; g.beginPath(); g.moveTo(L,T); g.lineTo(L,h-Bm); g.lineTo(w-R,h-Bm); g.stroke(); g.globalAlpha=1;
+  g.fillStyle=C.muted; g.font="12px "+FONT; g.textAlign="center"; g.fillText(o.xlabel,L+(w-L-R)/2,h-8);
+  g.save(); g.translate(13,T+(h-Bm-T)/2); g.rotate(-Math.PI/2); g.fillText(o.ylabel,0,0); g.restore();
+  g.save(); g.beginPath(); g.rect(L,T,w-L-R,h-Bm-T); g.clip();
+  o.series.forEach(function(se){
+    if(se.fit){g.strokeStyle=se.fitColor||se.color;g.lineWidth=1.6;g.setLineDash([6,4]);g.beginPath();g.moveTo(X(se.fit.xa),Y(se.fit.m*se.fit.xa+se.fit.b));g.lineTo(X(se.fit.xb),Y(se.fit.m*se.fit.xb+se.fit.b));g.stroke();g.setLineDash([]);}
+    if(se.line&&se.pts.length>1){g.strokeStyle=se.color;g.lineWidth=1.5;g.beginPath();se.pts.forEach(function(p,i){if(i)g.lineTo(X(p[0]),Y(p[1]));else g.moveTo(X(p[0]),Y(p[1]));});g.stroke();}
+    se.pts.forEach(function(p){g.fillStyle=se.color;g.beginPath();if(se.sq)g.rect(X(p[0])-3.4,Y(p[1])-3.4,6.8,6.8);else g.arc(X(p[0]),Y(p[1]),3.6,0,7);g.fill();g.strokeStyle=C.surface;g.lineWidth=1;g.stroke();});
+  });
+  g.restore();
+  if(o.legend){var lx=L+10,ly=T+14;g.font="11px "+FONT;g.textAlign="left";o.series.forEach(function(se){if(!se.name)return;g.fillStyle=se.color;if(se.sq)g.fillRect(lx,ly-7,7,7);else{g.beginPath();g.arc(lx+3.5,ly-3.5,3.6,0,7);g.fill();}g.fillStyle=C.ink;g.fillText(se.name,lx+12,ly);ly+=15;});}
+}
+
+/* ---------- natijalar ---------- */
+function expA(){
+  var tb=st.tabA; if(!tb.meta) return null;
+  var pts=tb.rows.filter(function(r){return r.V>0;}).slice().sort(function(a,b){return a.V-b.V;});
+  if(pts.length<5) return null;
+  var pk=null, k;
+  for(k=0;k<pts.length;k++){var p=pts[k]; if(!pk||p.I>pk.I) pk=p; else if(p.I<0.6*pk.I) break;}
+  if(k>=pts.length) return null;
+  var vl=null; for(var j=pts.indexOf(pk)+1;j<pts.length;j++){var q=pts[j]; if(q.I>pk.I) break; if(!vl||q.I<vl.I) vl=q;}
+  if(!vl) return null;
+  var gmin=0, a=pts.indexOf(pk), b=pts.indexOf(vl);
+  for(var i=a;i<b;i++){var g=(pts[i+1].I-pts[i].I)/(pts[i+1].V-pts[i].V); if(g<gmin) gmin=g;}
+  return {Ip:pk.I,Vp:pk.V,Iv:vl.I,Vv:vl.V,ratio:pk.I/vl.I,rmin:gmin<0?-1/gmin:null,nNeg:b-a-1};
+}
+function expB(){
+  var tb=st.tabB; if(!tb.meta) return null; var rows=tb.rows, up=null, dn=null;
+  for(var i=1;i<rows.length;i++){var a=rows[i-1],b=rows[i];
+    if(b.dir>0&&b.V-a.V>0.08&&b.E>=a.E) up={E:b.E,Eprev:a.E,V1:a.V,V2:b.V};
+    if(b.dir<0&&a.V-b.V>0.08&&b.E<=a.E) dn={E:b.E,Eprev:a.E,V1:a.V,V2:b.V};}
+  var d=DIODES[tb.meta.di], p=tdParams(d,tb.meta.T), Rt=tb.meta.R+RA, thUp=null, thDn=null, prev=null, rising=true;
+  // yuklama chizig'i VAX ga urinma bo'ladigan E: g(V) = V_d + I(R+R_A) ning lokal maksimumi va minimumi
+  for(var V=0;V<=(p.Vfp||1)*1.1;V+=0.0005){var I=diodeI(d,V,tb.meta.T), gv=V+I*d.Rs+I*Rt;
+    if(prev!==null){ if(rising&&gv<prev&&thUp===null){thUp=prev;rising=false;} else if(!rising&&gv>prev&&thDn===null){thDn=prev;break;} }
+    prev=gv;}
+  return {up:up,dn:dn,dE:up&&dn?up.E-dn.E:null,thUp:thUp,thDn:thDn,p:p,Rt:Rt};
+}
+function renderData(){
+  // A
+  var ta="<thead><tr><th>№</th><th class='num'>\\(E\\), V</th><th class='num'>\\(V\\), mV</th><th class='num'>\\(I\\), mA</th><th class='num'>\\(\\Delta I/\\Delta V\\), mS</th><th></th></tr></thead><tbody>";
+  if(!st.tabA.rows.length) ta+="<tr><td colspan='6' style='color:var(--muted)'>R = 1 Ω. E ni 0 dan kichik qadamlar bilan oshirib, cho'qqi va vodiy atrofida zich nuqtalar oling (25–35 nuqta).</td></tr>";
+  var rA=st.tabA.rows, gp=[];
+  rA.forEach(function(r,i){var g=null; if(i>0&&r.V-rA[i-1].V>2e-4){g=(r.I-rA[i-1].I)/(r.V-rA[i-1].V); gp.push([(r.V+rA[i-1].V)/2,g*1e3]);}
+    ta+="<tr><td>"+(i+1)+"</td><td class='num'>"+minus(r.E.toFixed(3))+"</td><td class='num'>"+vmv(r.V)+"</td><td class='num'>"+ima(r.I)+"</td><td class='num'"+(g!==null&&g<0?" style='color:var(--bad)'":"")+">"+(g===null?"—":minus((g*1e3).toFixed(2)))+"</td><td><button class='delbtn' data-del='A' data-i='"+i+"' aria-label='Qatorni o`chirish'>✕</button></td></tr>";});
+  $("#tblA").innerHTML=ta+"</tbody>";
+  plot($("#plotA1"),{title:"Tunnel diod VAX: I(V)",xlabel:"V, V",ylabel:"I, mA",series:[{pts:rA.map(function(r){return [r.V,r.I*1e3];}),color:C.accent,line:true}]});
+  plot($("#plotA2"),{title:"Differensial o'tkazuvchanlik dI/dV (manfiy — NDR sohasi)",xlabel:"V, V",ylabel:"dI/dV, mS",series:[{pts:gp,color:C.fe,line:true}]});
+  var ex=expA(), me=st.tabA.meta;
+  setMath($("#givenA"),me?"<span>Diod: <b>"+DIODES[me.di].short+"</b></span><span>\\(T\\) = <b>"+me.T+" K</b></span><span>Nuqtalar: <b>"+rA.length+"</b></span>"+(ex?"<span>Manfiy qismda <b>"+ex.nNeg+"</b> ta oraliq nuqta</span>":"<span>Cho'qqi va vodiy hali aniqlanmadi: ko'proq nuqta kerak.</span>"):"<span>Avval A bosqichida o'lchang.</span>");
+  // B
+  var tbb="<thead><tr><th>№</th><th>Yo'nalish</th><th class='num'>\\(E\\), V</th><th class='num'>\\(V\\), mV</th><th class='num'>\\(I\\), mA</th><th></th></tr></thead><tbody>";
+  if(!st.tabB.rows.length) tbb+="<tr><td colspan='6' style='color:var(--muted)'>R = 100 Ω. E ni 0 dan 10 mV qadam bilan oshirib, keyin kamaytirib, har qadamda yozing.</td></tr>";
+  var rB=st.tabB.rows;
+  rB.forEach(function(r,i){var jump=i>0&&Math.abs(r.V-rB[i-1].V)>0.08; tbb+="<tr"+(jump?" style='background:var(--accent-soft)'":"")+"><td>"+(i+1)+"</td><td>"+(r.dir>0?"↑":"↓")+"</td><td class='num'>"+r.E.toFixed(3)+"</td><td class='num'>"+vmv(r.V)+(jump?" ⚡":"")+"</td><td class='num'>"+ima(r.I)+"</td><td><button class='delbtn' data-del='B' data-i='"+i+"' aria-label='Qatorni o`chirish'>✕</button></td></tr>";});
+  $("#tblB").innerHTML=tbb+"</tbody>";
+  var up=rB.filter(function(r){return r.dir>0;}), dn=rB.filter(function(r){return r.dir<0;});
+  plot($("#plotB1"),{title:"V(E): oshirish (↑) va kamaytirish (↓)",xlabel:"E, V",ylabel:"V, V",series:[{name:"↑ oshirish",pts:up.map(function(r){return [r.E,r.V];}),color:C.accent,line:true},{name:"↓ kamaytirish",pts:dn.map(function(r){return [r.E,r.V];}),color:C.hole,sq:true,line:true}],xmin:0,ymin:0,legend:true});
+  plot($("#plotB2"),{title:"O'lchangan VAX: sakrashlar manfiy qismni «aylanib o'tadi»",xlabel:"V, V",ylabel:"I, mA",series:[{name:"↑",pts:up.map(function(r){return [r.V,r.I*1e3];}),color:C.accent},{name:"↓",pts:dn.map(function(r){return [r.V,r.I*1e3];}),color:C.hole,sq:true}],xmin:0,ymin:0,legend:true});
+  var eb=expB(), mb=st.tabB.meta;
+  setMath($("#givenB"),mb?"<span>Diod: <b>"+DIODES[mb.di].short+"</b></span><span>\\(R + R_A\\) = <b>"+(mb.R+RA)+" Ω</b></span><span>\\(|r_-|_{min}\\) ≈ <b>"+(eb.p.rmin?eb.p.rmin.toFixed(0):"—")+" Ω</b></span>"+((mb.R+RA)<(eb.p.rmin||0)?"<span style='color:var(--warn)'>\\(R + R_A < |r_-|\\): gisterezis bo'lmaydi</span>":"")+
+    "<span>Sakrash ↑: <b>"+(eb.up?eb.up.E.toFixed(3)+" V":"topilmadi")+"</b></span><span>Sakrash ↓: <b>"+(eb.dn?eb.dn.E.toFixed(3)+" V":"topilmadi")+"</b></span>":"<span>Avval B bosqichida o'lchang.</span>");
+  // C
+  var tc="<thead><tr><th>№</th><th class='num'>\\(T\\), K</th><th class='num'>\\(I_p\\), mA</th><th class='num'>\\(V_p\\), mV</th><th class='num'>\\(I_v\\), mA</th><th class='num'>\\(V_v\\), mV</th><th class='num'>\\(I_p/I_v\\)</th><th></th></tr></thead><tbody>";
+  if(!st.tabC.rows.length) tc+="<tr><td colspan='8' style='color:var(--muted)'>Har bir haroratda «Avtomatik: I_p va I_v» tugmasini bosing (230–400 K).</td></tr>";
+  st.tabC.rows.forEach(function(r,i){tc+="<tr><td>"+(i+1)+"</td><td class='num'>"+r.T+"</td><td class='num'>"+(r.Ip*1e3).toFixed(3)+"</td><td class='num'>"+(r.Vp*1e3).toFixed(1)+"</td><td class='num'>"+(r.Iv*1e3).toFixed(3)+"</td><td class='num'>"+(r.Vv*1e3).toFixed(1)+"</td><td class='num'>"+(r.Ip/r.Iv).toFixed(2)+"</td><td><button class='delbtn' data-del='C' data-i='"+i+"' aria-label='Qatorni o`chirish'>✕</button></td></tr>";});
+  $("#tblC").innerHTML=tc+"</tbody>";
+  var rc=st.tabC.rows;
+  plot($("#plotC1"),{title:"I_p(T) va I_v(T)",xlabel:"T, K",ylabel:"I, mA",series:[{name:"I_p (cho'qqi)",pts:rc.map(function(r){return [r.T,r.Ip*1e3];}),color:C.accent,line:true},{name:"I_v (vodiy)",pts:rc.map(function(r){return [r.T,r.Iv*1e3];}),color:C.hole,sq:true,line:true}],ymin:0,legend:true});
+  plot($("#plotC2"),{title:"I_p/I_v nisbati",xlabel:"T, K",ylabel:"I_p / I_v",series:[{pts:rc.map(function(r){return [r.T,r.Ip/r.Iv];}),color:C.fe,line:true}],ymin:0});
+  if(rc.length>=2){var a=rc[0],b=rc[rc.length-1],dT=b.T-a.T;
+    setMath($("#resC"),"\\(I_p\\): "+(a.Ip*1e3).toFixed(3)+" → "+(b.Ip*1e3).toFixed(3)+" mA (\\("+minus(((b.Ip/a.Ip-1)/dT*100).toFixed(3))+"\\ \\%/\\text{K}\\)). \\(I_v\\): "+(a.Iv*1e3).toFixed(3)+" → "+(b.Iv*1e3).toFixed(3)+" mA (\\(+"+((b.Iv/a.Iv-1)/dT*100).toFixed(2)+"\\ \\%/\\text{K}\\)). Tunnel toki haroratga deyarli bog'liq emas, vodiy toki esa tez ortadi.");}
+  else setMath($("#resC"),"Kamida 2 ta harorat nuqtasi kerak.");
+  mjx($("#tblA")); mjx($("#tblB")); mjx($("#tblC"));
+}
+function chk(id,exp,name,tol,hint,scale){var raw=$(id).value;if(!raw)return null;var v=parseNum(raw);if(!isFinite(v))return {ok:false,t:name+": sonni o'qib bo'lmadi."};var e=exp*(scale||1);var ok=Math.abs(v-e)/Math.abs(e)<=tol;return {ok:ok,t:name+(ok?": to'g'ri.":": noto'g'ri. "+hint)};}
+function showFb(box,L,extra){if(!L.length){box.innerHTML="<p class='callout warn'>Hech bo'lmasa bitta qiymatni kiriting.</p>";return;}box.innerHTML="<ul class='fb-list'>"+L.map(function(x){return "<li class='"+(x.ok?"ok":"bad")+"'>"+x.t+"</li>";}).join("")+"</ul>"+(extra||"");mjx(box);}
+$("#btnCheckA").addEventListener("click",function(){
+  var ex=expA(), fb=$("#feedA"); if(!ex){fb.innerHTML="<p class='callout warn'>Jadvaldan cho'qqi va vodiyni aniqlab bo'lmadi: VAX ni vodiydan keyingi diffuziya tarmog'igacha o'lchang.</p>";return;}
+  var L=[chk("#inIp",ex.Ip,"\\(I_p\\)",0.03,"Jadvaldagi eng katta tok (manfiy qismdan oldin), mA da.",1e3),chk("#inVp",ex.Vp,"\\(V_p\\)",0.08,"Cho'qqi tokidagi kuchlanish, mV da.",1e3),
+    chk("#inIv",ex.Iv,"\\(I_v\\)",0.03,"Manfiy qismdan keyingi eng kichik tok, mA da.",1e3),chk("#inVv",ex.Vv,"\\(V_v\\)",0.08,"Vodiy tokidagi kuchlanish, mV da.",1e3),
+    chk("#inRat",ex.ratio,"\\(I_p/I_v\\)",0.05,"Ikki tokning nisbati."),ex.rmin?chk("#inRn",ex.rmin,"\\(|r_-|_{min}\\)",0.2,"Manfiy qismdagi eng tik oraliq: \\(|\\Delta V/\\Delta I|\\), \\(V\\) — voltda, \\(I\\) — amperda."):null].filter(Boolean);
+  var p=tdParams(DIODES[st.tabA.meta.di],st.tabA.meta.T);
+  showFb(fb,L,"<p class='hint'>Jadvalingizdan: \\(I_p\\) = "+(ex.Ip*1e3).toFixed(3)+" mA, \\(V_p\\) = "+vmv(ex.Vp)+" mV, \\(I_v\\) = "+(ex.Iv*1e3).toFixed(3)+" mA, \\(V_v\\) = "+vmv(ex.Vv)+" mV, \\(I_p/I_v\\) = "+ex.ratio.toFixed(2)+(ex.rmin?", \\(|r_-|_{min}\\) ≈ "+ex.rmin.toFixed(0)+" Ω":"")+". Model (datasheet): \\(I_p\\) = "+(p.Ip*1e3).toFixed(2)+" mA, \\(V_v\\) = "+(p.Vv*1e3).toFixed(0)+" mV, \\(I_p/I_v\\) = "+p.ratio.toFixed(1)+".</p>");
+});
+$("#btnCheckB").addEventListener("click",function(){
+  var eb=expB(), fb=$("#feedB"); if(!eb||eb.dE===null){fb.innerHTML="<p class='callout warn'>Jadvalda ikkala sakrash (↑ va ↓) topilmadi. R = 100 Ω da E ni avval oshirib, keyin kamaytiring.</p>";return;}
+  showFb(fb,[chk("#inDE",eb.dE,"\\(\\Delta E\\)",0.1,"Oshirishdagi sakrash \\(E_\\uparrow\\) dan kamaytirishdagi sakrash \\(E_\\downarrow\\) ni ayiring.")].filter(Boolean),
+    "<p class='hint'>Jadvalingizdan: \\(E_\\uparrow\\) = "+eb.up.E.toFixed(3)+" V, \\(E_\\downarrow\\) = "+eb.dn.E.toFixed(3)+" V. Nazariya (yuklama chizig'i VAX ga urinma bo'lgan holatlar, \\(E = V + I(R+R_A)\\) ning lokal maksimumi va minimumi): \\(E_\\uparrow\\) = "+(eb.thUp!==null?eb.thUp.toFixed(3):"—")+" V, \\(E_\\downarrow\\) = "+(eb.thDn!==null?eb.thDn.toFixed(3):"—")+" V. Taxminiy formulalar: \\(V_p + I_p(R+R_A)\\) = "+(eb.p.Vp+eb.p.Ip*eb.Rt).toFixed(3)+" V, \\(V_v + I_v(R+R_A)\\) = "+(eb.p.Vv+eb.p.Iv*eb.Rt).toFixed(3)+" V.</p>");
+});
+
+/* ---------- mikro-ko'rinish: tunnel o'tish ---------- */
+var XJ=320, CY0=34, CY1=196, GX=16, NI=37, NJ=10;
+var M={need:true,running:true,speed:1,e:[],h:[],ions:[],fx:[],acc:{t:0,d:0,x:0},alt:0,xL:312,xR:328,f:1,text:null};
+function sx(i){return 22+i*GX;} function sy(j){return CY0+8+j*GX;}
+function junction(){var d=DIODES[st.di],r=st.read,V=r?r.Vj:0,Vbi=d.Eg+2*d.degen,f=Math.sqrt(Math.max(0.05,Vbi-V)/Vbi),W=Math.max(8,Math.min(30,16*f));M.xL=XJ-W/2;M.xR=XJ+W/2;M.f=f;}
+function mkE(x,y,mode){return {x:x,y:y,mode:mode||"maj",life:0,tx:0};}
+function mkH(i,j,mode){return {i:i,j:j,x:sx(i),y:sy(j),mode:mode||"maj",hop:null,ax:0,ay:0,life:0,tx:0};}
+function hIndexFromX(x){return Math.max(0,Math.min(NI-1,Math.round((x-22)/GX)));}
+function placeH(h,i,j){h.i=i;h.j=j;h.x=sx(i);h.y=sy(j);h.hop=null;h.ax=0;h.ay=0;}
+function respawnE(p){p.mode="maj";p.x=614+Math.random()*6;p.y=CY0+6+Math.random()*(CY1-CY0-12);}
+function respawnH(h){h.mode="maj";placeH(h,0,Math.floor(Math.random()*NJ));}
+function setupMicro(){
+  junction(); M.e=[]; M.h=[]; M.fx=[]; M.ions=[]; M.acc={t:0,d:0,x:0};
+  for(var k=0;k<56;k++) M.e.push(mkE(M.xR+6+Math.random()*(616-M.xR),CY0+6+Math.random()*(CY1-CY0-12)));
+  var imax=hIndexFromX(M.xL-10);
+  for(var q=0;q<56;q++) M.h.push(mkH(Math.floor(Math.random()*(imax+1)),Math.floor(Math.random()*NJ)));
+  for(var i=0;i<NI;i++)for(var j=0;j<NJ;j++){ if((i+j)%2!==0) continue; var x=sx(i); M.ions.push({x:x+8,y:sy(j)+8,s:x<XJ?-1:1}); }
+  M.key=st.di; M.need=false;
+}
+function flash(x,y,type){M.fx.push({x:x,y:y,t:0,type:type});}
+function nearest(arr,x,y,mode){var b=null,bd=1e9;arr.forEach(function(p){if(p.mode!==mode)return;var dd=Math.hypot(p.x-x,p.y-y);if(dd<bd){bd=dd;b=p;}});return b;}
+function extreme(arr,mode,sign){var b=null;arr.forEach(function(p){if(p.mode!==mode)return;if(!b||(sign>0?p.x>b.x:p.x<b.x))b=p;});return b;}
+function trigger(kind){
+  if(kind==="ftun"||kind==="xtun"){
+    var e=extreme(M.e,"maj",-1), h=e?nearest(M.h,M.xL-8,e.y,"maj"):null; if(!e||!h) return;
+    M.fx.push({x:M.xR,y:e.y,x2:M.xL,y2:h.y,t:0,type:kind==="xtun"?"tunx":"tunl"}); flash(h.x,h.y,"fill");
+    respawnE(e); respawnH(h);
+  } else if(kind==="rtun"){
+    var yy=CY0+10+Math.random()*(CY1-CY0-20);
+    M.fx.push({x:M.xL,y:yy,x2:M.xR,y2:yy,t:0,type:"tunl"});
+    M.e.push(mkE(M.xR+3,yy,"drift")); M.h.push(mkH(hIndexFromX(M.xL-3),Math.max(0,Math.min(NJ-1,Math.round((yy-CY0-8)/GX))),"drift"));
+  } else if(kind==="fwd"){
+    M.alt=1-M.alt;
+    if(M.alt){var e2=extreme(M.e,"maj",-1); if(e2){e2.mode="cross";e2.tx=M.xL-12-Math.random()*Math.max(20,M.xL-60);}}
+    else {var h2=extreme(M.h,"maj",1); if(h2){h2.mode="cross";h2.tx=M.xR+12+Math.random()*Math.max(20,560-M.xR);}}
+  }
+}
+function rateOf(I,k,base,max){return I>base?Math.max(0,Math.min(max,k*Math.log10(I/base))):0;}
+function stepMicro(dt){
+  var d=DIODES[st.di], r=st.read; if(!r) return; junction();
+  if(!st.burned){
+    var p=parts(d,r.Vj,r.Tj);
+    M.acc.t+=rateOf(Math.abs(p.t),2.4,1e-7,18)*dt; M.acc.d+=rateOf(p.d,2,1e-7,14)*dt; M.acc.x+=rateOf(p.x,1.5,1e-6,6)*dt;
+    var g=0; while(M.acc.t>=1&&g<5){M.acc.t-=1;g++;trigger(p.t>0?"ftun":"rtun");}
+    g=0; while(M.acc.d>=1&&g<5){M.acc.d-=1;g++;trigger("fwd");}
+    g=0; while(M.acc.x>=1&&g<3){M.acc.x-=1;g++;trigger("xtun");}
+  }
+  var jit=55*Math.sqrt(r.Tj/300)*Math.sqrt(dt);
+  for(var k=M.e.length-1;k>=0;k--){var e=M.e[k];
+    if(e.mode==="maj"){e.x+=gauss()*jit;e.y+=gauss()*jit; var lo=M.xR+4; if(e.x<lo)e.x=lo+Math.random()*20; if(e.x>622)e.x=622;}
+    else if(e.mode==="cross"){e.x-=260*dt; if(e.x<=e.tx){e.mode="min";e.life=0.4+Math.random()*0.7;}}
+    else if(e.mode==="min"){e.x+=gauss()*jit-25*dt;e.y+=gauss()*jit;e.x=Math.max(18,Math.min(M.xL-3,e.x));e.life-=dt;
+      if(e.life<=0){var hh=nearest(M.h,e.x,e.y,"maj"); flash(e.x,e.y,"heat"); if(hh) respawnH(hh); respawnE(e);}}
+    else if(e.mode==="drift"){e.x+=240*dt; if(e.x>M.xR+6){e.mode="sweep";e.life=0.7;}}
+    else if(e.mode==="sweep"){e.x+=150*dt;e.life-=dt; if(e.life<=0||e.x>620){M.e.splice(k,1);continue;}}
+    e.y=Math.max(CY0+5,Math.min(CY1-5,e.y));
+  }
+  M.h.forEach(function(h){
+    if(h.hop){h.hop.k+=dt/(h.mode==="cross"||h.mode==="drift"||h.mode==="sweep"?0.05:0.16); if(h.hop.k>=1)h.hop=null; else return;}
+    if(h.mode==="sweep"){h.life-=dt; if(h.life<=0||h.i===0){h.dead=true;return;}}
+    var dx=0,dy=0;
+    if(h.mode==="maj"||h.mode==="min"){h.ax+=gauss()*jit*0.55;h.ay+=gauss()*jit*0.55; if(h.mode==="min")h.ax+=25*dt;}
+    if(h.mode==="cross"||h.mode==="drift"||h.mode==="sweep"){dx=h.mode==="cross"?1:-1;}
+    else { if(Math.abs(h.ax)>=GX){dx=h.ax>0?1:-1;h.ax-=dx*GX;} if(Math.abs(h.ay)>=GX){dy=h.ay>0?1:-1;h.ay-=dy*GX;} }
+    var ni=Math.max(0,Math.min(NI-1,h.i+dx)), nj=Math.max(0,Math.min(NJ-1,h.j+dy)), nx=sx(ni);
+    if(h.mode==="maj"&&nx>M.xL-6){ni=Math.min(h.i,hIndexFromX(M.xL-14));nx=sx(ni);}
+    if(h.mode==="min"&&nx<M.xR+4){ni=h.i;nx=sx(ni);}
+    if(ni!==h.i||nj!==h.j){h.hop={fx:h.x,fy:h.y,k:0};h.i=ni;h.j=nj;h.x=nx;h.y=sy(nj);}
+    if(h.mode==="cross"&&h.x>=h.tx){h.mode="min";h.life=0.4+Math.random()*0.7;}
+    if(h.mode==="drift"&&h.x<M.xL-6){h.mode="sweep";h.life=0.7;}
+    if(h.mode==="min"){h.life-=dt; if(h.life<=0){var ee=nearest(M.e,h.x,h.y,"maj"); flash(h.x,h.y,"heat"); if(ee) respawnE(ee); respawnH(h);}}
+    if(h.mode==="maj"&&h.x>M.xL-6){placeH(h,hIndexFromX(M.xL-14),h.j);}
+  });
+  M.h=M.h.filter(function(h){return !h.dead;});
+  M.fx.forEach(function(f){f.t+=dt;}); M.fx=M.fx.filter(function(f){return f.t<0.55;});
+}
+function drawMicro(){
+  var g=mctx; if(!microCv.width) return; g.setTransform(mS,0,0,mS,0,0); g.clearRect(0,0,MW,MH);
+  var d=DIODES[st.di], r=st.read; g.fillStyle=C.surface; g.fillRect(0,0,MW,MH);
+  var xL=M.xL, xR=M.xR;
+  g.fillStyle=C.hole; g.globalAlpha=0.1; g.fillRect(14,CY0,xL-14,CY1-CY0); g.globalAlpha=1;
+  g.fillStyle=C.electron; g.globalAlpha=0.1; g.fillRect(xR,CY0,626-xR,CY1-CY0); g.globalAlpha=1;
+  g.fillStyle=C.surface2; g.fillRect(xL,CY0,xR-xL,CY1-CY0);
+  g.strokeStyle=C.muted; g.setLineDash([3,3]); g.lineWidth=1; g.beginPath(); g.moveTo(xL,CY0); g.lineTo(xL,CY1); g.moveTo(xR,CY0); g.lineTo(xR,CY1); g.stroke(); g.setLineDash([]);
+  g.strokeStyle=C.ink; g.lineWidth=1.2; g.strokeRect(14,CY0,612,CY1-CY0);
+  g.fillStyle="#8e979f"; g.fillRect(0,CY0-6,14,CY1-CY0+12); g.fillRect(626,CY0-6,14,CY1-CY0+12);
+  g.fillStyle=C.steel; g.globalAlpha=0.22; for(var i=0;i<NI;i++)for(var j=0;j<NJ;j++){g.beginPath();g.arc(sx(i),sy(j),1.5,0,7);g.fill();} g.globalAlpha=1;
+  M.ions.forEach(function(q){var nearJ=Math.abs(q.x-XJ)<24; g.globalAlpha=nearJ?0.9:0.18; g.strokeStyle=q.s<0?C.hole:C.electron; g.lineWidth=1.2; g.strokeRect(q.x-4,q.y-4,8,8); g.beginPath(); g.moveTo(q.x-2.3,q.y); g.lineTo(q.x+2.3,q.y); if(q.s>0){g.moveTo(q.x,q.y-2.3);g.lineTo(q.x,q.y+2.3);} g.stroke(); g.globalAlpha=1;});
+  M.e.forEach(function(p){g.fillStyle=C.electron;g.beginPath();g.arc(p.x,p.y,3.1,0,7);g.fill(); if(p.mode==="min"){g.strokeStyle=C.electron;g.lineWidth=1;g.beginPath();g.arc(p.x,p.y,6,0,7);g.stroke();}});
+  M.h.forEach(function(h){
+    function ring(x,y,a){g.globalAlpha=a;g.strokeStyle=C.hole;g.lineWidth=1.5;g.setLineDash([2.5,2.2]);g.beginPath();g.arc(x,y,4.4,0,7);g.stroke();g.setLineDash([]);g.globalAlpha=1;}
+    if(h.hop){var k=h.hop.k;ring(h.hop.fx,h.hop.fy,1-k);ring(h.x,h.y,k);g.fillStyle=C.electron;g.globalAlpha=0.85;g.beginPath();g.arc(h.x+(h.hop.fx-h.x)*k,h.y+(h.hop.fy-h.y)*k,1.8,0,7);g.fill();g.globalAlpha=1;}
+    else ring(h.x,h.y,1);
+    if(h.mode==="min"){g.strokeStyle=C.hole;g.lineWidth=1;g.beginPath();g.arc(h.x,h.y,7.5,0,7);g.stroke();}
+  });
+  M.fx.forEach(function(f){
+    var a=Math.max(0,1-f.t/0.55);
+    if(f.type==="tunl"||f.type==="tunx"){g.strokeStyle="#e0a800";g.fillStyle="#e0a800";g.lineWidth=2;g.globalAlpha=a;g.setLineDash([4,3]);g.beginPath();g.moveTo(f.x,f.y);g.lineTo(f.x2,f.y2);g.stroke();g.setLineDash([]);
+      var dir=f.x2<f.x?-1:1;g.beginPath();g.moveTo(f.x2,f.y2);g.lineTo(f.x2-dir*7,f.y2-4);g.lineTo(f.x2-dir*7,f.y2+4);g.fill();
+      if(f.type==="tunx"){g.fillStyle=C.fe;g.beginPath();g.arc((f.x+f.x2)/2,(f.y+f.y2)/2,3,0,7);g.fill();} g.globalAlpha=1;}
+    else {g.fillStyle=f.type==="fill"?"#e0a800":"#ff9a3a";g.globalAlpha=a*0.7;g.beginPath();g.arc(f.x,f.y,4+10*(1-a),0,7);g.fill();g.globalAlpha=1;}
+  });
+  g.fillStyle=C.ink; g.font="600 12px "+FONT; g.textAlign="left"; g.fillText("p⁺-soha (anod), aynigan",20,CY0-10); g.textAlign="right"; g.fillText("n⁺-soha (katod), aynigan",620,CY0-10);
+  g.textAlign="center"; g.fillStyle=C.muted; g.font="11px "+FONT; g.fillText("W ≈ "+Math.round(d.W0*M.f*1000)+" nm — to'siq juda ingichka",XJ,CY1+12);
+  if(st.burned){g.fillStyle=C.bad;g.font="600 14px "+FONT;g.fillText("Diod kuygan: zanjir uzilgan",MW/2,(CY0+CY1)/2);}
+  if(!$("#chkBand").checked) return;
+  // aynigan p-n o'tishning energetik diagrammasi
+  var s=52/(d.Eg+2*d.degen), Eg=d.Eg*s, dg=d.degen*s, V=r?r.Vj:0, sh=Math.max(-50,Math.min(60,V*s));
+  var yFn=220+Eg+dg, yEcN=yFn+dg, yEvN=yEcN+Eg, yFp=yFn+sh, yEvP=yFp-dg, yEcP=yEvP-Eg;
+  g.strokeStyle=C.line; g.beginPath(); g.moveTo(0,214); g.lineTo(MW,214); g.stroke();
+  g.save(); g.beginPath(); g.rect(0,215,MW,MH-215); g.clip();
+  // to'lgan holatlar
+  g.fillStyle=C.electron; g.globalAlpha=0.35; g.fillRect(xR,yFn,626-xR,yEcN-yFn); g.globalAlpha=0.18; g.fillRect(xR,yEvN,626-xR,30); g.fillRect(14,yFp,xL-14,40); g.globalAlpha=1;
+  // p-sohadagi bo'sh valent holatlar (kovaklar)
+  g.save(); g.beginPath(); g.rect(14,yEvP,xL-14,yFp-yEvP); g.clip(); g.strokeStyle=C.hole; g.globalAlpha=0.55; g.lineWidth=1; for(var hx=0;hx<xL+40;hx+=6){g.beginPath();g.moveTo(hx,yFp+2);g.lineTo(hx+12,yEvP-2);g.stroke();} g.restore(); g.globalAlpha=1;
+  // zona chegaralari
+  g.lineWidth=2;
+  [[yEcP,yEcN,C.electron],[yEvP,yEvN,C.hole]].forEach(function(b){g.strokeStyle=b[2];g.beginPath();g.moveTo(14,b[0]);g.lineTo(xL,b[0]);g.lineTo(xR,b[1]);g.lineTo(626,b[1]);g.stroke();});
+  g.setLineDash([5,4]); g.strokeStyle=C.muted; g.lineWidth=1.2; g.beginPath(); g.moveTo(14,yFp); g.lineTo(xL,yFp); g.moveTo(xR,yFn); g.lineTo(626,yFn); g.stroke(); g.setLineDash([]);
+  // tunnel oynasi
+  var wlo, whi, dir=0;
+  if(sh>0){wlo=Math.max(yFn,yEvP); whi=Math.min(yEcN,yFp); dir=-1;}
+  else if(sh<0){wlo=Math.max(yFp,yEvP); whi=yFn; dir=1;}
+  if(dir&&whi-wlo>0.5){
+    g.fillStyle="#e0a800"; g.globalAlpha=0.28; g.fillRect(xL-40,wlo,xR-xL+80,whi-wlo); g.globalAlpha=1;
+    g.strokeStyle="#c08a00"; g.fillStyle="#c08a00"; g.lineWidth=1.6; var n=Math.max(1,Math.min(3,Math.round((whi-wlo)/5)));
+    for(var q=0;q<n;q++){var yy=wlo+(q+0.5)*(whi-wlo)/n, x1=dir<0?xR+30:xL-30, x2=dir<0?xL-30:xR+30; g.beginPath(); g.moveTo(x1,yy); g.lineTo(x2,yy); g.stroke(); g.beginPath(); g.moveTo(x2,yy); g.lineTo(x2-dir*7,yy-4); g.lineTo(x2-dir*7,yy+4); g.fill();}
+    g.font="600 11px "+FONT; g.textAlign="center"; g.fillText("tunnel oynasi",XJ,Math.max(226,wlo-4));
+  } else if(V>0.02){
+    g.fillStyle=C.muted; g.font="11px "+FONT; g.textAlign="center"; g.fillText("oyna yopiq: to'lgan holatlar taqiqlangan zona qarshisida",XJ,228);
+  }
+  var pd=r&&!st.burned?parts(d,V,r.Tj).d:0;
+  if(pd>1e-5){g.strokeStyle=C.electron;g.lineWidth=1.4;g.setLineDash([3,3]);g.beginPath();g.moveTo(xR+40,yEcN-4);g.quadraticCurveTo(XJ,Math.min(yEcP,yEcN)-14,xL-40,yEcP-4);g.stroke();g.setLineDash([]);g.fillStyle=C.electron;g.font="10px "+FONT;g.textAlign="center";g.fillText("diffuziya (to'siq ustidan)",XJ,Math.min(yEcP,yEcN)-18);}
+  g.restore();
+  g.font="italic 12px "+MATHF; g.textAlign="left";
+  g.fillStyle=C.electron; g.fillText("E_c",604,Math.min(334,yEcN+13)); g.fillStyle=C.hole; g.fillText("E_v",604,Math.min(334,yEvN+13));
+  g.fillStyle=C.muted; g.fillText("E_F",604,Math.min(330,yFn-3)); g.fillText("E_F",18,Math.max(226,Math.min(332,yFp+12)));
+  if(Math.abs(sh)>3){g.strokeStyle=C.fb;g.lineWidth=1.4;g.beginPath();g.moveTo(XJ+40,yFn);g.lineTo(XJ+40,Math.max(216,Math.min(336,yFp)));g.stroke();g.fillStyle=C.fb;g.fillText("qV",XJ+44,(yFn+yFp)/2+4);}
+}
+function drawIV(){
+  var cv=ivCv,g=ictx,W=cv.width; if(!W||!cv.clientWidth) return; var s=W/cv.clientWidth,w=cv.clientWidth,h=cv.clientHeight; g.setTransform(s,0,0,s,0,0); g.clearRect(0,0,w,h);
+  var d=DIODES[st.di], r=st.read; if(!r) return; var T=r.Tj, Es=r.Es, p=tdParams(d,T), Rt=st.R+(st.ideal?0:RA);
+  g.fillStyle=C.ink; g.font="600 11px "+FONT; g.textAlign="left"; g.fillText("VAX ∩ yuklama chizig'i (kesishmalar soni: "+r.roots.length+")",8,14);
+  var x0=Math.min(-0.12,r.Vd*1.2), x1=Math.max((p.Vfp||0.6)*1.08,r.Vd*1.1), y0=Math.min(-p.Ip*0.6,r.Id*1.2), y1=Math.max(p.Ip*1.35,r.Id*1.15);
+  var L=8,R=8,Tp=22,B=16, X=function(v){return L+(v-x0)/(x1-x0)*(w-L-R);}, Y=function(v){return h-B-(v-y0)/(y1-y0)*(h-B-Tp);};
+  g.strokeStyle=C.line; g.lineWidth=1; g.beginPath(); g.moveTo(L,Y(0)); g.lineTo(w-R,Y(0)); g.moveTo(X(0),Tp); g.lineTo(X(0),h-B); g.stroke();
+  g.save(); g.beginPath(); g.rect(L,Tp,w-L-R,h-B-Tp); g.clip();
+  if(!st.burned){g.strokeStyle=C.accent;g.lineWidth=2;g.beginPath();for(var k=0;k<=200;k++){var V=x0+(x1-x0)*k/200, I=diodeI(d,V,T), Vd=V+I*d.Rs; if(k)g.lineTo(X(Vd),Y(I));else g.moveTo(X(Vd),Y(I));}g.stroke();}
+  g.strokeStyle=C.fb; g.setLineDash([5,4]); g.lineWidth=1.4; g.beginPath(); g.moveTo(X(x0),Y((Es-x0)/Rt)); g.lineTo(X(x1),Y((Es-x1)/Rt)); g.stroke(); g.setLineDash([]);
+  r.roots.forEach(function(v){var q=evalAt(v,Es,T,st.ideal); if(Math.abs(v-r.Vj)<1e-6) return; g.strokeStyle=C.hole; g.lineWidth=1.5; g.beginPath(); g.arc(X(q.Vd),Y(q.Id),4.5,0,7); g.stroke();
+    var gg=(diodeI(d,v+1e-4,T)-diodeI(d,v-1e-4,T))/2e-4; if(gg<0){g.fillStyle=C.hole;g.font="10px "+FONT;g.textAlign="center";g.fillText("beqaror",X(q.Vd),Y(q.Id)-8);}});
+  g.restore();
+  g.fillStyle=C.hole; g.beginPath(); g.arc(X(r.Vd),Y(r.Id),5,0,7); g.fill();
+  g.fillStyle=C.muted; g.font="10px "+FONT; g.textAlign="right"; g.fillText("V →",w-R,Y(0)-4); g.textAlign="left"; g.fillText("I",X(0)+4,Tp+8);
+  g.fillStyle=C.fb; g.textAlign="right"; g.fillText("I = (E − V)/(R + R_A)",w-R,Tp+8);
+}
+function updateMicroText(){
+  var r=st.read; if(!r) return; var d=DIODES[st.di], V=r.Vj, p=tdParams(d,r.Tj), c=st.burned?{t:0,x:0,d:0}:parts(d,V,r.Tj), step, title, text;
+  if(st.burned){step="nosozlik";title="Diod kuydi";text="Tunnel diodlar juda kam quvvatga mo'ljallangan (o'nlab mW). Tokni rezistor yoki manba kuchlanishi bilan cheklang.";}
+  else if(Math.abs(V)<0.003){step="muvozanat";title="Fermi sathi bir xil";text="Ikkala soha aynigan: n-sohada \\(E_F\\) o'tkazuvchanlik zonasi ichida, p-sohada valent zona ichida. To'siq juda ingichka (~10 nm), shuning uchun elektronlar ikkala yo'nalishda tunnellaydi. Ammo oqimlar teng va tok nolga teng.";}
+  else if(V<0){step="teskari yo'nalish";title="p → n tunnellash: tok katta";text="p-sohaning to'lgan valent zonasi n-sohaning bo'sh o'tkazuvchanlik holatlari qarshisiga ko'tarildi. Oyna kengligi \\(q|V|\\) ga teng va kuchlanish bilan ortadi. Tunnel diod teskari yo'nalishda ham yaxshi o'tkazadi, oddiy dioddan farqi shu.";}
+  else if(V<p.Vp*0.85){step="tunnel tarmog'i";title="Tunnel oynasi ochilmoqda";text="n-sohaning to'lgan o'tkazuvchanlik zonasi p-sohaning bo'sh valent holatlari (kovaklar) qarshisiga ko'tarildi. Elektronlar to'siq orqali n → p tunnellaydi (sariq uzuq strelkalar) va u yerdagi kovaklarni to'ldiradi. Kuchlanish ortsa, ustma-ust tushish kengayadi va tok tez ortadi.";}
+  else if(V<p.Vp*1.25){step="cho'qqi";title="Cho'qqi: tunnellash eng kuchli";text="To'lgan va bo'sh holatlarning ustma-ust tushishi eng katta, tok \\(I_p\\) ≈ "+(p.Ip*1e3).toFixed(2)+" mA. Bundan keyin kuchlanish ortsa, n-sohadagi elektronlar p-sohaning taqiqlangan zonasi qarshisiga o'ta boshlaydi.";}
+  else if(V<p.Vv*0.93){step="manfiy qism";title="Manfiy differensial qarshilik";text="Tunnel oynasi torayapti: elektronlar taqiqlangan zona qarshisida qolmoqda, unda holatlar yo'q. Kuchlanish ortgani sari tok <b>kamayadi</b>: \\(dI/dV < 0\\). Bu holat generatorlar va tez kalitlarda ishlatiladi. Bu sohani faqat \\(R + R_A < |r_-|\\) bo'lganda barqaror o'lchash mumkin.";}
+  else if(V<p.Vv*1.2){step="vodiy";title="Oyna yopildi: faqat ortiqcha tok";text="To'g'ridan-to'g'ri tunnellash deyarli to'xtadi. Tok \\(I_v\\) ≈ "+(p.Iv*1e3).toFixed(3)+" mA asosan taqiqlangan zonadagi nuqson sathlari orqali tunnellashdan (binafsha nuqtali strelka) va boshlanayotgan diffuziyadan iborat.";}
+  else {step="diffuziya tarmog'i";title="Oddiy diod kabi: to'siq ustidan diffuziya";text="To'siq pasaydi va elektronlar issiqlik energiyasi hisobiga uning ustidan o'ta boshladi. Tok oddiy dioddagidek eksponensial ortadi: \\(I_{dif} = I_s[\\exp(qV/nkT)-1]\\).";}
+  $("#phaseStep").textContent=step; setMath($("#phaseTitle"),title); setMath($("#phaseText"),text); M.text={title:title,text:text};
+  var lv=$("#liveNums");
+  if(!lv._b){lv.innerHTML="<dt>\\(V\\) / \\(I\\)</dt><dd id='lv1'></dd><dt>\\(I_{tun}\\)</dt><dd id='lv2'></dd><dt>\\(I_{ort}\\)</dt><dd id='lv3'></dd><dt>\\(I_{dif}\\)</dt><dd id='lv4'></dd><dt>\\(dI/dV\\)</dt><dd id='lv5'></dd><dt>\\(P\\) / \\(T_j\\)</dt><dd id='lv6'></dd>";lv._b=1;mjx(lv);}
+  var gg=st.burned?0:(diodeI(d,V+1e-4,r.Tj)-diodeI(d,V-1e-4,r.Tj))/2e-4;
+  $("#lv1").textContent=vmv(r.Vd)+" mV / "+istr(r.Id); $("#lv2").textContent=istr(c.t); $("#lv3").textContent=istr(c.x); $("#lv4").textContent=istr(c.d);
+  $("#lv5").textContent=minus((gg*1e3).toFixed(2))+" mS"+(gg<0?" (NDR)":""); $("#lv6").textContent=(r.P*1000).toFixed(2)+" mW / "+r.Tj.toFixed(1)+" K";
+}
+$("#btnPlay").addEventListener("click",function(){M.running=!M.running;this.textContent=M.running?"Pauza":"Davom etish";});
+$("#btnReset").addEventListener("click",function(){M.need=true;});
+$("#speedR").addEventListener("input",function(){M.speed=parseFloat(this.value);});
+
+function drawApp(){
+  var g=actx; if(!appCv.width) return; g.setTransform(aS,0,0,aS,0,0); g.clearRect(0,0,AW,AH); g.fillStyle=C.surface2; g.fillRect(0,0,AW,AH);
+  g.fillStyle=C.muted; g.font="13px "+FONT; g.textAlign="center"; g.fillText("Brauzerda 3D grafika (WebGL) ishlamadi. Quyida p-n o'tish kesimi ko'rsatilgan.",AW/2,28);
+  if(microCv.width) g.drawImage(microCv,0,0,microCv.width,microCv.height,40,50,AW-80,(AW-80)*MH/MW);
+}
+
+/* ---------- 3D laboratoriya ---------- */
+var T3=null, L3={x:0,y:0,r:70,init:false,drag:null};
+function m3(color,o){return new THREE.MeshStandardMaterial(Object.assign({color:color,roughness:0.6,metalness:0.1},o||{}));}
+function box3(w,h,d,m,x,y,z){var me=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);me.position.set(x||0,y||0,z||0);me.castShadow=true;me.receiveShadow=true;return me;}
+function cyl3(rt,rb,h,m,seg){var me=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||40),m);me.castShadow=true;me.receiveShadow=true;return me;}
+function ctex(w,h,draw){var c=document.createElement("canvas");c.width=w;c.height=h;if(draw)draw(c.getContext("2d"),w,h);var t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return {c:c,t:t};}
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function V3(x,y,z){return new THREE.Vector3(x,y,z);}
+function tube(parent,pts,color,r,noTable){
+  r=r||0.3; var v=pts.map(function(p){return p.clone();}), dense=[];
+  v.forEach(function(p,i){ if(!noTable&&p.y<=0.6)p.y=r+0.03;
+    if(i>0){var q=v[i-1];if(q.y<=r+0.04&&p.y<=r+0.04){var d=q.distanceTo(p),n=Math.floor(d/4);for(var k=1;k<n;k++)dense.push(q.clone().lerp(p,k/n));}}
+    dense.push(p);});
+  var me=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(dense,false,"centripetal"),Math.max(60,dense.length*12),r,8,false),m3(color,{roughness:0.4,metalness:noTable?0.8:0.1}));
+  me.castShadow=true; parent.add(me); return me;
+}
+function instrument3(S,o){
+  var g=new THREE.Group(); g.position.set(o.x,o.y+o.h/2+0.6,o.z); g.rotation.y=o.ry||0;
+  g.add(box3(o.w,o.h,o.d,m3("#3a4047",{roughness:0.5,metalness:0.25})));
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(a){g.add(box3(1.8,0.6,1.8,m3("#15181b"),a[0]*(o.w/2-1.6),-o.h/2-0.3,a[1]*(o.d/2-1.6)));});
+  g.add(box3(o.w+0.3,0.5,o.d+0.3,m3("#2b3036",{metalness:0.3}),0,o.h/2-0.1,0));
+  var pw=o.w-0.9, ph=o.h-0.9, cw=640, ch=Math.round(640*ph/pw), tx=ctex(cw,ch);
+  var front=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),new THREE.MeshStandardMaterial({map:tx.t,roughness:0.55,metalness:0.05})); front.position.z=o.d/2+0.02; g.add(front);
+  var kx=pw*0.33, ky=-ph*0.04, z0=o.d/2+0.02, knob=new THREE.Group(); knob.position.set(kx,ky,z0);
+  var kb=cyl3(1.15,1.35,1.2,m3("#1b1f24",{roughness:0.35,metalness:0.3})); kb.rotation.x=Math.PI/2; kb.position.z=0.6; knob.add(kb);
+  var kc=cyl3(0.9,0.9,0.15,m3("#9aa3ac",{metalness:0.7,roughness:0.3})); kc.rotation.x=Math.PI/2; kc.position.z=1.25; knob.add(kc);
+  knob.add(box3(0.2,0.75,0.1,m3("#ffffff",{emissive:"#ffffff",emissiveIntensity:0.3}),0,0.45,1.36)); g.add(knob);
+  var lever=null;
+  if(o.lever){g.add(box3(1.5,1.1,0.4,m3("#202429"),pw*0.15,ky,z0+0.2)); lever=new THREE.Group(); lever.position.set(pw*0.15,ky,z0+0.4);
+    var stick=cyl3(0.16,0.2,1.5,m3("#c8ced4",{metalness:0.8,roughness:0.25})); stick.position.y=0.7; lever.add(stick);
+    var tip=new THREE.Mesh(new THREE.SphereGeometry(0.28,12,10),m3("#d63b2a")); tip.position.y=1.45; lever.add(tip); lever.rotation.x=Math.PI/2.6; g.add(lever);}
+  var posts=[];
+  [["#c0392b",0.20],["#1a1a1a",0.36]].forEach(function(pc){var p=cyl3(0.42,0.42,0.9,m3(pc[0],{roughness:0.35}));p.rotation.x=Math.PI/2;p.position.set(pw*pc[1],-ph*0.36,z0+0.45);g.add(p);posts.push(p);});
+  var led=new THREE.Mesh(new THREE.SphereGeometry(0.3,12,8),new THREE.MeshStandardMaterial({color:"#1b5e2a",emissive:"#2bff6a",emissiveIntensity:1.2})); led.position.set(-pw*0.43,-ph*0.36,z0+0.1); g.add(led);
+  S.scene.add(g); return {g:g,o:o,tx:tx,cw:cw,ch:ch,pw:pw,ph:ph,knob:knob,lever:lever,posts:posts};
+}
+function drawPanel3(P,val,unit,warn,sub){
+  var g=P.tx.c.getContext("2d"),w=P.cw,h=P.ch,o=P.o;
+  var gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,"#eef0f2");gr.addColorStop(1,"#cfd4d9");g.fillStyle=gr;g.fillRect(0,0,w,h);
+  g.strokeStyle="rgba(0,0,0,0.18)";g.lineWidth=3;g.strokeRect(1.5,1.5,w-3,h-3);
+  g.fillStyle="#1b2530";g.textAlign="left";g.font="600 "+Math.round(h*0.085)+"px "+FONT;g.fillText(o.title,w*0.05,h*0.15);
+  g.fillStyle="#5b6670";g.font=Math.round(h*0.058)+"px "+MONO;g.fillText(o.model,w*0.05,h*0.245);
+  var lx=w*0.05,ly=h*0.31,lw=w*0.52,lh=h*0.38; g.fillStyle="#0c1115";rr(g,lx,ly,lw,lh,12);g.fill();
+  g.fillStyle=warn?"#ff4a3a":"#ffb23e";g.textAlign="right";g.font="500 "+Math.round(lh*0.48)+"px "+MONO;g.fillText(val,lx+lw-w*0.1,ly+lh*0.66);
+  g.font=Math.round(lh*0.22)+"px "+MONO;g.fillText(unit,lx+lw-w*0.015,ly+lh*0.66);
+  if(sub){g.textAlign="left";g.font=Math.round(lh*0.17)+"px "+MONO;g.fillText(sub,lx+w*0.02,ly+lh*0.92);}
+  g.fillStyle="#3c4651";g.textAlign="center";g.font="600 "+Math.round(h*0.052)+"px "+FONT; var ky=h*0.54+(1.9/P.ph)*h;
+  g.fillText(o.knobLabel||"SOZLASH",w*0.83,ky); if(o.lever)g.fillText(o.lever,w*0.65,ky);
+  g.font=Math.round(h*0.045)+"px "+FONT;g.fillStyle="#5b6670";g.fillText("+",w*0.70,h*0.97);g.fillText("−",w*0.86,h*0.97);g.textAlign="left";g.fillText("TARMOQ",w*0.1,h*0.97);
+  P.tx.t.needsUpdate=true;
+}
+function buildDiode(){
+  var S=T3; if(!S) return; if(S.diodeG){S.scene.remove(S.diodeG);} var G=new THREE.Group(); S.scene.add(G); S.diodeG=G;
+  var d=DIODES[st.di], burnt=st.burned, y=3.55, z=2, lead="#cfd3d6", half=0.42;
+  S.ledMat=null;
+  // metall-keramik «tabletka» korpus
+  var metal=m3(burnt?"#3a3026":d.col,{metalness:0.85,roughness:0.25});
+  var c1=new THREE.Mesh(new THREE.CylinderGeometry(0.34,0.34,0.3,32),metal); c1.rotation.z=Math.PI/2; c1.position.set(-0.27,y,z); G.add(c1);
+  var cer=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,0.24,32),m3(burnt?"#4a4038":"#efe9dc",{roughness:0.7})); cer.rotation.z=Math.PI/2; cer.position.set(0,y,z); G.add(cer);
+  var c2=new THREE.Mesh(new THREE.CylinderGeometry(0.34,0.34,0.3,32),metal); c2.rotation.z=Math.PI/2; c2.position.set(0.27,y,z); G.add(c2);
+  var dot=new THREE.Mesh(new THREE.SphereGeometry(0.07,12,8),m3(d.dot)); dot.position.set(0.3,y+0.33,z); G.add(dot);
+  tube(G,[V3(-half,y,z),V3(-half-0.6,y,z),V3(-4.3,y-0.1,z),V3(-5,2.75,z)],lead,0.035,true);
+  tube(G,[V3(half,y,z),V3(half+0.6,y,z),V3(4.3,y-0.1,z),V3(5,2.75,z)],lead,0.035,true);
+  if(burnt){for(var k=0;k<3;k++){var sm=new THREE.Mesh(new THREE.SphereGeometry(0.25+k*0.12,12,8),new THREE.MeshStandardMaterial({color:"#555",transparent:true,opacity:0.35-k*0.08}));sm.position.set(0.1*k,4.0+k*0.5,z);G.add(sm);}}
+}
+function init3D(){
+  if(!window.THREE||!THREE.OrbitControls) return null;
+  var host=$("#app3d"), renderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});}catch(e){return null;}
+  if(!renderer||!renderer.getContext()) return null;
+  host.hidden=false; appCv.hidden=true; $("#lensCv").hidden=false; $("#viewBtns").hidden=false;
+  $("#appTitle").textContent="Laboratoriya stoli (3D)";
+  $("#appHint").textContent="Sichqoncha bilan aylantiring (chap tugma), suring (o'ng tugma), yaqinlashtiring (g'ildirak). Telefonda: bir barmoq bilan aylantirish, ikki barmoq bilan yaqinlashtirish. Lupani tortib diodga olib boring (yoki ← ↑ → ↓).";
+  host.appendChild(renderer.domElement); renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+  renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputEncoding=THREE.sRGBEncoding;
+  var scene=new THREE.Scene(); scene.background=new THREE.Color(C.surface2);
+  var camera=new THREE.PerspectiveCamera(36,1.5,0.05,700); camera.position.set(0,40,74);
+  var controls=new THREE.OrbitControls(camera,renderer.domElement); controls.target.set(0,5,0); controls.enableDamping=true; controls.dampingFactor=0.08; controls.minDistance=2; controls.maxDistance=200; controls.maxPolarAngle=Math.PI*0.49;
+  var S={renderer:renderer,scene:scene,camera:camera,controls:controls,host:host,P:{},over:false,anim:null,w:0,h:0};
+  T3=S;
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8d7a64,0.8));
+  var dl=new THREE.DirectionalLight(0xffffff,0.9); dl.position.set(35,80,50); dl.castShadow=true; dl.shadow.mapSize.set(2048,2048);
+  var sc=dl.shadow.camera; sc.left=-70;sc.right=70;sc.top=55;sc.bottom=-55;sc.near=10;sc.far=220; dl.shadow.bias=-0.0004; scene.add(dl);
+  var fl=new THREE.DirectionalLight(0xcfe0ff,0.35); fl.position.set(-60,40,-40); scene.add(fl);
+  var wood=ctex(1024,256,function(g,w,h){g.fillStyle="#b58756";g.fillRect(0,0,w,h);for(var i=0;i<160;i++){var y=Math.random()*h;g.strokeStyle="rgba("+(85+Math.random()*45|0)+","+(52+Math.random()*28|0)+",28,"+(0.08+Math.random()*0.2)+")";g.lineWidth=0.6+Math.random()*1.8;g.beginPath();g.moveTo(0,y);for(var x=0;x<=w;x+=32)g.lineTo(x,y+Math.sin(x/90+i)*3);g.stroke();}});
+  wood.t.wrapS=wood.t.wrapT=THREE.RepeatWrapping; wood.t.repeat.set(1.3,1);
+  scene.add(box3(120,3,64,m3("#ffffff",{map:wood.t,roughness:0.75}),0,-1.5,0));
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(a){scene.add(box3(4,60,4,m3("#5b4a38"),a[0]*55,-33,a[1]*28));});
+  var floor=new THREE.Mesh(new THREE.PlaneGeometry(500,500),m3("#9aa0a6",{roughness:0.95})); floor.rotation.x=-Math.PI/2; floor.position.y=-63; floor.receiveShadow=true; scene.add(floor);
+  scene.add(box3(12,0.8,8,m3("#5a3b28",{roughness:0.55}),0,0.4,2));
+  var heatMat=m3("#b9c0c7",{metalness:0.75,roughness:0.3,emissive:"#000000"}); scene.add(box3(5,2.4,4,heatMat,0,2.0,2)); S.heatMat=heatMat;
+  [-1,1].forEach(function(s){scene.add(box3(0.3,2.0,3.6,m3("#8e979f",{metalness:0.8,roughness:0.3}),s*2.65,1.8,2));});
+  [["#c0392b",-5],["#1a1a1a",5]].forEach(function(p){var b=cyl3(0.45,0.45,1.4,m3(p[0],{roughness:0.35}),24);b.position.set(p[1],1.5,2);scene.add(b);var cap=cyl3(0.26,0.26,0.4,m3("#d4a83a",{metalness:0.85,roughness:0.25}),16);cap.position.set(p[1],2.4,2);scene.add(cap);});
+  var plT=ctex(512,64,function(g,w,h){g.fillStyle="#d9dde1";g.fillRect(0,0,w,h);g.fillStyle="#1b2530";g.font="600 26px "+FONT;g.textAlign="center";g.fillText("A (+)   TUNNEL DIOD · TERMOSTOLIK   K (−)",w/2,42);});
+  var np=new THREE.Mesh(new THREE.PlaneGeometry(11,1.0),m3("#ffffff",{map:plT.t,metalness:0.3,roughness:0.4})); np.position.set(0,0.42,6.02); scene.add(np);
+  var pl=new THREE.PointLight(0xff3a20,0,14,2); pl.position.set(0,4.4,2); scene.add(pl); S.ledLight=pl;
+  S.P.psu=instrument3(S,{x:-34,y:0,z:-16,w:24,h:12,d:16,title:"Past kuchlanishli manba",model:"0–3 V · 1 mV qadam",knobLabel:"KUCHLANISH",lever:"QUTB"});
+  S.P.am=instrument3(S,{x:-34,y:13.2,z:-17,w:22,h:10,d:14,title:"Milliampermetr",model:"0–20 mA · R_A = 2 Ω",knobLabel:"DIAPAZON"});
+  S.P.vm=instrument3(S,{x:34,y:0,z:-16,w:22,h:11,d:14,title:"Raqamli voltmetr",model:"0.1 mV · 10 MΩ",knobLabel:"DIAPAZON"});
+  S.P.rb=instrument3(S,{x:-38,y:0,z:15,ry:0.35,w:20,h:9,d:13,title:"Rezistor R magazini",model:"1 Ω – 1 kΩ",knobLabel:"R"});
+  S.P.th=instrument3(S,{x:40,y:0,z:14,ry:-0.35,w:20,h:10,d:14,title:"Harorat regulyatori",model:"230–400 K · Pt100",knobLabel:"HARORAT"});
+  scene.updateMatrixWorld(true);
+  function term(P,i){var c=new THREE.Vector3();P.posts[i].getWorldPosition(c);var n=new THREE.Vector3(0,0,1).applyQuaternion(P.g.quaternion);return {p:c.clone().addScaledVector(n,0.45),n:n};}
+  function fwd(t,d,y){var v=t.p.clone().addScaledVector(t.n,d);if(y!==undefined)v.y=y;return v;}
+  var T=0, a, b;
+  a=term(S.P.psu,0); b=term(S.P.am,0);
+  tube(scene,[a.p,fwd(a,1.5),V3(a.p.x-2.2,(a.p.y+b.p.y)/2,a.p.z+2.4),fwd(b,1.5),b.p],"#c0392b",0.24);
+  a=term(S.P.am,1);
+  tube(scene,[a.p,fwd(a,1.5),V3(a.p.x+3,a.p.y-3,a.p.z+2.4),V3(-22.5,4,-4.5),V3(-21,T,-3),V3(-10,T,-1),V3(-8,T,2),V3(-6.6,1.3,2),V3(-5.3,2.75,2)],"#c0392b",0.22);
+  b=term(S.P.rb,1);
+  tube(scene,[V3(5.3,2.75,2),V3(5.2,1.7,4.4),V3(5,1.05,6.3),V3(5,T,7.6),V3(-12,T,9),fwd(b,3.5,T),fwd(b,1.6),b.p],"#1f1f1f",0.22);
+  a=term(S.P.rb,0); b=term(S.P.psu,1);
+  tube(scene,[a.p,fwd(a,1.6),fwd(a,3.5,T),V3(-38,T,27),V3(-54,T,24),V3(-54,T,-3),V3(b.p.x-0.5,T,-3.5),fwd(b,1.6),b.p],"#1f1f1f",0.24);
+  a=term(S.P.vm,0); b=term(S.P.vm,1);
+  tube(scene,[a.p,fwd(a,1.6),V3(a.p.x,T,-6.5),V3(-5,T,-6.5),V3(-5,T,-3.2),V3(-5,1.3,-1.6),V3(-5,2.75,1.6)],"#e67e22",0.2);
+  tube(scene,[b.p,fwd(b,1.6),V3(b.p.x,T,-5),V3(5,T,-5),V3(5,T,-3.2),V3(5,1.3,-1.6),V3(5,2.75,1.6)],"#2c3e50",0.2);
+  a=term(S.P.th,0); b=term(S.P.th,1);
+  tube(scene,[V3(6.05,0.4,3),V3(8,T,3),V3(20,T,15),fwd(a,3.5,T),fwd(a,1.6),a.p],"#8a929a",0.22);
+  tube(scene,[V3(6.05,0.4,1),V3(8.5,T,1.4),V3(22,T,14.6),fwd(b,3.5,T),fwd(b,1.6),b.p],"#c0392b",0.22);
+  buildDiode();
+  return S;
+}
+function panels3D(r){
+  if(!T3) return; var P=T3.P;
+  drawPanel3(P.psu,minus(r.Es.toFixed(3)),"V",r.cc,st.pol>0?"qutb: to'g'ri":"qutb: teskari");
+  drawPanel3(P.am,r.ol?"OL":ima(r.Im),"mA",r.ol,"diapazon 20 mA");
+  drawPanel3(P.vm,vmv(r.Vm),"mV",false,"");
+  drawPanel3(P.rb,String(st.R),"Ω",false,"");
+  drawPanel3(P.th,r.Tj.toFixed(1),"K",r.P>DIODES[st.di].Pmax,st.T<295?"sovutish":st.T>305?"qizdirish":"xona harorati");
+}
+var VIEWS={umumiy:{p:[0,40,74],t:[0,5,0]},diod:{p:[2.6,8,11],t:[0,3.2,2]},asbob:{p:[0,28,46],t:[0,7,-10]}};
+function goView(k){var v=VIEWS[k];if(!T3||!v)return;T3.anim={fp:T3.camera.position.clone(),ft:T3.controls.target.clone(),tp:V3(v.p[0],v.p[1],v.p[2]),tt:V3(v.t[0],v.t[1],v.t[2]),k:0};}
+document.querySelectorAll("[data-view]").forEach(function(b){b.addEventListener("click",function(){goView(b.dataset.view);});});
+function diodeRect3(){
+  if(!T3||!T3.diodeG) return null;
+  var bb=new THREE.Box3().setFromObject(T3.diodeG), w=T3.w, h=T3.h, x0=1e9,y0=1e9,x1=-1e9,y1=-1e9, ok=false;
+  for(var i=0;i<8;i++){var v=V3(i&1?bb.max.x:bb.min.x,i&2?bb.max.y:bb.min.y,i&4?bb.max.z:bb.min.z).project(T3.camera);if(v.z>1)continue;ok=true;var sx_=(v.x+1)/2*w,sy_=(1-v.y)/2*h;x0=Math.min(x0,sx_);x1=Math.max(x1,sx_);y0=Math.min(y0,sy_);y1=Math.max(y1,sy_);}
+  if(!ok) return null; var c=V3(0,3.55,2).project(T3.camera), pad=14;
+  return {x0:x0-pad,y0:y0-pad,x1:x1+pad,y1:y1+pad,cx:(c.x+1)/2*w,cy:(1-c.y)/2*h};
+}
+function lensHome3D(){var r=diodeRect3();if(r){L3.x=Math.max(L3.r+6,Math.min(T3.w-L3.r-6,r.cx));L3.y=Math.max(L3.r+20,Math.min(T3.h-L3.r-6,r.cy));}L3.init=true;}
+function render3D(dt){
+  var S=T3, w=S.host.clientWidth, h=S.host.clientHeight;
+  if(w!==S.w||h!==S.h){S.w=w;S.h=h;S.renderer.setSize(w,h,false);S.camera.aspect=w/Math.max(1,h);S.camera.updateProjectionMatrix();L3.r=Math.max(52,Math.min(92,w*0.11));}
+  if(!w||!h) return;
+  if(S.anim){S.anim.k=Math.min(1,S.anim.k+dt/0.9);var e=S.anim.k<0.5?2*S.anim.k*S.anim.k:1-Math.pow(-2*S.anim.k+2,2)/2;S.camera.position.lerpVectors(S.anim.fp,S.anim.tp,e);S.controls.target.lerpVectors(S.anim.ft,S.anim.tt,e);if(S.anim.k>=1)S.anim=null;}
+  S.controls.update(); S.scene.background.set(C.surface2);
+  var dT=st.T-300; S.heatMat.emissive.set(dT>0?"#ff3a10":"#5aa8ff"); S.heatMat.emissiveIntensity=Math.min(0.6,Math.abs(dT)/100*0.6);
+  var r=st.read, li=(r&&!st.burned&&r.Id>1e-6&&DIODES[st.di].led)?Math.min(1,Math.log10(r.Id/1e-6)/4.5):0;
+  if(S.ledMat) S.ledMat.emissiveIntensity=li*2.2; S.ledLight.intensity=li*3;
+  var P=S.P, Ri=[1,10,100,1000].indexOf(st.R);
+  P.psu.knob.rotation.z=2.36-(st.E/3)*4.72; P.rb.knob.rotation.z=2.36-(Ri/3)*4.72; P.th.knob.rotation.z=2.36-((st.T-230)/170)*4.72;
+  P.psu.lever.rotation.z=st.pol>0?-0.55:0.55;
+  S.renderer.render(S.scene,S.camera); drawLens3D();
+}
+function tag(g,x,y,txt,col){g.font="600 11px "+FONT;var w=g.measureText(txt).width+12,x0=x-w/2;g.fillStyle=C.surface;g.globalAlpha=0.92;g.fillRect(x0,y-10,w,18);g.globalAlpha=1;g.strokeStyle=col;g.lineWidth=1;g.strokeRect(x0+0.5,y-9.5,w-1,17);g.fillStyle=col;g.textAlign="left";g.fillText(txt,x0+6,y+3);}
+function drawLens3D(){
+  var S=T3, cv=$("#lensCv"), w=S.w, h=S.h, pr=Math.min(2,window.devicePixelRatio||1);
+  if(cv.width!==Math.round(w*pr)||cv.height!==Math.round(h*pr)){cv.width=Math.round(w*pr);cv.height=Math.round(h*pr);}
+  var g=cv.getContext("2d"); g.setTransform(pr,0,0,pr,0,0); g.clearRect(0,0,w,h);
+  if(!L3.init){ if(L3.first===undefined){L3.first=1;L3.x=w*0.82;L3.y=Math.max(L3.r+22,h*0.2);L3.init=true;} else lensHome3D(); }
+  var r=diodeRect3(); S.over=!!(r&&st.lensOn&&L3.x>=r.x0&&L3.x<=r.x1&&L3.y>=r.y0&&L3.y<=r.y1);
+  if(!st.lensOn) return;
+  if(r&&!S.over){g.strokeStyle=C.accent;g.setLineDash([4,4]);g.lineWidth=1.5;g.strokeRect(r.x0,r.y0,r.x1-r.x0,r.y1-r.y0);g.setLineDash([]);}
+  var R=L3.r; g.save(); g.beginPath(); g.arc(L3.x,L3.y,R,0,7); g.clip();
+  if(S.over&&microCv.width){g.fillStyle=C.surface;g.fillRect(L3.x-R,L3.y-R,2*R,2*R);var hh=2*R*196/MW;g.drawImage(microCv,0,0,MW*mS,200*mS,L3.x-R,L3.y-hh/2,2*R,2*R*200/MW);}
+  else{var src=2*R/2.4, rp=S.renderer.getPixelRatio(); g.fillStyle=C.surface2; g.fillRect(L3.x-R,L3.y-R,2*R,2*R); try{g.drawImage(S.renderer.domElement,(L3.x-src/2)*rp,(L3.y-src/2)*rp,src*rp,src*rp,L3.x-R,L3.y-R,2*R,2*R);}catch(e){}}
+  var gr=g.createRadialGradient(L3.x-R*0.4,L3.y-R*0.5,2,L3.x,L3.y,R);gr.addColorStop(0,"rgba(255,255,255,0.22)");gr.addColorStop(0.5,"rgba(255,255,255,0)");g.fillStyle=gr;g.fillRect(L3.x-R,L3.y-R,2*R,2*R);
+  g.restore();
+  var ang=Math.PI/4, k=R/82, hx1=L3.x+Math.cos(ang)*(R+4),hy1=L3.y+Math.sin(ang)*(R+4),hx2=L3.x+Math.cos(ang)*(R+60*k),hy2=L3.y+Math.sin(ang)*(R+60*k);
+  g.lineCap="round"; g.strokeStyle=C.ink; g.lineWidth=12*k; g.beginPath(); g.moveTo(hx1,hy1); g.lineTo(hx2,hy2); g.stroke();
+  g.strokeStyle=C.copper; g.lineWidth=6*k; g.beginPath(); g.moveTo(hx1+Math.cos(ang)*16*k,hy1+Math.sin(ang)*16*k); g.lineTo(hx2,hy2); g.stroke();
+  g.strokeStyle=C.ink; g.lineWidth=6; g.beginPath(); g.arc(L3.x,L3.y,R+2,0,7); g.stroke();
+  g.strokeStyle=C.accent; g.lineWidth=2; g.beginPath(); g.arc(L3.x,L3.y,R-2,0,7); g.stroke();
+  tag(g,L3.x,L3.y-R-14,S.over?"p-n o'tish ichi":(r?"× 2.4 · diodga olib boring":"× 2.4"),C.accent);
+}
+var stage=$("#stage");
+function lpos(e){var b=stage.getBoundingClientRect();return {x:e.clientX-b.left,y:e.clientY-b.top};}
+function hitL3(p){if(Math.hypot(p.x-L3.x,p.y-L3.y)<=L3.r+8)return true;var ang=Math.PI/4,k=L3.r/82;for(var t=0;t<=60*k;t+=5){if(Math.hypot(p.x-(L3.x+Math.cos(ang)*(L3.r+t)),p.y-(L3.y+Math.sin(ang)*(L3.r+t)))<11)return true;}return false;}
+stage.addEventListener("pointerdown",function(e){if(!T3||!st.lensOn)return;var p=lpos(e);if(hitL3(p)){L3.drag={dx:p.x-L3.x,dy:p.y-L3.y};e.stopPropagation();e.preventDefault();try{stage.setPointerCapture(e.pointerId);}catch(_){}}},true);
+stage.addEventListener("pointermove",function(e){if(!T3)return;var p=lpos(e);if(L3.drag){L3.x=Math.max(10,Math.min(T3.w-10,p.x-L3.drag.dx));L3.y=Math.max(10,Math.min(T3.h-10,p.y-L3.drag.dy));e.stopPropagation();}else T3.renderer.domElement.style.cursor=(st.lensOn&&hitL3(p))?"grab":"";},true);
+function endL3(e){if(L3.drag){L3.drag=null;e.stopPropagation();}}
+stage.addEventListener("pointerup",endL3,true); stage.addEventListener("pointercancel",endL3,true);
+stage.addEventListener("keydown",function(e){var k={ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,-10],ArrowDown:[0,10]}[e.key];if(!k||!st.lensOn||!T3)return;e.preventDefault();L3.x+=k[0];L3.y+=k[1];});
+$("#chkLens").addEventListener("change",function(){st.lensOn=this.checked;});
+$("#btnLensHome").addEventListener("click",function(){st.lensOn=true;$("#chkLens").checked=true;if(T3){L3.init=false;goView("diod");setTimeout(lensHome3D,950);}});
+
+/* ---------- asosiy sikl ---------- */
+var last=performance.now(), txtT=0, metT=0;
+function frame(now){
+  var dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(curTab==="simulyator"){
+    var dpr=Math.min(2,window.devicePixelRatio||1); if(microCv.clientWidth>0&&microCv.width!==Math.round(microCv.clientWidth*dpr)) resizeAll();
+    var r=st.read, d=DIODES[st.di], tgt=(r&&!st.ideal&&!st.burned)?d.Rth*r.P:0; heat+=(tgt-heat)*Math.min(1,dt*0.6);
+    if(M.need||M.key!==st.di) setupMicro();
+    if(M.running) stepMicro(dt*M.speed);
+    drawMicro(); if(T3) render3D(dt); else drawApp();
+    $("#microTag").textContent=T3&&T3.over&&st.lensOn?"lupa diod ustida · p-n o'tish ichi":"kristall kesimi va zonalar diagrammasi";
+    metT+=dt; if(metT>0.3){metT=0;updateMeters();}
+    txtT+=dt; if(txtT>0.3){txtT=0;updateMicroText();drawIV();}
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- test ---------- */
+var QUIZ=[
+  {q:"Tunnel diodning p- va n-sohalari qanday legirlangan?",o:["Juda kuchsiz (\\(10^{14}\\ \\text{sm}^{-3}\\))","Juda kuchli (\\(10^{19}\\text{–}10^{20}\\ \\text{sm}^{-3}\\)), yarimo'tkazgich aynigan","Faqat n-soha legirlangan","Legirlanmagan"],a:1,ex:"Kuchli legirlashda Fermi sathi zonalar ichiga kiradi, kambag'allashgan soha esa ~10 nm gacha ingichkalashadi. Shundagina tunnellash ehtimoli sezilarli bo'ladi."},
+  {q:"Nima uchun tunnel diod VAX ida manfiy differensial qarshilik sohasi bor?",o:["Diod qiziydi","Kuchlanish ortganda to'lgan va bo'sh holatlarning ustma-ust tushishi (tunnel oynasi) kamayadi","Kontaktlar uziladi","Elektronlar sekinlashadi"],a:1,ex:"\\(V > V_p\\) da n-sohadagi elektronlar p-sohaning taqiqlangan zonasi qarshisiga o'tadi va tunnellash uchun bo'sh holat qolmaydi. Natijada \\(V\\) ortsa, \\(I\\) kamayadi."},
+  {q:"Ge tunnel diodi uchun \\(I_p\\) = 4.7 mA, \\(I_v\\) = 0.6 mA. Tok nisbati qancha?",o:["2.8","7.8","0.13","4.1"],a:1,ex:"\\(I_p/I_v = 4.7/0.6 \\approx 7.8\\). Bu nisbat qanchalik katta bo'lsa, diod generator va kalit sifatida shunchalik yaxshi."},
+  {q:"Manfiy qismda \\(V\\) 0.10 V dan 0.20 V ga oshganda tok 4.0 mA dan 1.5 mA ga kamaydi. \\(r_-\\) qancha?",o:["−40 Ω","+40 Ω","−400 Ω","−4 Ω"],a:0,ex:"\\(r_- = \\Delta V/\\Delta I = 0.10/(-0.0025) = -40\\ \\Omega\\)."},
+  {q:"Nima uchun VAX ning manfiy qismini o'lchash uchun ketma-ket qarshilik kichik bo'lishi kerak?",o:["Diod kuymasligi uchun","\\(R + R_A > |r_-|\\) bo'lsa, yuklama chizig'i VAX ni uch nuqtada kesadi. O'rtadagi nuqta beqaror, ish nuqtasi esa sakraydi","Voltmetr aniqroq ishlashi uchun","Harorat oshmasligi uchun"],a:1,ex:"\\(R + R_A < |r_-|_{min}\\) bo'lsa, kesishma yagona va manfiy qism ham barqaror o'lchanadi. Aks holda gisterezis paydo bo'ladi."},
+  {q:"B bosqichida \\(E\\) oshirilganda kuchlanish sakragan qiymat kamaytirishdagidan katta. Bu hodisa nima deyiladi?",o:["Rezonans","Gisterezis (bistabillik)","Teshilish","Fotoeffekt"],a:1,ex:"\\(E_\\uparrow \\approx V_p + I_p(R+R_A)\\), \\(E_\\downarrow \\approx V_v + I_v(R+R_A)\\). Ular orasida ikkita barqaror holat bor. Bu xususiyat xotira va trigger sxemalarida ishlatiladi."},
+  {q:"Tunnel diod teskari yo'nalishda qanday ishlaydi?",o:["Oddiy dioddek tokni o'tkazmaydi","Yaxshi o'tkazadi: p-sohaning to'lgan valent zonasidan n-sohaning bo'sh holatlariga tunnellash","Faqat yorug'likda o'tkazadi","Darhol kuyadi"],a:1,ex:"Teskari kuchlanishda oyna kengligi \\(q|V|\\) ga teng va tok tez ortadi. Shuning uchun tunnel diodni «teskari diod» (backward diode) sifatida ham ishlatish mumkin."},
+  {q:"Harorat ortganda tunnel diod parametrlari qanday o'zgaradi?",o:["\\(I_p\\) keskin ortadi","\\(I_p\\) deyarli o'zgarmaydi, \\(I_v\\) ortadi va \\(I_p/I_v\\) kamayadi","Ikkalasi ham nolga tushadi","\\(V_p\\) ikki marta ortadi"],a:1,ex:"Tunnellash issiqlik aktivatsiyasini talab qilmaydi, shuning uchun \\(I_p\\) barqaror. Nuqsonlar orqali o'tadigan va diffuziya toklari esa harorat bilan ortadi."},
+  {q:"Nima uchun GaAs tunnel diodining \\(V_p\\) va \\(V_{fp}\\) germaniynikidan katta?",o:["GaAs og'irroq","GaAs da \\(E_g\\) katta (1.42 eV) va aynish chuqurligi katta","GaAs metall","Korpusi boshqacha"],a:1,ex:"\\(E_g\\) katta bo'lgani uchun diffuziya tarmog'i yuqoriroq kuchlanishda (~1.1 V) boshlanadi va kuchlanish diapazoni kengroq bo'ladi. \\(I_p/I_v\\) ham odatda kattaroq."},
+  {q:"Tunnel diod qayerda ishlatiladi?",o:["Faqat to'g'rilagichlarda","O'ta yuqori chastotali (GHz) generator va kuchaytirgichlarda, tez kalitlarda, chastota bo'lgichlarda","Faqat yorug'lik manbai sifatida","Kuchlanish stabilizatorida"],a:1,ex:"Tunnellash juda tez jarayon (~\\(10^{-13}\\) s) va asosiy bo'lmagan tashuvchilar to'planmaydi. Manfiy differensial qarshilik konturdagi isroflarni kompensatsiyalab, tebranish hosil qiladi."}
+];
+function renderQuiz(){
+  $("#quiz").innerHTML=QUIZ.map(function(q,i){return "<div class='q' id='q"+i+"'><fieldset><legend>"+(i+1)+". "+q.q+"</legend>"+q.o.map(function(o,j){return "<label><input type='radio' name='q"+i+"' value='"+j+"'> <span>"+o+"</span></label>";}).join("")+"<div class='ex' hidden></div></fieldset></div>";}).join("");
+  $("#quizScore").textContent=""; mjx($("#quiz"));
+}
+$("#btnQuiz").addEventListener("click",function(){var sc=0;
+  QUIZ.forEach(function(q,i){var box=$("#q"+i),sel=document.querySelector("input[name=q"+i+"]:checked"),ex=box.querySelector(".ex");box.classList.remove("right","wrong");
+    if(!sel){ex.hidden=false;ex.innerHTML="Javob tanlanmagan. "+q.ex;mjx(ex);box.classList.add("wrong");return;}
+    var ok=+sel.value===q.a;if(ok)sc++;box.classList.add(ok?"right":"wrong");ex.hidden=false;ex.innerHTML=(ok?"To'g'ri. ":"Noto'g'ri. To'g'ri javob: "+q.o[q.a]+". ")+q.ex;mjx(ex);});
+  $("#quizScore").textContent="Natija: "+sc+" / "+QUIZ.length;});
+$("#btnQuizReset").addEventListener("click",renderQuiz);
+
+/* ---------- oflayn yordamchi ---------- */
+var CYR={"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"j","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"x","ц":"ts","ч":"ch","ш":"sh","щ":"sh","ъ":"","ы":"i","ь":"","э":"e","ю":"yu","я":"ya","ў":"o","қ":"q","ғ":"g","ҳ":"h"};
+function norm(s){var o="";String(s).toLowerCase().split("").forEach(function(ch){o+=CYR[ch]!==undefined?CYR[ch]:ch;});return o.replace(/[‘’`ʻʼ']/g,"").replace(/_/g,"").replace(/[^a-z0-9\s]/g," ").replace(/\s+/g," ").trim();}
+function kscore(nt,toks,keys){var sc=0;keys.forEach(function(k){if(k.indexOf(" ")>=0){if((" "+nt+" ").indexOf(" "+k)>=0)sc+=2;}else if(toks.some(function(t){return k.length>=4?t.indexOf(k)===0:t===k;}))sc+=1;});return sc;}
+var KBASE=[
+ {k:["salom","assalom","hayrli","qalesan","qalaysiz","privet"],a:function(){return "Salom! Men shu laboratoriyaning oflayn yordamchisiman. Tunnel diod bo'yicha savollarga javob beraman, <b>o'lchovlaringizni tekshiraman</b> va <b>hisoblab beraman</b>. Masalan: «Ma'lumotlarimni tekshir» yoki «Ip=4.7 mA, Iv=0.6 mA, Vp=65 mV, Vv=350 mV, R=100».";}},
+ {k:["rahmat","raxmat","tashakkur","spasibo"],a:"Arzimaydi! Yana savol bo'lsa, yozing."},
+ {k:["nima qila","yordam ber","imkoniyat","kimsan","sen kim"],a:"Men internetsiz ishlayman va quyidagilarni qila olaman:<ul><li>Tunnel effekti va tunnel diod nazariyasi bo'yicha savollarga javob beraman.</li><li>«Ma'lumotlarimni tekshir» desangiz, jadvallaringizni tahlil qilaman.</li><li>Hisoblayman:<ul><li>«Ip=..., Iv=...» → nisbat;</li><li>«V1=0.1 V, I1=4 mA, V2=0.2 V, I2=1.5 mA» → \\(r_-\\);</li><li>«Ip, Vp, Iv, Vv, R» → sakrash kuchlanishlari.</li></ul></li></ul>"},
+ {k:["tunnel diod","esaki","tunnel diod nima","nima uchun tunnel"],a:"<b>Tunnel diod</b> (Esaki diodi, 1958) — juda kuchli legirlangan p-n o'tish. Ikkala soha aynigan va kambag'allashgan soha ~10 nm. Elektronlar to'siqni oshib o'tmasdan, uning orqali kvant-mexanik tunnellab o'tadi. Natijada VAX N-shaklida bo'ladi: tok cho'qqidan keyin kamayadi (manfiy differensial qarshilik), vodiydan keyin esa oddiy dioddagidek ortadi."},
+ {k:["tunnel effekt","tunnellash","kvant","ehtimol","to'siq orqali"],a:"<b>Tunnel effekti</b> — zarra energiyasi to'siq balandligidan kichik bo'lsa ham, uning orqali o'tish ehtimoli. To'siq ingichka va past bo'lsa, ehtimol katta: \\(T_t \\approx \\exp\\left(-\\dfrac{4\\sqrt{2m^*}E_g^{3/2}}{3q\\hbar\\mathcal{E}}\\right)\\). Tunnel diodda to'siq kengligi ~10 nm, maydon \\(\\sim 10^8\\) V/m."},
+ {k:["aynigan","fermi","zona ichida","degenerat","oyna","tunnel oyna"],a:"<b>Aynigan yarimo'tkazgich</b>: legirlash shunchalik kuchliki, Fermi sathi n-sohada o'tkazuvchanlik zonasi, p-sohada valent zona ichida yotadi. <b>Tunnel oynasi</b> — bir tomondagi to'lgan holatlar ikkinchi tomondagi bo'sh holatlar bilan bir xil energiyada bo'lgan oraliq. To'g'ri kuchlanishda oyna avval kengayadi (tok ortadi), keyin yopiladi (tok kamayadi). Lupadagi zonalar diagrammasida u sariq rangda."},
+ {k:["ndr","manfiy","differensial","r minus","manfiy qarshilik"],a:"<b>Manfiy differensial qarshilik</b>: \\(V_p < V < V_v\\) da \\(dI/dV < 0\\), \\(r_- = dV/dI\\) manfiy. \\(|r_-|_{min}\\) — eng tik joyda. Ge diodida bir necha o'n om. Bu sohani barqaror o'lchash uchun \\(R + R_A < |r_-|_{min}\\) bo'lishi kerak. Shuning uchun A bosqichida \\(R\\) = 1 Ω olinadi."},
+ {k:["ip","vp","cho'qqi","choqqi","iv","vv","vodiy","parametr","nisbat"],a:"<b>Parametrlar</b>:<ul><li>\\(I_p, V_p\\) — cho'qqi (VAX ning birinchi maksimumi);</li><li>\\(I_v, V_v\\) — vodiy (manfiy qismdan keyingi minimum);</li><li>\\(I_p/I_v\\) — sifat ko'rsatkichi;</li><li>\\(V_{fp}\\) — diffuziya tarmog'ida tok yana \\(I_p\\) ga teng bo'ladigan kuchlanish.</li></ul>Model qiymatlari: Ge — 4.7 mA, 65 mV, ~0.6 mA, ~330 mV; GaAs — 10 mA, 150 mV, ~0.5 mA; Si — 2.2 mA, nisbat ~3.6. Cho'qqi va vodiy atrofida E qadamini 1 mV ga kichraytiring."},
+ {k:["gisterezis","sakrash","yuklama","bistabil","kesishma","barqaror"],a:"<b>Yuklama chizig'i</b>: \\(I = (E-V)/(R+R_A)\\). \\(R+R_A > |r_-|\\) bo'lsa, ba'zi \\(E\\) larda u VAX ni uch nuqtada kesadi. O'rtadagi nuqta (manfiy qismda) beqaror. \\(E\\) oshirilganda nuqta cho'qqidan \\(E_\\uparrow \\approx V_p + I_p(R+R_A)\\) da diffuziya tarmog'iga sakraydi. Kamaytirilganda vodiydan \\(E_\\downarrow \\approx V_v + I_v(R+R_A)\\) da qaytadi. Ular orasida gisterezis bor. Mikro-ko'rinish yonidagi grafikda barcha kesishmalar ko'rsatilgan."},
+ {k:["teskari","teskari yonalish","backward"],a:"<b>Teskari yo'nalishda</b> p-sohaning to'lgan valent zonasi n-sohaning bo'sh holatlari qarshisiga ko'tariladi va elektronlar p → n tunnellaydi. Tok tez ortadi: tunnel diod teskari yo'nalishda ham yaxshi o'tkazadi. Simulyatorda qutbni «teskari» ga o'tkazib, −0.2 V gacha o'lchang (R = 10 Ω tavsiya)."},
+ {k:["harorat","temperatura"],a:"<b>Harorat ta'siri</b>: tunnellash issiqlikka deyarli bog'liq emas, shuning uchun \\(I_p\\) juda barqaror (bu tunnel diodning afzalligi). Vodiy toki (nuqsonlar orqali tunnellash va diffuziya) esa harorat bilan ortadi. Natijada \\(I_p/I_v\\) kamayadi. C bosqichida har haroratda «Avtomatik» tugmasini bosing."},
+ {k:["qollanil","generator","kalit","nima uchun kerak","amaliyot"],a:"<b>Qo'llanilishi</b>:<ul><li>GHz chastotali generatorlar va kuchaytirgichlar — manfiy qarshilik konturdagi isroflarni kompensatsiyalaydi;</li><li>tez kalitlar va trigger (bistabil) sxemalar — gisterezis tufayli;</li><li>radiatsiyaga chidamli elektronika;</li><li>«teskari diod» sifatida kichik signallarni detektorlash.</li></ul>Tunnellash juda tez (~\\(10^{-13}\\) s)."},
+ {k:["kovak nima","kovak","proton","yadro"],a:"<b>Kovak proton emas.</b> Kovak — valent zonadagi bo'sh holat (bog'dagi bo'sh joy). Tunnellashda n-sohadan kelgan elektron p-sohadagi aynan shunday bo'sh holatni to'ldiradi. Yadrolar va ionlar joyida qoladi."},
+ {k:["lupa","mikro","ichida nima","lupada","diagramma"],a:function(){var t=M.text;return "<b>Lupa</b>: yuqorida aynigan p⁺ va n⁺ sohalar va juda ingichka to'siq. Tunnellash sariq uzuq strelka bilan, nuqson orqali tunnellash binafsha nuqtali strelka bilan ko'rsatilgan. Pastda zonalar: ko'k — to'lgan holatlar, qizil shtrix — p-sohadagi bo'sh valent holatlar, sariq — tunnel oynasi."+(t?"<br><br><b>Hozir:</b> "+t.title+". "+t.text:"");}},
+ {k:["3d","kamera","aylantir","sichqoncha"],a:"3D sahnani boshqarish:<ul><li>chap tugma — aylantirish;</li><li>o'ng tugma — surish;</li><li>g'ildirak — yaqinlashtirish.</li></ul>Tayyor ko'rinishlar: «Umumiy», «Tunnel diod», «Asboblar»."},
+ {k:["a bosqich","birinchi","vax olch"],a:"<b>A bosqich</b>:<ol><li>R = 1 Ω.</li><li>E ni 0 dan oshiring: cho'qqigacha 1–5 mV qadam bilan, manfiy qismda 5–10 mV, vodiydan keyin 20–50 mV.</li><li>Jami 25–35 nuqta yozing.</li><li>Teskari yo'nalishda 5–6 nuqta oling.</li><li>Parametrlarni toping va «Tekshirish» ni bosing.</li></ol>"},
+ {k:["b bosqich","ikkinchi"],a:"<b>B bosqich</b>:<ol><li>R = 100 Ω.</li><li>E ni 10 mV qadam bilan oshirib yozing — sakrashni toping (⚡).</li><li>So'ng kamaytirib yozing — qaytish sakrashi boshqa E da bo'ladi.</li><li>\\(\\Delta E = E_\\uparrow - E_\\downarrow\\) ni toping.</li><li>R = 10 Ω da takrorlang: gisterezis yo'qoladi.</li></ol>"},
+ {k:["c bosqich","uchinchi"],a:"<b>C bosqich</b>: 230–400 K oralig'ida 8–10 haroratda «Avtomatik: I_p va I_v» ni bosing. Grafikdan \\(I_p\\) deyarli o'zgarmasligini, \\(I_v\\) esa ortishini ko'ring."},
+ {k:["hisobot","otchet","xulosa"],a:"Hisobotga kiriting:<ol><li>maqsad va nazariya (zonalar diagrammalari bilan);</li><li>VAX jadvali va grafigi, \\(I_p, V_p, I_v, V_v, I_p/I_v, |r_-|\\);</li><li>uch xil diodni solishtirish;</li><li>gisterezis grafigi va \\(E_\\uparrow, E_\\downarrow\\) (tajriba va nazariya);</li><li>\\(I_p(T), I_v(T)\\);</li><li>xulosa.</li></ol>"},
+ {k:["tekshir","malumotlarim","xatom","xato qayer","keyingi qadam","keyin nima","notogri","togrimi","tahlil","maslahat"],w:1.6,a:function(){return analyzeLab();}}
+];
+function diagVal(name,raw,exp,tol){var v=parseNum(raw);if(!raw)return null;if(!isFinite(v))return name+": «"+raw+"» ni son sifatida o'qiy olmadim.";var err=Math.abs(v/exp-1);if(err<=tol)return name+": to'g'ri.";
+  var l=Math.log10(Math.abs(v/exp)),k=Math.round(l);if(k!==0&&Math.abs(l-k)<0.05)return name+": to'g'ri qiymatdan \\(10^{"+k+"}\\) marta farq qiladi. Birliklarni tekshiring (mA, mV).";
+  return name+": taxminan "+(err*100).toFixed(0)+" % farq qiladi.";}
+function analyzeLab(){
+  var L=[], next="", d=DIODES[st.di];
+  L.push("Hozirgi bosqich: <b>"+MODE_NAME[st.mode]+"</b>, diod: <b>"+d.short+"</b>, \\(R\\) = "+Rlabel(st.R)+(st.ideal?" · <b style='color:var(--warn)'>ideal rejim</b>":"")+(st.burned?" · <b style='color:var(--bad)'>diod kuygan</b>":"")+".");
+  if(st.mode==="A"&&st.R>=10){var pr=tdParams(d,st.T); if(st.R+RA>(pr.rmin||0)) L.push("Diqqat: \\(R + R_A\\) = "+(st.R+RA)+" Ω > \\(|r_-|_{min}\\) ≈ "+(pr.rmin||0).toFixed(0)+" Ω. Manfiy qismni o'lchab bo'lmaydi, R = 1 Ω qo'ying.");}
+  var ra=st.tabA.rows;
+  if(!ra.length) next="A bosqichida R = 1 Ω da VAX ni o'lchang.";
+  else { var ex=expA(); L.push("A jadvali: "+ra.length+" nuqta."+(ex?" Cho'qqi "+(ex.Ip*1e3).toFixed(3)+" mA ("+vmv(ex.Vp)+" mV), vodiy "+(ex.Iv*1e3).toFixed(3)+" mA ("+vmv(ex.Vv)+" mV), nisbat "+ex.ratio.toFixed(2)+", manfiy qismda "+ex.nNeg+" oraliq nuqta.":" Cho'qqi yoki vodiy hali aniqlanmadi."));
+    if(ex&&ex.nNeg<3) L.push("Manfiy qismda nuqtalar kam: E qadamini 2–5 mV ga kamaytiring.");
+    if(ex){var fb=[diagVal("\\(I_p\\)",$("#inIp").value,ex.Ip*1e3,0.03),diagVal("\\(V_p\\)",$("#inVp").value,ex.Vp*1e3,0.08),diagVal("\\(I_v\\)",$("#inIv").value,ex.Iv*1e3,0.03),diagVal("\\(V_v\\)",$("#inVv").value,ex.Vv*1e3,0.08),diagVal("\\(I_p/I_v\\)",$("#inRat").value,ex.ratio,0.05)].filter(Boolean);
+      if(fb.length) L.push("Javoblaringiz:<ul><li>"+fb.join("</li><li>")+"</li></ul>"); else next=next||"A jadvali ostida parametrlarni kiriting.";}
+    else next=next||"VAX ni vodiydan keyingi diffuziya tarmog'igacha davom ettiring."; }
+  var rb=st.tabB.rows;
+  if(rb.length){var eb=expB(); L.push("B jadvali: "+rb.length+" nuqta. Sakrash ↑: "+(eb.up?eb.up.E.toFixed(3)+" V":"yo'q")+", ↓: "+(eb.dn?eb.dn.E.toFixed(3)+" V":"yo'q")+". Nazariy: ↑ ≈ "+(eb.thUp!==null?eb.thUp.toFixed(3):"—")+" V, ↓ ≈ "+(eb.thDn!==null?eb.thDn.toFixed(3):"—")+" V.");
+    if(!eb.dn) next=next||"E ni sakrashdan keyin kamaytirib boring: qaytish sakrashini toping.";}
+  else if(ra.length>=10) next=next||"B bosqichida R = 100 Ω da gisterezisni o'rganing.";
+  var rc=st.tabC.rows; if(rc.length) L.push("C jadvali: "+rc.length+" harorat nuqtasi."); else if(rb.length) next=next||"C bosqichida harorat ta'sirini o'lchang.";
+  if(!next) next="Lupada E ni 0 dan \\(V_v\\) gacha sekin oshirib, tunnel oynasi qanday ochilib-yopilishini kuzating va hisobotga yozing.";
+  return "<ul><li>"+L.join("</li><li>")+"</li></ul><b>Keyingi qadam:</b> "+next;
+}
+var NUM="([-+−–]?\\s*\\d+(?:[.,]\\d+)?(?:\\s*(?:e|[·x×*]\\s*10\\^?)\\s*\\(?[-+−–]?\\d+\\)?)?)";
+var VAR_RE=new RegExp("\\b(v1|v2|i1|i2|ip|iv|vp|vv|r|e)\\s*=\\s*"+NUM+"\\s*(mkv|mv|uv|μv|mka|ma|ua|μa|kom|kohm|kω|om|ohm|ω|k|v|a)?(?![a-z])","gi");
+function parseVars(text){var out={},m;VAR_RE.lastIndex=0;var s=String(text).replace(/[−–]/g,"-");
+  while((m=VAR_RE.exec(s))){var name=m[1].toLowerCase(),val=parseNum(m[2]),u=(m[3]||"").toLowerCase();if(!isFinite(val))continue;var f=1;
+    if(/^v|^e$/.test(name)) f=u?({mv:1e-3,uv:1e-6,mkv:1e-6,"μv":1e-6,v:1}[u]||1):(Math.abs(val)>3?1e-3:1);
+    else if(/^i/.test(name)) f=u?({ma:1e-3,ua:1e-6,mka:1e-6,"μa":1e-6,a:1}[u]||1):(Math.abs(val)>0.2?1e-3:1);
+    else if(name==="r") f=/^k/.test(u)?1e3:1;
+    out[name]={v:val*f,raw:m[0].trim()};}
+  return out;}
+function calcLab(vars){
+  var g=function(k){return vars[k]?vars[k].v:undefined;}, steps=[];
+  steps.push("Qabul qilindi: "+Object.keys(vars).map(function(x){return vars[x].raw;}).join(", ")+". (Birliksiz: 3 dan katta kuchlanish — mV, 0.2 dan katta tok — mA deb olinadi.)");
+  var V1=g("v1"),V2=g("v2"),I1=g("i1"),I2=g("i2"),Ip=g("ip"),Iv=g("iv"),Vp=g("vp"),Vv=g("vv"),R=g("r");
+  if(V1!==undefined&&V2!==undefined&&I1!==undefined&&I2!==undefined&&I2!==I1){var rr=(V2-V1)/(I2-I1);steps.push("\\(r = \\Delta V/\\Delta I\\) = <b>"+rr.toFixed(1)+" Ω</b>"+(rr<0?" (manfiy differensial qarshilik)":""));}
+  if(Ip!==undefined&&Iv!==undefined){steps.push("\\(I_p/I_v\\) = <b>"+(Ip/Iv).toFixed(2)+"</b>");}
+  if(Ip!==undefined&&Iv!==undefined&&Vp!==undefined&&Vv!==undefined){var rav=(Vv-Vp)/(Iv-Ip);steps.push("O'rtacha manfiy qarshilik \\((V_v-V_p)/(I_v-I_p)\\) = <b>"+rav.toFixed(1)+" Ω</b> (eng tik joyda \\(|r_-|\\) bundan kichik)");
+    if(R!==undefined){var Rt=R+RA;steps.push("\\(R + R_A\\) = "+Rt+" Ω: \\(E_\\uparrow \\approx V_p + I_p(R+R_A)\\) = <b>"+(Vp+Ip*Rt).toFixed(3)+" V</b>, \\(E_\\downarrow \\approx V_v + I_v(R+R_A)\\) = <b>"+(Vv+Iv*Rt).toFixed(3)+" V</b>, \\(\\Delta E\\) ≈ "+((Vp+Ip*Rt)-(Vv+Iv*Rt)).toFixed(3)+" V"+((Vp+Ip*Rt)<=(Vv+Iv*Rt)?" — gisterezis yo'q (R yetarlicha kichik)":"")+".");}}
+  if(steps.length<=1) steps.push("Bu qiymatlardan hech narsa hisoblay olmadim. Misollar:<ul><li>«V1=0.1 V, I1=4 mA, V2=0.2 V, I2=1.5 mA» → \\(r\\)</li><li>«Ip=4.7 mA, Iv=0.6 mA, Vp=65 mV, Vv=350 mV, R=100» → nisbat va sakrash kuchlanishlari</li></ul>");
+  return steps.join("<br>");}
+var AI={log:$("#aiLog"),busy:false};
+function aiChips(){var c=["Keyingi qadam nima?","Ma'lumotlarimni tekshir","Lupada nima bo'lyapti?"];
+  if(st.mode==="A") c=c.concat(["Tunnel oynasi nima?","Manfiy qarshilik","V1=0.1 V, I1=4 mA, V2=0.2 V, I2=1.5 mA"]);
+  if(st.mode==="B") c=c.concat(["Gisterezis nega paydo bo'ladi?","Ip=4.7 mA, Iv=0.6 mA, Vp=65 mV, Vv=330 mV, R=100"]);
+  if(st.mode==="C") c=c.concat(["Harorat ta'siri"]);
+  $("#aiChips").innerHTML=c.map(function(x){return "<button type='button' class='chip'>"+x.replace(/</g,"&lt;")+"</button>";}).join("");}
+function aiAdd(who,html){var d=document.createElement("div");d.className="msg "+who;if(who==="user")d.textContent=html;else d.innerHTML=html;AI.log.appendChild(d);AI.log.scrollTop=AI.log.scrollHeight;if(who!=="user")mjx(d);return d;}
+function aiAnswer(q){var vars=parseVars(q);if(Object.keys(vars).length)return calcLab(vars);
+  var nt=norm(q),toks=nt.split(" "),best=null,bs=0;
+  KBASE.forEach(function(e){var sc=kscore(nt,toks,e.k)*(e.w||1);if(sc>bs){bs=sc;best=e;}});
+  if(best&&bs>=1) return typeof best.a==="function"?best.a():best.a;
+  return "Bu savolni tushunmadim. Men tunnel diod va shu laboratoriya bo'yicha javob beraman. Masalan: «Tunnel oynasi nima?», «Gisterezis nega paydo bo'ladi?», «Ma'lumotlarimni tekshir».";}
+function aiAsk(q){q=String(q||"").trim();if(!q||AI.busy)return;aiAdd("user",q);AI.busy=true;var typing=aiAdd("bot typing","…");
+  setTimeout(function(){typing.remove();var a;try{a=aiAnswer(q);}catch(err){a="Javob tayyorlashda xato yuz berdi.";}aiAdd("bot",a);AI.busy=false;aiChips();},280);}
+function aiOpen(open){var p=$("#aiPanel"),b=$("#aiFab");p.hidden=!open;b.setAttribute("aria-expanded",String(open));b.hidden=open;if(open){aiChips();if(!AI.log.children.length)aiAdd("bot",KBASE[0].a());setTimeout(function(){$("#aiIn").focus();},50);}}
+$("#aiFab").addEventListener("click",function(){aiOpen(true);});
+$("#aiClose").addEventListener("click",function(){aiOpen(false);});
+$("#aiForm").addEventListener("submit",function(e){e.preventDefault();var i=$("#aiIn");aiAsk(i.value);i.value="";});
+$("#aiChips").addEventListener("click",function(e){var b=e.target.closest(".chip");if(b)aiAsk(b.textContent);});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!$("#aiPanel").hidden)aiOpen(false);});
+
+/* ---------- ishga tushirish ---------- */
+function renderAll(){syncLabels();updateLocks();renderData();}
+load();
+if(st.tabA.meta&&st.tabA.rows.length){st.di=st.tabA.meta.di;st.T=st.tabA.meta.T;}
+applyInputs(); renderQuiz(); updateMeters();
+try{T3=init3D();}catch(err){T3=null;try{console.error(err);$("#app3d").hidden=true;appCv.hidden=false;$("#lensCv").hidden=true;$("#viewBtns").hidden=true;}catch(_){}}
+showTab(); setMode(st.mode); resizeAll(); updateMicroText(); drawIV();
+requestAnimationFrame(frame);})();
+</script>

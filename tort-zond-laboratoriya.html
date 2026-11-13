@@ -1,0 +1,1732 @@
+<title>To'rt zondli usul laboratoriyasi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=STIX+Two+Text:ital@0;1&display=swap">
+<style>
+/* Layout: laboratoriya stoli — chapda 3D stend va lupa, o'ngda boshqaruv tokchasi, pastda o'lchov jurnali */
+:root{
+  --bg:#edf0f2; --surface:#ffffff; --surface2:#f5f7f8; --ink:#17212b; --muted:#5a6672; --line:#d5dbe0;
+  --accent:#0d6e7a; --accent-ink:#ffffff; --accent-soft:#dcedef;
+  --electron:#2563d9; --hole:#d9412f; --copper:#b26a2e; --steel:#7f8c97;
+  --fb:#c77700; --fe:#7a3fd1;
+  --lcd-bg:#121a20; --lcd-fg:#ffb23e; --lcd-dim:#7d6338;
+  --ok:#1e8449; --bad:#c0392b; --warn:#a86a00;
+  --f-display:"Archivo","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --f-math:"STIX Two Text","Cambria Math",Cambria,Georgia,serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1317; --surface:#151c22; --surface2:#1b242b; --ink:#e2e8ed; --muted:#93a0ab; --line:#2a353e;
+    --accent:#45b8c6; --accent-ink:#06191c; --accent-soft:#163238;
+    --electron:#6ea2ff; --hole:#ff6d5c; --copper:#d1884a; --steel:#9aa7b2;
+    --fb:#f0a030; --fe:#b18cff;
+    --lcd-bg:#070b0e; --lcd-fg:#ffb23e; --lcd-dim:#6a5228;
+    --ok:#4cc27e; --bad:#ff6b5e; --warn:#e0a33a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1317; --surface:#151c22; --surface2:#1b242b; --ink:#e2e8ed; --muted:#93a0ab; --line:#2a353e;
+  --accent:#45b8c6; --accent-ink:#06191c; --accent-soft:#163238;
+  --electron:#6ea2ff; --hole:#ff6d5c; --copper:#d1884a; --steel:#9aa7b2;
+  --fb:#f0a030; --fe:#b18cff;
+  --lcd-bg:#070b0e; --lcd-fg:#ffb23e; --lcd-dim:#6a5228;
+  --ok:#4cc27e; --bad:#ff6b5e; --warn:#e0a33a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1260px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.5rem,3.2vw,2.1rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.35rem;font-weight:700;margin-bottom:.6rem}
+h3{font-size:1.02rem;font-weight:700}
+h4{font-size:.98rem;font-weight:700}
+p{margin:.4rem 0 .8rem}
+a{color:var(--accent)}
+sub,sup{font-size:.72em;line-height:0}
+
+.top{border-bottom:1px solid var(--line);background:var(--surface)}
+.top .wrap{padding-block:18px 0}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.title-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.title-row p{margin:.2rem 0 0;color:var(--muted);max-width:66ch}
+nav.tabs{display:flex;gap:2px;margin-top:16px;overflow-x:auto;scrollbar-width:thin}
+nav.tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:500;padding:10px 14px;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs a:hover{color:var(--ink)}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.tabs a:focus-visible,.btn:focus-visible,button:focus-visible,canvas:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+main .wrap{padding-block:22px 48px}
+[hidden]{display:none!important}
+.prose{max-width:78ch}
+.prose h2{margin-top:1.6rem}
+.prose h2:first-child{margin-top:0}
+.prose h3{margin-top:1.2rem;margin-bottom:.3rem}
+.prose ul,.prose ol{padding-left:1.3rem;margin:.4rem 0 .9rem}
+.prose li{margin:.25rem 0}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.card-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-bottom:12px}
+.hint{font-size:.84rem;color:var(--muted);margin:.5rem 0 0}
+
+.eq{font-family:var(--f-math);font-size:1.18rem;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:.6rem 0 .9rem;overflow-x:auto;white-space:nowrap}
+.eq mjx-container[display="true"]{margin:0!important;display:inline-block!important}
+.eq mjx-container svg{color:var(--ink)}
+.eq .note{font-family:var(--f-body);font-size:.82rem;color:var(--muted);margin-left:14px}
+
+.tbl-wrap{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.78rem;letter-spacing:.02em}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.pending{color:var(--muted);text-align:right;font-family:var(--f-mono)}
+td.cur{background:var(--accent-soft)}
+.prose table{margin:.5rem 0 1rem}
+
+/* simulator layout */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+.col-main,.col-side{display:grid;gap:16px;min-width:0}
+@media (max-width:980px){.simgrid{grid-template-columns:minmax(0,1fr)}}
+#appCv{width:100%;aspect-ratio:760/440;display:block;border-radius:8px;max-width:100%}
+.stage{position:relative;border-radius:8px;outline-offset:2px}
+#app3d{width:100%;aspect-ratio:760/500;border-radius:8px;overflow:hidden;touch-action:none;background:var(--surface2);max-width:100%}
+#app3d canvas{display:block;width:100%!important;height:100%!important}
+#lensCv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.viewbtns{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:10px}
+.lens-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:.86rem}
+
+.micro-wrap{position:relative}
+#microCv{width:100%;aspect-ratio:640/320;display:block;border-radius:8px;border:1px solid var(--line);max-width:100%}
+.micro-ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:10px;font-size:.86rem}
+.micro-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:14px}
+.phase{border-left:3px solid var(--accent);padding:2px 0 2px 12px}
+.phase-step{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.phase h4{margin:.15rem 0 .25rem}
+.phase p{margin:0;font-size:.92rem}
+#phiCv{width:100%;height:150px;display:block;border:1px solid var(--line);border-radius:6px;background:var(--surface2)}
+dl.live{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:10px 0 0;font-size:.84rem}
+dl.live dt{color:var(--muted)}
+dl.live dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--muted);margin-top:8px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+.sw.e{background:var(--electron)}
+.sw.h{border:2px dashed var(--hole)}
+.sw.ve{width:7px;height:7px;background:var(--electron)}
+.sw.ion{border-radius:1px;border:1.5px solid var(--hole)}
+.sw.atom{border:1.5px solid var(--steel);background:var(--surface2)}
+.sw.fb{background:var(--fb);border-radius:2px;height:3px;width:16px;vertical-align:3px}
+.sw.fe{background:var(--fe);border-radius:2px;height:3px;width:16px;vertical-align:3px}
+
+/* controls */
+.ctl{display:grid;gap:12px}
+.ctl label.f,.ctl .f{display:grid;gap:4px;font-size:.86rem;font-weight:500}
+.ctl .row{display:flex;align-items:center;gap:10px}
+.ctl .row input[type=range]{flex:1;min-width:0}
+.val{font-family:var(--f-mono);font-size:.84rem;min-width:70px;text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{accent-color:var(--accent)}
+select,input[type=text]{font:inherit;font-size:.9rem;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
+select:disabled,input:disabled{opacity:.55}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg.two{grid-template-columns:repeat(2,1fr)}
+.seg button{font:inherit;font-size:.82rem;font-weight:500;padding:8px 6px;border:0;background:var(--surface2);color:var(--muted);cursor:pointer;line-height:1.25}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.pol{font:inherit;font-size:.82rem;font-family:var(--f-mono);border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:6px;padding:6px 9px;cursor:pointer;white-space:nowrap}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:.86rem}
+.check input{margin-top:3px;accent-color:var(--accent)}
+.lockmsg{font-size:.78rem;color:var(--warn)}
+
+.lcds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.lcd{background:var(--lcd-bg);border-radius:7px;padding:7px 10px 8px;min-width:0}
+.lcd .lab{font-size:.7rem;color:var(--lcd-dim);font-family:var(--f-mono);letter-spacing:.04em;display:flex;justify-content:space-between;gap:6px}
+.lcd .dig{font-family:var(--f-mono);font-weight:500;font-size:1.32rem;color:var(--lcd-fg);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lcd.off .dig{color:var(--lcd-dim)}
+.lcd.warn .dig{color:#ff5a4a}
+
+.btn{font:inherit;font-weight:600;font-size:.9rem;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:7px;padding:9px 14px;cursor:pointer}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.sm{font-size:.8rem;padding:5px 10px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.status{font-size:.86rem;margin-top:10px;min-height:1.3em}
+.status.ok{color:var(--ok)} .status.bad{color:var(--bad)} .status.info{color:var(--muted)}
+.slots{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-top:10px}
+.slot{font-family:var(--f-mono);font-size:.72rem;text-align:center;padding:4px 2px;border-radius:5px;border:1px dashed var(--line);color:var(--muted)}
+.slot.done{border-style:solid;border-color:var(--ok);color:var(--ok)}
+.slot.now{outline:2px solid var(--accent)}
+
+.data{display:grid;gap:16px;margin-top:16px}
+.data-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.data-grid{grid-template-columns:minmax(0,1fr)}}
+canvas.plot{width:100%;height:270px;display:block;border:1px solid var(--line);border-radius:8px;background:var(--surface2)}
+.delbtn{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.95rem;padding:0 4px}
+.delbtn:hover{color:var(--bad)}
+.analysis{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.given{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.86rem;margin:.4rem 0 .8rem}
+.given span b{font-family:var(--f-mono);font-weight:500}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 14px}
+.form-grid label{display:grid;gap:4px;font-size:.84rem;font-weight:500}
+.fb-list{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:4px;font-size:.88rem}
+.fb-list li.ok::before{content:"✓ ";color:var(--ok);font-weight:700}
+.fb-list li.bad::before{content:"✗ ";color:var(--bad);font-weight:700}
+.callout{background:var(--accent-soft);border-radius:8px;padding:10px 14px;font-size:.9rem;margin:.6rem 0}
+.callout.warn{background:color-mix(in srgb,var(--warn) 14%,var(--surface))}
+
+/* quiz */
+.quiz{display:grid;gap:14px;max-width:820px}
+.q{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:14px 16px}
+.q legend{font-weight:600;padding:0;margin-bottom:6px}
+.q fieldset{border:0;margin:0;padding:0;min-width:0}
+.q label{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:.92rem;cursor:pointer}
+.q label input{margin-top:4px;accent-color:var(--accent)}
+.q .ex{font-size:.86rem;margin-top:6px;padding-left:10px;border-left:3px solid var(--line)}
+.q.right .ex{border-color:var(--ok)} .q.wrong .ex{border-color:var(--bad)}
+.score{font-family:var(--f-display);font-size:1.1rem;font-weight:700}
+
+.fig{margin:1rem 0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;overflow-x:auto}
+.fig svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto}
+.fig figcaption{font-size:.82rem;color:var(--muted);text-align:center;margin-top:6px}
+.s-ink{stroke:var(--ink)} .s-e{stroke:var(--electron)} .s-h{stroke:var(--hole)} .s-fb{stroke:var(--fb)} .s-fe{stroke:var(--fe)} .s-acc{stroke:var(--accent)} .s-mut{stroke:var(--muted)}
+.f-ink{fill:var(--ink)} .f-e{fill:var(--electron)} .f-h{fill:var(--hole)} .f-surf{fill:var(--surface2)} .f-none{fill:none} .f-fb{fill:var(--fb)} .f-fe{fill:var(--fe)} .f-mut{fill:var(--muted)} .f-acc{fill:var(--accent)} .f-steel{fill:var(--steel)}
+.svgtxt{font-family:var(--f-body);font-size:13px}
+.svgmath{font-family:var(--f-math);font-style:italic;font-size:15px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+
+/* oflayn yordamchi */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ai-fab{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;align-items:center;gap:8px;font:inherit;font-weight:600;font-size:.92rem;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 16px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.ai-fab:focus-visible,.ai-x:focus-visible,.chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ai-panel{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:41;width:min(410px,calc(100vw - 32px));height:min(640px,calc(100vh - 32px));background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}
+.ai-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--surface2)}
+.ai-head b{font-family:var(--f-display);display:block}
+.ai-sub{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);letter-spacing:.04em}
+.ai-x{border:0;background:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px}
+.ai-log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.msg{max-width:92%;padding:9px 12px;border-radius:10px;font-size:.9rem;line-height:1.5;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:3px;white-space:pre-wrap}
+.msg.bot{align-self:flex-start;background:var(--surface2);border:1px solid var(--line);border-bottom-left-radius:3px}
+.msg.bot ul{margin:.3rem 0;padding-left:1.1rem}
+.msg.bot li{margin:.15rem 0}
+.msg.typing{color:var(--muted);letter-spacing:.2em}
+.ai-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-top:1px solid var(--line)}
+.chip{font:inherit;font-size:.78rem;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:999px;padding:4px 10px;cursor:pointer;text-align:left}
+.chip:hover{background:var(--accent-soft)}
+.ai-form{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.ai-form input{flex:1;min-width:0;font:inherit;font-size:.9rem;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:8px 10px}
+@media (max-width:520px){.ai-panel{right:0;left:0;bottom:0;width:100%;height:min(78vh,640px);border-radius:12px 12px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">Yarimo'tkazgichlar fizikasi · Virtual laboratoriya ishi</div>
+    <div class="title-row">
+      <div>
+        <h1>Yarimo'tkazgichning solishtirma qarshiligini to'rt zondli usulda aniqlash</h1>
+        <p>3D to'rt zondli stend, oltita namuna, geometrik tuzatishlar, harorat bo'yicha tadqiqot va namuna ichidagi tok chiziqlarini ko'rsatuvchi lupa.</p>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Laboratoriya bo'limlari">
+      <a href="#maqsad" data-t="maqsad">Maqsad</a>
+      <a href="#nazariya" data-t="nazariya">Nazariya</a>
+      <a href="#tartib" data-t="tartib">Ish tartibi</a>
+      <a href="#simulyator" data-t="simulyator">Simulyator</a>
+      <a href="#sinov" data-t="sinov">O'z-o'zini tekshirish</a>
+      <a href="#adabiyot" data-t="adabiyot">Adabiyotlar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<!-- ============ MAQSAD ============ -->
+<section class="tab" id="tab-maqsad" hidden>
+  <div class="prose">
+    <h2>Ishning maqsadi</h2>
+    <ol>
+      <li>To'rt zondli usul nazariyasini o'rganish: nuqtaviy tok manbaining potensiali va \(\rho = 2\pi s\,V/I\) formulasining kelib chiqishi.</li>
+      <li>Volt-amper xarakteristikasini 4 zondli va 2 zondli sxemalarda o'lchab, kontakt qarshiligining ta'sirini miqdoriy baholash.</li>
+      <li>Namuna qalinligi va diametri uchun geometrik tuzatish koeffitsiyentlari \(F_1(t/s)\) va \(F_2(d/s)\) ni o'rganish, yupqa qatlam qarshiligi \(R_\square\) ni aniqlash.</li>
+      <li>Solishtirma qarshilik \(\rho\), solishtirma o'tkazuvchanlik \(\sigma\) va asosiy zaryad tashuvchilar konsentratsiyasini hisoblash.</li>
+      <li>\(\rho(T)\) bog'liqligini 150–600 K oralig'ida o'lchab, kirishmali va xususiy o'tkazuvchanlik sohalarini ajratish va taqiqlangan zona kengligi \(E_g\) ni baholash.</li>
+      <li>Lupa yordamida namuna ichidagi tok chiziqlari, ekvipotensial chiziqlar va zaryad tashuvchilar harakatini kuzatish. Nima uchun ichki zondlar orqali tok o'tmasligini tushunish.</li>
+    </ol>
+
+    <h2>Virtual jihozlar</h2>
+    <ul>
+      <li><b>To'rt zondli stend.</b> To'g'ri chiziq bo'ylab teng oraliqda joylashgan to'rtta volfram karbid igna: oraliq \(s = 1.00\ \text{mm}\), uchining radiusi \(\approx 40\ \mu\text{m}\), prujinali bosim. Zond kallagi vint yordamida namunaga tushiriladi.</li>
+      <li><b>Doimiy tok manbai:</b> 0.01–10 mA, chiqish kuchlanishi chegarasi 20 V, qutbni almashtirgich bilan.</li>
+      <li><b>Raqamli voltmetr:</b> kirish qarshiligi \(> 10\ \text{M}\Omega\), «4 zondli / 2 zondli» sxema almashtirgichi bilan.</li>
+      <li><b>Termostolik:</b> 150–600 K, suyuq azot bilan sovutiladi va qizdirgich bilan isitiladi. Haroratni Pt100 datchigi o'lchaydi. Namuna izolyatsiyalovchi slyuda qatlami ustida yotadi.</li>
+      <li><b>Stol lampasi:</b> fotoo'tkazuvchanlik ta'sirini ko'rsatish uchun.</li>
+      <li><b>Namunalar:</b> n-Si va p-Si plastinalar (\(d = 50\ \text{mm}\)), n-Ge va p-Ge disklar, deyarli xususiy i-Ge, kirishmasi noma'lum X namuna.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ NAZARIYA ============ -->
+<section class="tab" id="tab-nazariya" hidden>
+  <div class="prose">
+    <h2>1. Solishtirma qarshilik va ikki zondli o'lchashning muammosi</h2>
+    <p>Bir jinsli namunaning qarshiligi uning o'lchamlari va solishtirma qarshiligi \(\rho\) bilan aniqlanadi:</p>
+    <div class="eq">\[ R = \rho\,\frac{L}{A} \]</div>
+    <p>Namunaga ikkita kontakt ulab, ular orasidagi kuchlanishni o'lchasak (ikki zondli usul), asbob faqat namunaning qarshiligini emas, kontaktlarning qarshiligini ham o'lchaydi:</p>
+    <div class="eq">\[ R_{2z} = \frac{V_{14}}{I} = R_{\text{namuna}} + 2R_{\text{yoy}} + 2R_c \]</div>
+    <p>Bu yerda \(R_c\) — metall-yarimo'tkazgich kontaktining qarshiligi, \(R_{\text{yoy}}\) — tok igna uchidan namunaga yoyilayotganda hosil bo'ladigan yoyilish qarshiligi. Metall-yarimo'tkazgich kontaktida Shottki to'sig'i hosil bo'ladi. Shuning uchun \(R_c\) katta (yuzlab va minglab om), igna bosimiga bog'liq, nochiziqli (tokka bog'liq) va oldindan noma'lum. Natijada ikki zondli usul yarimo'tkazgichlar uchun ishonchsiz.</p>
+
+    <h2>2. To'rt zondli usulning g'oyasi</h2>
+    <p>L. Valdes (1954) taklif qilgan usulda namuna sirtiga to'g'ri chiziq bo'ylab, bir-biridan \(s\) masofada to'rtta igna tushiriladi. Tok \(I\) chetki 1 va 4-zondlar orqali o'tkaziladi. Kuchlanish \(V\) ichki 2 va 3-zondlar orasida kirish qarshiligi juda katta (\(> 10^7\ \Omega\)) voltmetr bilan o'lchanadi.</p>
+    <p>Voltmetr zanjiridan deyarli tok o'tmaydi (\(I_V \lesssim 10^{-9}\ \text{A}\)), shuning uchun 2 va 3-zondlarning kontakt qarshiligida kuchlanish tushmaydi: \(I_V R_c \approx 0\). Voltmetr namuna sirtidagi ikki nuqtaning potensiallar farqini aynan o'lchaydi. 1 va 4-zondlardagi kontakt qarshiligi esa faqat tok manbaiga yuk bo'ladi va natijaga ta'sir qilmaydi.</p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 560 290" role="img" aria-label="To'rt zondli usul sxemasi: tok manbai 1 va 4-zondlarga, voltmetr 2 va 3-zondlarga ulangan, namunada tok chiziqlari yarim aylana bo'ylab tarqaladi">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="f-ink"/></marker>
+          <marker id="ahB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="f-fb"/></marker>
+        </defs>
+        <rect x="40" y="160" width="480" height="96" rx="3" class="f-surf s-ink" stroke-width="1.5"/>
+        <path d="M130 160 C 132 186, 428 186, 430 160" class="s-fb f-none" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <path d="M130 160 C 128 214, 432 214, 430 160" class="s-fb f-none" stroke-width="1.6" stroke-dasharray="5 4" marker-mid="url(#ahB)"/>
+        <path d="M130 160 C 118 250, 442 250, 430 160" class="s-fb f-none" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <line x1="279" y1="200" x2="292" y2="200" class="s-fb" stroke-width="2" marker-end="url(#ahB)"/>
+        <g class="f-steel">
+          <path d="M124 108 L136 108 L131 160 L129 160 Z"/><path d="M224 108 L236 108 L231 160 L229 160 Z"/>
+          <path d="M324 108 L336 108 L331 160 L329 160 Z"/><path d="M424 108 L436 108 L431 160 L429 160 Z"/>
+        </g>
+        <g class="s-ink f-none" stroke-width="1.6">
+          <path d="M130 108 V 32 H 252"/><path d="M308 32 H 430 V 108"/>
+          <path d="M230 108 V 80 H 263"/><path d="M297 80 H 330 V 108"/>
+        </g>
+        <rect x="252" y="18" width="56" height="28" rx="4" class="f-surf s-ink" stroke-width="1.6"/>
+        <text x="280" y="37" text-anchor="middle" class="svgtxt f-ink">I manba</text>
+        <circle cx="280" cy="80" r="17" class="f-surf s-ink" stroke-width="1.6"/>
+        <text x="280" y="86" text-anchor="middle" class="svgmath f-ink">V</text>
+        <line x1="160" y1="32" x2="200" y2="32" class="s-ink" stroke-width="1.6" marker-end="url(#ah)"/>
+        <text x="112" y="126" text-anchor="end" class="svgtxt f-ink">1</text><text x="212" y="126" text-anchor="end" class="svgtxt f-ink">2</text>
+        <text x="312" y="126" text-anchor="end" class="svgtxt f-ink">3</text><text x="412" y="126" text-anchor="end" class="svgtxt f-ink">4</text>
+        <g class="s-mut" stroke-width="1"><line x1="130" y1="268" x2="430" y2="268"/><line x1="130" y1="262" x2="130" y2="274"/><line x1="230" y1="262" x2="230" y2="274"/><line x1="330" y1="262" x2="330" y2="274"/><line x1="430" y1="262" x2="430" y2="274"/></g>
+        <text x="180" y="286" text-anchor="middle" class="svgmath f-mut">s</text><text x="280" y="286" text-anchor="middle" class="svgmath f-mut">s</text><text x="380" y="286" text-anchor="middle" class="svgmath f-mut">s</text>
+        <line x1="530" y1="160" x2="530" y2="256" class="s-mut"/><line x1="524" y1="160" x2="536" y2="160" class="s-mut"/><line x1="524" y1="256" x2="536" y2="256" class="s-mut"/>
+        <text x="543" y="212" class="svgmath f-mut">t</text>
+        <text x="50" y="246" class="svgtxt f-mut">namuna</text>
+      </svg>
+      <figcaption>Tok 1-zond orqali kirib, 4-zonddan chiqadi (uzuq chiziqlar — tok chiziqlari). Voltmetr 2 va 3-zondlar orasidagi potensiallar farqini o'lchaydi, undan tok o'tmaydi.</figcaption>
+    </figure>
+
+    <h2>3. Yarim cheksiz namuna (\(t \gg s\))</h2>
+    <p>Yarim cheksiz namuna sirtidagi nuqtaviy kontakt orqali kirgan tok yarim sfera bo'ylab bir tekis tarqaladi. Kontaktdan \(r\) masofada tok zichligi, maydon kuchlanganligi va potensial quyidagicha:</p>
+    <div class="eq">\[ j(r) = \frac{I}{2\pi r^2},\qquad E = \rho\, j,\qquad \varphi(r) = \frac{\rho I}{2\pi r} \]</div>
+    <p>1-zond (\(+I\)) va 4-zond (\(-I\)) potensiallarini ustma-ust qo'yish (superpozitsiya) orqali ichki zondlar potensialini topamiz:</p>
+    <div class="eq">\[ \varphi_2 = \frac{\rho I}{2\pi}\left(\frac{1}{s}-\frac{1}{2s}\right),\qquad \varphi_3 = \frac{\rho I}{2\pi}\left(\frac{1}{2s}-\frac{1}{s}\right) \]</div>
+    <div class="eq">\[ V = \varphi_2-\varphi_3 = \frac{\rho I}{2\pi s}\quad\Longrightarrow\quad \rho_0 = 2\pi s\,\frac{V}{I} \]</div>
+    <p>Zondlar oralig'i teng bo'lmasa (\(s_1, s_2, s_3\)):</p>
+    <div class="eq">\[ \rho = \frac{2\pi\, V/I}{\dfrac{1}{s_1}+\dfrac{1}{s_3}-\dfrac{1}{s_1+s_2}-\dfrac{1}{s_2+s_3}} \]</div>
+
+    <h2>4. Yupqa namuna (\(t \ll s\)) va qatlam qarshiligi</h2>
+    <p>Namuna yupqa bo'lsa, tok yarim sfera bo'ylab emas, qatlam ichida silindr bo'ylab tarqaladi:</p>
+    <div class="eq">\[ j(r) = \frac{I}{2\pi r t},\qquad \varphi(r) = -\frac{\rho I}{2\pi t}\,\ln r \]</div>
+    <div class="eq">\[ V = \frac{\rho I}{\pi t}\,\ln 2\quad\Longrightarrow\quad \rho = \frac{\pi}{\ln 2}\,t\,\frac{V}{I} = 4.532\,t\,\frac{V}{I} \]</div>
+    <p>Yupqa qatlam (diffuziya qatlami, plyonka) uchun odatda <b>qatlam qarshiligi</b> beriladi. Uning birligi \(\Omega/\square\) («om kvadratga»), chunki istalgan o'lchamli kvadrat shaklidagi qatlam bo'lagining qarshiligi bir xil:</p>
+    <div class="eq">\[ R_\square = \frac{\rho}{t} = 4.532\,\frac{V}{I} \]</div>
+
+    <h2>5. Umumiy holat: geometrik tuzatish koeffitsiyentlari</h2>
+    <p>Real namuna qalinligi zondlar oralig'i bilan solishtirsa bo'ladigan va o'lchami chekli bo'ladi. Bu holda:</p>
+    <div class="eq">\[ \rho = 2\pi s\,\frac{V}{I}\;F_1\!\left(\frac{t}{s}\right)F_2\!\left(\frac{d}{s}\right) = \rho_0\,F_1F_2 \]</div>
+    <p><b>Qalinlik bo'yicha tuzatish.</b> Namuna izolyatsiyalovchi taglikda yotgan bo'lsa, pastki sirtdan tok o'tmaydi. Bu shartni «tasvir manbalari» usuli bilan bajarish mumkin: har bir zondning sirtlardagi ko'zgu tasvirlari \(z = \pm 2kt\) chuqurlikka qo'yiladi:</p>
+    <div class="eq">\[ \varphi(r) = \frac{\rho I}{2\pi}\left[\frac{1}{r} + \sum_{k=1}^{\infty}\frac{2}{\sqrt{r^2+(2kt)^2}}\right] \]</div>
+    <p>Qatorni yig'ish yopiq ko'rinishdagi ifodani beradi (Valdes):</p>
+    <div class="eq">\[ F_1 = \frac{t/s}{2\ln\left[\dfrac{\sinh(t/s)}{\sinh(t/2s)}\right]} \]</div>
+    <p>Chegaraviy hollar: \(t \gg s\) da \(F_1 \to 1\) (yarim cheksiz namuna), \(t \ll s\) da \(F_1 \to \dfrac{t}{2s\ln 2}\) (yupqa qatlam formulasi).</p>
+    <div class="tbl-wrap"><table><thead><tr><th class="num">\(t/s\)</th><th class="num">\(F_1\) (aniq)</th><th class="num">\(t/(2s\ln 2)\)</th><th class="num">\(\rho_0/\rho = 1/F_1\)</th></tr></thead><tbody id="f1Table"></tbody></table></div>
+    <p><b>Diametr bo'yicha tuzatish.</b> Zondlar \(d\) diametrli yupqa diskning markazida turgan bo'lsa (Smits, 1958):</p>
+    <div class="eq">\[ F_2 = \frac{\ln 2}{\ln 2 + \ln\left[\dfrac{(d/s)^2+3}{(d/s)^2-3}\right]} \]</div>
+    <div class="tbl-wrap"><table><thead><tr><th class="num">\(d/s\)</th><th class="num">\(F_2\)</th><th class="num">Tuzatishsiz xatolik</th></tr></thead><tbody id="f2Table"></tbody></table></div>
+    <p>Amalda \(d \ge 40s\) bo'lsa, \(F_2\) ni hisobga olmasa ham bo'ladi (xatolik \(< 0.6\ \%\)). Simulyatorda qalin va kichik namunalar uchun \(F = F_1F_2\) ko'paytmasi ishlatiladi. Bu keng tarqalgan yaqinlashish.</p>
+
+    <h2>6. Parazit kuchlanishlar va o'lchash shartlari</h2>
+    <ul>
+      <li><b>Termo-EYuK.</b> Zondlar harorati bir xil bo'lmasa (Peltye effekti, qizdirgich, qo'l issiqligi), metall-yarimo'tkazgich juftida tokka bog'liq bo'lmagan \(V_0\) kuchlanish hosil bo'ladi. U tok yo'nalishini almashtirib yo'qotiladi:
+        <div class="eq">\[ \bar V = \frac{V(+I) - V(-I)}{2},\qquad \frac{V}{I} = \frac{V(+I)-V(-I)}{I_+ - I_-} \]</div></li>
+      <li><b>Tokni tanlash.</b> Tok kichik bo'lsa, \(V\) shovqin bilan solishtirsa bo'ladigan darajada kichik bo'ladi. Tok katta bo'lsa, quyidagi muammolar paydo bo'ladi:
+        <ul>
+          <li>zond uchlari atrofida Joul issiqligi ajraladi;</li>
+          <li>1-zonddan namunaga asosiy bo'lmagan tashuvchilar injeksiyalanadi va o'tkazuvchanlik oshadi;</li>
+          <li>tok manbaining kuchlanish chegarasi (20 V) oshib ketadi.</li>
+        </ul>
+        Odatda tok \(V \approx 1\text{–}20\ \text{mV}\) bo'ladigan qilib tanlanadi.</li>
+      <li><b>Yorug'lik.</b> Fotonlar elektron-kovak juftlarini hosil qiladi (fotoo'tkazuvchanlik) va \(\rho\) kamayadi. Bu yuqori omli va xususiy namunalarda sezilarli, shuning uchun o'lchash qorong'ida o'tkaziladi.</li>
+      <li><b>Chetga yaqinlik.</b> Zondlar namuna chetidan kamida \(4s\text{–}5s\) uzoqda turishi kerak, aks holda \(F_2\) tuzatishi kiritiladi.</li>
+    </ul>
+
+    <h2>7. Solishtirma qarshilikning haroratga bog'liqligi</h2>
+    <div class="eq">\[ \sigma = \frac{1}{\rho} = e\,(n\mu_n + p\mu_p) \]</div>
+    <p><b>Harakatchanlik.</b> Tashuvchilar panjara tebranishlarida (fononlarda) va ionlashgan kirishmalarda sochiladi. Matissen qoidasiga ko'ra:</p>
+    <div class="eq">\[ \frac{1}{\mu} = \frac{1}{\mu_L}+\frac{1}{\mu_I},\qquad \mu_L\propto T^{-3/2},\qquad \mu_I\propto \frac{T^{3/2}}{N_I} \]</div>
+    <p>Real kristallarda panjara sochilishi uchun daraja ko'rsatkichi \(-3/2\) dan biroz farq qiladi: Ge elektronlari uchun \(\approx -1.66\), Si elektronlari uchun \(\approx -2.4\).</p>
+    <p><b>Konsentratsiya.</b> Xususiy tashuvchilar konsentratsiyasi:</p>
+    <div class="eq">\[ n_i = \sqrt{N_c N_v}\,\exp\!\left(-\frac{E_g}{2kT}\right)\propto T^{3/2}\exp\!\left(-\frac{E_g}{2kT}\right) \]</div>
+    <p>Donorlar to'liq ionlashgan n-tip namunada elektroneytrallik shartidan:</p>
+    <div class="eq">\[ n = \frac{N_d}{2}+\sqrt{\frac{N_d^2}{4}+n_i^2},\qquad p=\frac{n_i^2}{n} \]</div>
+    <figure class="fig">
+      <svg viewBox="0 0 560 270" role="img" aria-label="ln rho ning 1000/T ga bog'liqligi: xususiy soha, kirishmali soha va muzlash sohasi">
+        <line x1="60" y1="230" x2="530" y2="230" class="s-ink" stroke-width="1.4" marker-end="url(#ah)"/>
+        <line x1="60" y1="230" x2="60" y2="20" class="s-ink" stroke-width="1.4" marker-end="url(#ah)"/>
+        <text x="520" y="252" text-anchor="end" class="svgmath f-ink">1000/T</text>
+        <text x="68" y="26" class="svgmath f-ink">ln ρ</text>
+        <path d="M72 214 C 140 150, 178 102, 218 94 S 330 112, 382 120 C 432 126, 470 80, 512 30" class="s-acc f-none" stroke-width="2.4"/>
+        <line x1="210" y1="40" x2="210" y2="226" class="s-mut" stroke-dasharray="3 4"/>
+        <line x1="392" y1="40" x2="392" y2="226" class="s-mut" stroke-dasharray="3 4"/>
+        <text x="132" y="58" text-anchor="middle" class="svgtxt f-ink">Xususiy soha</text>
+        <text x="132" y="76" text-anchor="middle" class="svgtxt f-mut">qiyalik = E_g/2k</text>
+        <text x="300" y="58" text-anchor="middle" class="svgtxt f-ink">Kirishmali soha</text>
+        <text x="300" y="76" text-anchor="middle" class="svgtxt f-mut">n ≈ N_d, ρ ∝ 1/μ(T)</text>
+        <text x="462" y="58" text-anchor="middle" class="svgtxt f-ink">Muzlash</text>
+        <text x="462" y="76" text-anchor="middle" class="svgtxt f-mut">T ≲ 100 K</text>
+        <text x="140" y="250" text-anchor="middle" class="svgtxt f-mut">yuqori T</text>
+        <text x="470" y="250" text-anchor="middle" class="svgtxt f-mut">past T</text>
+      </svg>
+      <figcaption>Legirlangan yarimo'tkazgichda \(\ln\rho\) ning \(1000/T\) ga bog'liqligi (sxematik). Simulyator 150–600 K oralig'ini qamraydi.</figcaption>
+    </figure>
+    <ul>
+      <li><b>Kirishmali (to'yinish) soha:</b> \(n \approx N_d\) o'zgarmaydi, \(\rho\) esa harorat ortishi bilan <b>ortadi</b>, chunki panjara sochilishi kuchayadi va \(\mu\) kamayadi (metalga o'xshash xatti-harakat).</li>
+      <li><b>Xususiy soha:</b> \(n_i\) kirishmalar konsentratsiyasidan oshib ketadi va \(\rho\) eksponensial <b>kamayadi</b>:
+        <div class="eq">\[ \ln\rho \approx \frac{E_g}{2kT}+\text{const}\quad\Longrightarrow\quad E_g = 2k\,\frac{\Delta \ln\rho}{\Delta(1/T)} \]</div></li>
+      <li><b>Muzlash sohasi</b> (\(T \lesssim 100\ \text{K}\), simulyatorda yo'q): kirishmalar to'liq ionlashmaydi va \(\rho\) yana ortadi.</li>
+    </ul>
+    <p>Kirishmali sohada asosiy tashuvchilar konsentratsiyasi \(\rho\) va ma'lum harakatchanlik orqali topiladi:</p>
+    <div class="eq">\[ n \approx \frac{1}{e\,\rho\,\mu_n}\qquad\text{yoki}\qquad p \approx \frac{1}{e\,\rho\,\mu_p} \]</div>
+
+    <h2>8. Namunalar parametrlari (simulyator modeli)</h2>
+    <div class="tbl-wrap"><table><thead><tr><th>Namuna</th><th class="num">\(E_g\), eV</th><th class="num">Kirishma, m⁻³</th><th class="num">\(\mu_n\) (300 K), m²/(V·s)</th><th class="num">\(\mu_p\) (300 K), m²/(V·s)</th><th class="num">\(\rho\) (300 K), \(\Omega\cdot\)cm</th><th class="num">\(t\) × \(d\), mm</th></tr></thead><tbody id="matTable"></tbody></table></div>
+
+    <h2>9. Lupa nimani ko'rsatadi</h2>
+    <p>Lupa namunaning zondlar ostidagi vertikal kesimini ko'rsatadi:</p>
+    <ul>
+      <li><span style="color:var(--fb)">To'q sariq uzuq chiziqlar</span> — tok chiziqlari.</li>
+      <li><span style="color:var(--fe)">binafsha chiziqlar</span> — ekvipotensial chiziqlar.</li>
+      <li>Ko'k nuqtalar — erkin elektronlar.</li>
+      <li>Uzuq qizil halqalar — kovaklar.</li>
+    </ul>
+    <p>Maydon yuqoridagi tasvir manbalari formulasi bilan hisoblanadi. Shuning uchun yupqa namunada tok chiziqlari qatlam ichida qisilib ketishini, qalin namunada esa chuqur yoyilishini ko'rish mumkin.</p>
+    <p class="callout"><b>Kovak proton emas.</b> Kovak — kovalent bog'da elektron yetishmaydigan bo'sh joy. Lupada u panjara tugunlari bo'ylab sakrab ko'chadi: qo'shni bog'dagi valent elektron (kichik ko'k nuqta) bo'sh joyga o'tadi, bo'sh joy esa teskari tomonga siljiydi. Atom yadrolari va kirishma ionlari joyida qoladi. Elektron-kovak juftini hosil qilish uchun \(\sim 1\ \text{eV}\) yetarli, yadrodan proton ajratish uchun esa \(\sim 8\ \text{MeV}\) kerak.</p>
+  </div>
+</section>
+
+<!-- ============ TARTIB ============ -->
+<section class="tab" id="tab-tartib" hidden>
+  <div class="prose">
+    <h2>Tayyorgarlik</h2>
+    <ol>
+      <li>«Simulyator» bo'limini oching. 3D stendni sichqoncha bilan aylantirib, qurilmalar bilan tanishing:
+        <ul>
+          <li>zond kallagi;</li>
+          <li>termostolik;</li>
+          <li>tok manbai;</li>
+          <li>voltmetr;</li>
+          <li>harorat regulyatori.</li>
+        </ul>
+        «Zondlar» kamera tugmasi ignalarni yaqindan ko'rsatadi.</li>
+      <li>Zondlar namunaga tushirilganini tekshiring («Zondlarni ko'tarish / tushirish» tugmasi). Zondlar ko'tarilgan bo'lsa, zanjir ochiq bo'ladi.</li>
+      <li>Lupani namuna ustiga olib boring va kesimdagi tok chiziqlarini kuzating.</li>
+    </ol>
+
+    <h2>A bosqich · Volt-amper xarakteristikasi (\(T = 300\ \text{K}\))</h2>
+    <ol>
+      <li>«A · V–I» rejimini va namunani (masalan, n-Si) tanlang. Qalinlik va diametr namunaning haqiqiy o'lchamlariga avtomatik qo'yiladi.</li>
+      <li>Sxema: «4 zondli». Tokni 0.05 mA dan boshlab 7–8 ta qiymatda o'zgartiring. Har birida «Avtomatik (+I va −I)» ni bosing yoki qutbni almashtirib, «Yozib olish» ni ikki marta bosing.</li>
+      <li>«Manba kuchlanishi» 20 V ga yetsa (ko'rsatkich qizil rangga o'tadi), tokni kamaytiring.</li>
+      <li>Sxemani «2 zondli» ga o'tkazib, xuddi shu toklarda o'lchashni takrorlang. Ikkala grafikni solishtiring: qaysi biri to'g'ri chiziq, qaysi biri koordinata boshidan o'tadi?</li>
+      <li>4 zondli grafik qiyaligi \(V/I\) dan \(F = F_1F_2\), \(\rho\), \(\sigma\) va konsentratsiyani hisoblab, «Tekshirish» ni bosing.</li>
+    </ol>
+
+    <h2>B bosqich · Geometrik tuzatishlar</h2>
+    <ol>
+      <li>«B · Geometriya» rejimiga o'ting, namunani tanlang (masalan, n-Ge), \(T = 300\ \text{K}\).</li>
+      <li>\(d = 60\ \text{mm}\) da qalinlikni 0.1, 0.2, 0.3, 0.5, 0.7, 1, 1.5, 2, 3, 5 mm qilib o'lchang (virtual laboratoriyada bir xil materialdan turli qalinlikdagi namunalar).</li>
+      <li>\(t = 0.3\ \text{mm}\) da diametrni 4, 5, 7, 10, 20, 40 mm qilib o'lchang.</li>
+      <li>Jadvalda tuzatishsiz \(\rho_0 = 2\pi s\,V/I\) va tuzatilgan \(\rho = \rho_0F_1F_2\) ni solishtiring. Grafikda \(\rho_0\) qalinlikka kuchli bog'liq bo'lishi, \(\rho\) esa o'zgarmas bo'lishi kerak.</li>
+    </ol>
+
+    <h2>C bosqich · Haroratga bog'liqlik</h2>
+    <ol>
+      <li>«C · Harorat» rejimiga o'ting. Namuna sifatida i-Ge yoki n-Ge oling: kremniyda xususiy soha faqat 550–600 K da boshlanadi.</li>
+      <li>Tokni voltmetr ko'rsatkichi 1–20 mV bo'ladigan qilib tanlang.</li>
+      <li>Haroratni 150 K dan 600 K gacha 25 K qadam bilan o'zgartirib, har safar «Avtomatik (+I va −I)» ni bosing.</li>
+      <li>\(\lg\rho(T)\) grafigida kirishmali va xususiy sohalarni ajrating. \(\ln\rho(1000/T)\) grafigining eng yuqori haroratli nuqtalaridan \(E_g\) ni baholang.</li>
+      <li>Biror haroratda lampani yoqib-o'chirib, fotoo'tkazuvchanlik ta'sirini kuzating.</li>
+    </ol>
+
+    <h2>Oflayn yordamchi</h2>
+    <p>O'ng pastki burchakdagi <b>Yordamchi</b> tugmasi internetsiz ishlaydigan yordamchini ochadi. Undan quyidagilarni so'rash mumkin:</p>
+    <ul>
+      <li>nazariya bo'yicha savollar;</li>
+      <li>«Ma'lumotlarimni tekshir» — jadvallaringizni tahlil qildirish;</li>
+      <li>qiymatlarni yozib hisoblatish, masalan: «V=12.4 mV, I=0.5 mA, t=0.5 mm, d=50 mm».</li>
+    </ul>
+
+    <h2>Hisobot uchun</h2>
+    <ul>
+      <li>A bosqich jadvali, 4 va 2 zondli \(\bar V(I)\) grafiklari, kontakt qarshiligi haqida xulosa.</li>
+      <li>\(F_1, F_2, \rho, \sigma\) va konsentratsiya qiymatlari, nisbiy xatoliklari.</li>
+      <li>B bosqich jadvali va \(\rho_0(t/s)\), \(\rho(t/s)\) grafigi.</li>
+      <li>\(\lg\rho(T)\) va \(\ln\rho(1000/T)\) grafiklari, \(E_g\) bahosi.</li>
+      <li>Lupa kuzatuvlari: yupqa va qalin namunada tok chiziqlari, nima uchun ichki zondlardan tok o'tmasligi.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ SIMULYATOR ============ -->
+<section class="tab" id="tab-simulyator" hidden>
+  <div class="simgrid">
+    <div class="col-main">
+      <div class="card">
+        <div class="card-head">
+          <h3 id="appTitle">Laboratoriya stoli</h3>
+          <div class="lens-ctl">
+            <label class="check"><input type="checkbox" id="chkLens" checked> Lupa</label>
+            <button class="btn ghost sm" id="btnLensHome" type="button">Lupani namunaga qo'yish</button>
+          </div>
+        </div>
+        <div class="stage" id="stage" tabindex="0" aria-label="Laboratoriya qurilmasi. Lupani suring yoki strelka tugmalari bilan siljiting.">
+          <div id="app3d" hidden></div>
+          <canvas id="lensCv" hidden></canvas>
+          <canvas id="appCv" aria-label="To'rt zondli stend sxemasi"></canvas>
+        </div>
+        <div class="viewbtns" id="viewBtns" hidden>
+          <span class="eyebrow">Kamera:</span>
+          <button class="btn ghost sm" type="button" data-view="umumiy">Umumiy ko'rinish</button>
+          <button class="btn ghost sm" type="button" data-view="stend">Stend</button>
+          <button class="btn ghost sm" type="button" data-view="zond">Zondlar</button>
+          <button class="btn ghost sm" type="button" data-view="asbob">Asboblar</button>
+        </div>
+        <p class="hint" id="appHint">Lupani suring (klaviaturada ← ↑ → ↓). Namuna ustida u namuna ichidagi jarayonni ko'rsatadi.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Mikro-ko'rinish: zondlar ostidagi kesim</h3>
+          <span class="eyebrow" id="microTag">kesim · y = 0 tekislik</span>
+        </div>
+        <div class="micro-wrap">
+          <canvas id="microCv" aria-label="Namuna kesimida tok chiziqlari, ekvipotensial chiziqlar va zaryad tashuvchilar harakati"></canvas>
+        </div>
+        <div class="micro-ctl">
+          <button class="btn sm" id="btnPlay" type="button">Pauza</button>
+          <button class="btn ghost sm" id="btnReset" type="button">Qaytadan</button>
+          <label style="display:flex;gap:6px;align-items:center">Tezlik <input type="range" id="speedR" min="0.25" max="2" step="0.25" value="1" style="width:90px"></label>
+          <label class="check"><input type="checkbox" id="chkLines" checked> Tok chiziqlari</label>
+          <label class="check"><input type="checkbox" id="chkEq" checked> Ekvipotensiallar</label>
+        </div>
+        <div class="micro-info">
+          <div>
+            <div class="phase">
+              <span class="phase-step" id="phaseStep"></span>
+              <h4 id="phaseTitle"></h4>
+              <p id="phaseText"></p>
+            </div>
+            <div class="legend">
+              <span><i class="sw e"></i>erkin elektron</span>
+              <span><i class="sw h"></i>kovak — bog'dagi bo'sh joy</span>
+              <span><i class="sw ve"></i>valent elektron sakrashi</span>
+              <span><i class="sw ion"></i>kirishma ioni (qo'zg'almas)</span>
+              <span><i class="sw atom"></i>panjara atomi (qo'zg'almas)</span>
+              <span><i class="sw fb"></i>tok chiziqlari</span>
+              <span><i class="sw fe"></i>ekvipotensial chiziqlar</span>
+            </div>
+            <p class="hint">Kesim sxematik: panjara masshtabsiz ko'rsatilgan (haqiqiy atomlararo masofa ~0.5 nm). Tok chiziqlari va potensial aniq formulalar bo'yicha hisoblangan.</p>
+          </div>
+          <div>
+            <canvas id="phiCv" aria-label="Namuna sirti bo'ylab potensial taqsimoti"></canvas>
+            <dl class="live" id="liveNums"></dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="col-side">
+      <div class="card ctl">
+        <h3>Boshqaruv paneli</h3>
+        <div class="seg" role="group" aria-label="Tajriba bosqichi">
+          <button type="button" data-mode="A" aria-pressed="true">A · V–I</button>
+          <button type="button" data-mode="B" aria-pressed="false">B · Geometriya</button>
+          <button type="button" data-mode="C" aria-pressed="false">C · Harorat</button>
+        </div>
+        <label class="f">Namuna
+          <select id="selMat"></select>
+        </label>
+        <label class="f"><span>Qalinlik \(t\)</span>
+          <span class="row"><input type="range" id="rngT" min="0.10" max="5.00" step="0.05" value="0.50"><span class="val" id="valT">0.50 mm</span></span>
+        </label>
+        <label class="f"><span>Diametr \(d\)</span>
+          <span class="row"><input type="range" id="rngD" min="4" max="60" step="1" value="50"><span class="val" id="valD">50 mm</span></span>
+        </label>
+        <label class="f"><span>Harorat \(T\)</span>
+          <span class="row"><input type="range" id="rngTemp" min="150" max="600" step="5" value="300"><span class="val" id="valTemp">300 K</span></span>
+        </label>
+        <label class="f"><span>Tok \(I\)</span>
+          <span class="row"><input type="range" id="rngI" min="0" max="14" step="1" value="8"><span class="val" id="valI">1.00 mA</span><button type="button" class="pol" id="polI" aria-label="Tok yo'nalishi">+I: 1→4</button></span>
+        </label>
+        <div class="f">
+          <span>Voltmetr ulanishi</span>
+          <div class="seg two" role="group" aria-label="Ulanish sxemasi">
+            <button type="button" data-sch="4" aria-pressed="true">4 zondli (2–3)</button>
+            <button type="button" data-sch="2" aria-pressed="false">2 zondli (1–4)</button>
+          </div>
+        </div>
+        <div class="btnrow" style="margin-top:0"><button class="btn ghost" type="button" id="btnProbe">Zondlarni ko'tarish</button></div>
+        <label class="check"><input type="checkbox" id="chkLight"> <span>Stol lampasi yoniq (yorug'lik namunaga tushadi)</span></label>
+        <label class="check"><input type="checkbox" id="chkIdeal"> <span>Ideal model: termo-EYuK, shovqin, qizish va yorug'liksiz. Faqat taqqoslash uchun.</span></label>
+        <div class="lockmsg" id="lockMsg" hidden></div>
+        <p class="hint" style="margin:0">Zondlar oralig'i \(s = 1.00\) mm, igna uchi radiusi 40 μm.</p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:10px">O'lchov asboblari</h3>
+        <div class="lcds">
+          <div class="lcd" id="lcdI"><div class="lab"><span>TOK MANBAI</span><span>mA</span></div><div class="dig">0.000</div></div>
+          <div class="lcd" id="lcdV"><div class="lab"><span>VOLTMETR</span><span>mV</span></div><div class="dig">0.000</div></div>
+          <div class="lcd" id="lcdU"><div class="lab"><span>MANBA KUCHLANISHI</span><span>V</span></div><div class="dig">0.00</div></div>
+          <div class="lcd" id="lcdT"><div class="lab"><span>NAMUNA HARORATI</span><span>K</span></div><div class="dig">300.0</div></div>
+        </div>
+        <div class="slots" id="slots"></div>
+        <div class="btnrow">
+          <button class="btn" type="button" id="btnRec">Yozib olish</button>
+          <button class="btn" type="button" id="btnAuto">Avtomatik (+I va −I)</button>
+        </div>
+        <div class="status info" id="status" role="status"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="data">
+    <div class="card" id="dataA">
+      <div class="card-head">
+        <h3>A bosqich · Volt-amper xarakteristikasi</h3>
+        <button class="btn ghost sm" type="button" id="clrA">Jadvalni tozalash</button>
+      </div>
+      <div class="data-grid">
+        <div class="tbl-wrap"><table id="tblA"></table></div>
+        <canvas class="plot" id="plotA" aria-label="Kuchlanishning tokka bog'liqligi"></canvas>
+      </div>
+      <div class="analysis">
+        <h4>Natijalarni hisoblash</h4>
+        <div class="given" id="givenA"></div>
+        <div class="form-grid">
+          <label><span>Tuzatish koeffitsiyenti \(F = F_1F_2\)</span><input type="text" id="inF" inputmode="decimal" placeholder="masalan 0.345"></label>
+          <label><span>Solishtirma qarshilik \(\rho\), \(\Omega\cdot\)cm</span><input type="text" id="inRho" inputmode="decimal" placeholder="masalan 9.3"></label>
+          <label><span>O'tkazuvchanlik \(\sigma\), S/m</span><input type="text" id="inSig" inputmode="decimal" placeholder="masalan 10.8"></label>
+          <label><span>Asosiy tashuvchilar konsentratsiyasi, m⁻³</span><input type="text" id="inN" inputmode="decimal" placeholder="masalan 5.0e20"></label>
+        </div>
+        <p class="hint">Sonlarni 5.0e20 yoki 5,0·10^20 ko'rinishida yozish mumkin. Javob sizning o'z ma'lumotlaringiz bo'yicha ±3 % aniqlikda tekshiriladi.</p>
+        <div class="btnrow"><button class="btn" type="button" id="btnCheck">Tekshirish</button></div>
+        <div id="feedA"></div>
+      </div>
+    </div>
+
+    <div class="card" id="dataB">
+      <div class="card-head">
+        <h3>B bosqich · Geometrik tuzatishlar</h3>
+        <button class="btn ghost sm" type="button" id="clrB">Jadvalni tozalash</button>
+      </div>
+      <div class="data-grid">
+        <div class="tbl-wrap"><table id="tblB"></table></div>
+        <canvas class="plot" id="plotB" aria-label="Tuzatishsiz va tuzatilgan solishtirma qarshilikning t/s ga bog'liqligi"></canvas>
+      </div>
+      <p class="hint">\(\rho_0 = 2\pi s\,V/I\) — yarim cheksiz namuna formulasi (tuzatishsiz). \(\rho = \rho_0F_1F_2\) — tuzatilgan qiymat. Yupqa namunalar uchun \(R_\square = 4.532\,V/I\).</p>
+    </div>
+
+    <div class="card" id="dataC">
+      <div class="card-head">
+        <h3>C bosqich · Haroratga bog'liqlik</h3>
+        <button class="btn ghost sm" type="button" id="clrC">Jadvalni tozalash</button>
+      </div>
+      <div class="tbl-wrap"><table id="tblC"></table></div>
+      <div class="grid2" style="margin-top:14px">
+        <canvas class="plot" id="plotC1" aria-label="Solishtirma qarshilik logarifmining haroratga bog'liqligi"></canvas>
+        <canvas class="plot" id="plotC2" aria-label="ln rho ning 1000/T ga bog'liqligi"></canvas>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px;font-size:.88rem">
+        <label for="egN">\(E_g\) ni eng yuqori haroratli</label>
+        <select id="egN" style="width:auto"><option>3</option><option selected>4</option><option>5</option><option>6</option><option>8</option></select>
+        <span>nuqta bo'yicha baholash:</span>
+        <b id="egOut" style="font-family:var(--f-mono)">—</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SINOV ============ -->
+<section class="tab" id="tab-sinov" hidden>
+  <div class="prose"><h2>O'z-o'zini tekshirish</h2><p>Har bir savolga javob belgilang va oxirida natijani tekshiring. Har bir javobga izoh beriladi.</p></div>
+  <form class="quiz" id="quiz"></form>
+  <div class="btnrow"><button class="btn" type="button" id="btnQuiz">Javoblarni tekshirish</button><button class="btn ghost" type="button" id="btnQuizReset">Qaytadan</button></div>
+  <p class="score" id="quizScore" role="status"></p>
+</section>
+
+<!-- ============ ADABIYOTLAR ============ -->
+<section class="tab" id="tab-adabiyot" hidden>
+  <div class="prose">
+    <h2>Adabiyotlar</h2>
+    <ol>
+      <li>L. B. Valdes. Resistivity measurements on germanium for transistors. <i>Proceedings of the IRE</i>, 42 (1954), 420–427.</li>
+      <li>F. M. Smits. Measurement of sheet resistivities with the four-point probe. <i>Bell System Technical Journal</i>, 37 (1958), 711–718.</li>
+      <li>D. K. Schroder. <i>Semiconductor Material and Device Characterization</i>, 3-nashr. Wiley, 2006. 1-bob: Resistivity.</li>
+      <li>H. Topsøe. <i>Geometric factors in four point resistivity measurement</i>. Haldor Topsøe, Bulletin 472-13, 1968.</li>
+      <li>SEMI MF84. Test method for measuring resistivity of silicon wafers with an in-line four-point probe.</li>
+      <li>S. M. Sze, K. K. Ng. <i>Physics of Semiconductor Devices</i>, 3-nashr. Wiley, 2007.</li>
+      <li>L. J. van der Pauw. A method of measuring specific resistivity and Hall effect of discs of arbitrary shape. <i>Philips Research Reports</i>, 13 (1958), 1–9.</li>
+      <li>Ioffe instituti. Yarimo'tkazgichlar parametrlari arxivi (NSM): <a href="https://www.ioffe.ru/SVA/NSM/Semicond/" target="_blank" rel="noopener">www.ioffe.ru/SVA/NSM/Semicond</a>.</li>
+    </ol>
+  </div>
+</section>
+
+</div>
+</main>
+
+<button class="ai-fab" id="aiFab" type="button" aria-expanded="false" aria-controls="aiPanel">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="10.5" r="1.2" fill="currentColor"/><circle cx="12" cy="10.5" r="1.2" fill="currentColor"/><circle cx="15" cy="10.5" r="1.2" fill="currentColor"/></svg>
+  <span>Yordamchi</span>
+</button>
+<aside class="ai-panel" id="aiPanel" hidden aria-label="Laboratoriya yordamchisi">
+  <div class="ai-head">
+    <div><b>Laboratoriya yordamchisi</b><span class="ai-sub">oflayn · internet kerak emas</span></div>
+    <button type="button" class="ai-x" id="aiClose" aria-label="Yordamchini yopish">✕</button>
+  </div>
+  <div class="ai-log" id="aiLog" role="log" aria-live="polite"></div>
+  <div class="ai-chips" id="aiChips"></div>
+  <form class="ai-form" id="aiForm" autocomplete="off">
+    <label for="aiIn" class="sr">Savol</label>
+    <input type="text" id="aiIn" placeholder="Savol yoki qiymatlar: V=12.4 mV, I=0.5 mA, t=0.5 mm…">
+    <button class="btn" type="submit">Yuborish</button>
+  </form>
+</aside>
+
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},svg:{fontCache:"global"},options:{enableMenu:false}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+"use strict";
+/* ---------- konstantalar va materiallar ---------- */
+var E=1.602176634e-19, KB=8.617333262e-5, SP=1.0e-3, LN2=Math.log(2), UMAX=20, RTH=60, DN_LIGHT=3e18;
+var IVALS=[0.01,0.02,0.05,0.1,0.2,0.3,0.5,0.7,1,1.5,2,3,5,7,10];
+// mun, mup — panjara sochilishi bilan cheklangan harakatchanlik (300 K), an, ap — daraja ko'rsatkichi; Rc — bitta zond kontakt qarshiligi (Om)
+var MATS={
+  nSi:{label:"n-Si (kremniy, fosforli)",short:"n-Si",type:"n",Eg:1.12,ni300:1.0e16,N:5e20,mun:0.145,an:2.4,mup:0.048,ap:2.2,Rc:2500,t:0.50,d:50,col:"#66758a"},
+  pSi:{label:"p-Si (kremniy, borli)",short:"p-Si",type:"p",Eg:1.12,ni300:1.0e16,N:1e21,mun:0.145,an:2.4,mup:0.048,ap:2.2,Rc:3000,t:0.38,d:50,col:"#6c6984"},
+  nGe:{label:"n-Ge (germaniy, surmali)",short:"n-Ge",type:"n",Eg:0.66,ni300:2.0e19,N:1e21,mun:0.39,an:1.66,mup:0.19,ap:2.33,Rc:200,t:2.0,d:20,col:"#a3abb3"},
+  pGe:{label:"p-Ge (germaniy, galliyli)",short:"p-Ge",type:"p",Eg:0.66,ni300:2.0e19,N:2e21,mun:0.39,an:1.66,mup:0.19,ap:2.33,Rc:220,t:2.0,d:20,col:"#aba59c"},
+  iGe:{label:"i-Ge (deyarli xususiy germaniy)",short:"i-Ge",type:"n",Eg:0.66,ni300:2.0e19,N:5e18,mun:0.39,an:1.66,mup:0.19,ap:2.33,Rc:1200,t:1.0,d:25,col:"#b6bec6"},
+  xSi:{label:"X namuna (n-Si, kirishmasi noma'lum)",short:"X (n-Si)",type:"n",Eg:1.12,ni300:1.0e16,N:2.4e21,mun:0.145,an:2.4,mup:0.048,ap:2.2,Rc:1800,t:0.60,d:40,col:"#5b6b7e",hidden:true}
+};
+function carriers(key,T,dn){
+  var m=MATS[key], r=T/300;
+  var ni=m.ni300*Math.pow(r,1.5)*Math.exp(-m.Eg/(2*KB)*(1/T-1/300));
+  var h=m.N/2, maj=h+Math.sqrt(h*h+ni*ni), mn=ni*ni/maj;
+  var n=(m.type==="n"?maj:mn)+(dn||0), p=(m.type==="n"?mn:maj)+(dn||0);
+  var muI=4.0*(1e21/m.N)*Math.pow(r,1.5);
+  var mun=1/(1/(m.mun*Math.pow(r,-m.an))+1/muI), mup=1/(1/(m.mup*Math.pow(r,-m.ap))+1/muI);
+  var sig=E*(n*mun+p*mup);
+  return {ni:ni,n:n,p:p,mun:mun,mup:mup,sigma:sig,rho:1/sig};
+}
+function F1(x){ if(x>15) return 1; return x/(2*Math.log(Math.sinh(x)/Math.sinh(x/2))); }
+function F2(y){ return LN2/(LN2+Math.log((y*y+3)/(y*y-3))); }
+function geomF(tmm,dmm){ var a=F1(tmm*1e-3/SP), b=F2(dmm*1e-3/SP); return {f1:a,f2:b,F:a*b}; }
+function gauss(){var u=1-Math.random(),v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+/* ---------- formatlash ---------- */
+var SUP={"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+function minus(s){return String(s).replace(/^-/,"−");}
+function sci(x,d){
+  d=d||3; if(x===null||x===undefined||!isFinite(x)) return "—"; if(x===0) return "0";
+  var e=Math.floor(Math.log10(Math.abs(x)));
+  if(e>=-2&&e<=3) return minus(String(+x.toPrecision(d)));
+  var m=x/Math.pow(10,e); if(Math.abs(m)>=9.995){m/=10;e+=1;}
+  return minus(m.toFixed(d-1))+"·10"+String(e).split("").map(function(c){return SUP[c];}).join("");
+}
+function mvs(v){var x=v*1000,a=Math.abs(x);return minus(a<10?x.toFixed(3):a<100?x.toFixed(2):a<1000?x.toFixed(1):x.toFixed(0));}
+function istr(mA){var a=Math.abs(mA);return minus(a<0.1?mA.toFixed(3):a<10?mA.toFixed(2):mA.toFixed(1));}
+function parseNum(s){
+  if(!s) return NaN;
+  s=String(s).trim().replace(/\s+/g,"").replace(/[−–]/g,"-").replace(/,/g,".");
+  s=s.replace(/[×x·*]10\^?\(?([-+]?\d+)\)?$/i,"e$1");
+  if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+  return Number(s);
+}
+
+/* ---------- holat ---------- */
+var st={mode:"A",mat:"nSi",tmm:0.5,dmm:50,T:300,Ii:8,sI:1,sch:4,down:true,light:false,ideal:false,lensOn:true,
+  tabA:{meta:null,rows:[]},tabB:{meta:null,rows:[]},tabC:{meta:null,rows:[]},read:null};
+var heat=0;
+var SAVE_KEY="tort-zond-lab-v1";
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({tabA:st.tabA,tabB:st.tabB,tabC:st.tabC}));}catch(e){}}
+function load(){try{var d=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");if(d){["tabA","tabB","tabC"].forEach(function(k){if(d[k]&&d[k].rows)st[k]=d[k];});}}catch(e){}}
+
+var $=function(s){return document.querySelector(s);};
+var mjQ=null;
+function mjx(el){
+  if(!el||!window.MathJax) return;
+  if(!mjQ) mjQ=(MathJax.startup&&MathJax.startup.promise)||Promise.resolve();
+  mjQ=mjQ.then(function(){ return MathJax.typesetPromise?MathJax.typesetPromise([el]):null; }).catch(function(){});
+}
+function setMath(el,html){ if(!el||el._raw===html) return; el._raw=html; el.innerHTML=html; mjx(el); }
+
+/* ---------- ranglar ---------- */
+var C={};
+function readColors(){
+  var cs=getComputedStyle(document.documentElement);
+  ["bg","surface","surface2","ink","muted","line","accent","electron","hole","copper","steel","fb","fe","ok","bad","warn"].forEach(function(k){C[k]=cs.getPropertyValue("--"+k).trim()||"#888";});
+}
+readColors();
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",readColors);}catch(e){}
+new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme","class","style"]});
+var FONT='"IBM Plex Sans","Segoe UI",system-ui,sans-serif', MONO='"IBM Plex Mono",Consolas,monospace', MATHF='"STIX Two Text",Cambria,Georgia,serif';
+
+/* ---------- bo'limlar ---------- */
+var TABS=["maqsad","nazariya","tartib","simulyator","sinov","adabiyot"];
+var curTab="simulyator";
+function showTab(){
+  var h=(location.hash||"").replace("#","");
+  curTab=TABS.indexOf(h)>=0?h:"simulyator";
+  TABS.forEach(function(t){$("#tab-"+t).hidden=(t!==curTab);});
+  document.querySelectorAll("nav.tabs a").forEach(function(a){if(a.dataset.t===curTab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
+  if(curTab==="simulyator"){resizeAll();renderAll();}
+}
+window.addEventListener("hashchange",showTab);
+
+/* ---------- nazariya jadvallari ---------- */
+(function(){
+  var r1="";
+  [0.1,0.2,0.3,0.5,0.7,1,1.5,2,3,5].forEach(function(x){var f=F1(x);r1+="<tr><td class='num'>"+x+"</td><td class='num'>"+f.toFixed(4)+"</td><td class='num'>"+(x<=1?(x/(2*LN2)).toFixed(4):"—")+"</td><td class='num'>"+(1/f).toFixed(3)+"</td></tr>";});
+  $("#f1Table").innerHTML=r1;
+  var r2="";
+  [4,5,7,10,15,20,40,100].forEach(function(y){var f=F2(y);r2+="<tr><td class='num'>"+y+"</td><td class='num'>"+f.toFixed(4)+"</td><td class='num'>"+((1/f-1)*100).toFixed(1)+" %</td></tr>";});
+  $("#f2Table").innerHTML=r2;
+  var rows="";
+  Object.keys(MATS).forEach(function(k){var m=MATS[k],c=carriers(k,300,0);
+    rows+="<tr><td>"+m.label+"</td><td class='num'>"+m.Eg+"</td><td class='num'>"+(m.hidden?"noma'lum":sci(m.N,2)+(m.type==="n"?" (donor)":" (akseptor)"))+"</td><td class='num'>"+c.mun.toFixed(3)+"</td><td class='num'>"+c.mup.toFixed(3)+"</td><td class='num'>"+(m.hidden?"o'lchang":sci(c.rho*100,3))+"</td><td class='num'>"+m.t.toFixed(2)+" × "+m.d+"</td></tr>";});
+  $("#matTable").innerHTML=rows;
+  var sel=$("#selMat");
+  Object.keys(MATS).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=MATS[k].label;sel.appendChild(o);});
+})();
+
+/* ---------- canvas o'lchamlari ---------- */
+var appCv=$("#appCv"), actx=appCv.getContext("2d");
+var microCv=$("#microCv"), mctx=microCv.getContext("2d");
+var phiCv=$("#phiCv"), pctx=phiCv.getContext("2d");
+var AW=760, AH=440, MW=640, MH=320, aS=1, mS=1;
+function resizeAll(){
+  var dpr=Math.min(2,window.devicePixelRatio||1);
+  var w=appCv.clientWidth; if(w>0){appCv.width=Math.round(w*dpr);appCv.height=Math.round(w*AH/AW*dpr);aS=appCv.width/AW;}
+  var mw=microCv.clientWidth; if(mw>0){microCv.width=Math.round(mw*dpr);microCv.height=Math.round(mw*MH/MW*dpr);mS=microCv.width/MW;}
+  if(phiCv.clientWidth>0){phiCv.width=Math.round(phiCv.clientWidth*dpr);phiCv.height=Math.round(phiCv.clientHeight*dpr);}
+  document.querySelectorAll("canvas.plot").forEach(function(c){if(c.clientWidth>0){c.width=Math.round(c.clientWidth*dpr);c.height=Math.round(c.clientHeight*dpr);}});
+  renderData();
+}
+if(window.ResizeObserver){new ResizeObserver(function(){resizeAll();}).observe(document.body);}else window.addEventListener("resize",resizeAll);
+
+/* ---------- o'lchash modeli ---------- */
+// V23 = I*rho/(2*pi*s*F1*F2); tok manbai yuklamasi: tarqalish qarshiligi (V14) + 2 ta kontakt qarshiligi
+function measure(sI,noisy){
+  var m=MATS[st.mat], g=geomF(st.tmm,st.dmm);
+  if(!st.down) return {open:true,V:(noisy&&!st.ideal)?gauss()*4e-6:0,U:0,I:0,Ts:st.T+0,g:g,c:carriers(st.mat,st.T,st.light&&!st.ideal?DN_LIGHT:0)};
+  var I=sI*IVALS[st.Ii]*1e-3, Ts=st.T+(st.ideal?0:heat);
+  var c=carriers(st.mat,Ts,(st.light&&!st.ideal)?DN_LIGHT:0);
+  var R23=c.rho/(2*Math.PI*SP*g.F);
+  var K14=6.23+43.1*g.f1;                 // V14/V23 nisbati (igna uchi radiusi 40 mkm)
+  var Rc=m.Rc*(0.4+0.6/(1+Math.abs(I)/2e-4)); // nochiziqli (Shottki) kontakt
+  var Rtot=R23*K14+2*Rc, U=I*Rtot, over=Math.abs(U)>UMAX, Ia=over?I*UMAX/Math.abs(U):I;
+  if(over) U=(I>0?1:-1)*UMAX;
+  var V=st.sch===4?Ia*R23:Ia*Rtot;
+  if(noisy&&!st.ideal){ V+=0.12e-3*(1+Math.abs(Ts-300)/150) + gauss()*(1.5e-6+6e-4*Math.abs(V)); }
+  return {V:V,U:U,I:Ia,over:over,Ts:Ts,c:c,R23:R23,Rc:Rc,Rtot:Rtot,K14:K14,g:g};
+}
+
+/* ---------- boshqaruv ---------- */
+var el={selMat:$("#selMat"),rngT:$("#rngT"),valT:$("#valT"),rngD:$("#rngD"),valD:$("#valD"),rngTemp:$("#rngTemp"),valTemp:$("#valTemp"),
+  rngI:$("#rngI"),valI:$("#valI"),polI:$("#polI"),btnProbe:$("#btnProbe"),chkLight:$("#chkLight"),chkIdeal:$("#chkIdeal"),lockMsg:$("#lockMsg"),status:$("#status")};
+var MODE_NAME={A:"A · Volt-amper xarakteristikasi",B:"B · Geometrik tuzatishlar",C:"C · Haroratga bog'liqlik"};
+function setStatus(msg,kind){el.status.textContent=msg||"";el.status.className="status "+(kind||"info");}
+function applyInputs(){el.selMat.value=st.mat;el.rngT.value=st.tmm;el.rngD.value=st.dmm;el.rngTemp.value=st.T;el.rngI.value=st.Ii;el.chkLight.checked=st.light;el.chkIdeal.checked=st.ideal;}
+function syncLabels(){
+  el.valT.textContent=st.tmm.toFixed(2)+" mm"; el.valD.textContent=st.dmm+" mm"; el.valTemp.textContent=st.T+" K";
+  el.valI.textContent=istr(IVALS[st.Ii])+" mA";
+  el.polI.textContent=st.sI>0?"+I: 1→4":"−I: 4→1";
+  document.querySelectorAll("[data-mode]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode));});
+  document.querySelectorAll("[data-sch]").forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.sch===st.sch));});
+  el.btnProbe.textContent=st.down?"Zondlarni ko'tarish":"Zondlarni namunaga tushirish";
+}
+function tableFor(m){return m==="A"?st.tabA:m==="B"?st.tabB:st.tabC;}
+function updateLocks(){
+  var tb=tableFor(st.mode), L={};
+  if(tb.rows.length){ if(st.mode==="A")L={mat:1,t:1,d:1,T:1}; else if(st.mode==="B")L={mat:1,T:1}; else L={mat:1,t:1,d:1}; }
+  el.selMat.disabled=!!L.mat; el.rngT.disabled=!!L.t; el.rngD.disabled=!!L.d; el.rngTemp.disabled=!!L.T;
+  var nm=[]; if(L.mat)nm.push("namuna"); if(L.t)nm.push("qalinlik"); if(L.d)nm.push("diametr"); if(L.T)nm.push("harorat");
+  el.lockMsg.hidden=!nm.length; el.lockMsg.textContent=nm.length?"Bu bosqich jadvalida ma'lumot bor, shuning uchun "+nm.join(", ")+" qulflangan. O'zgartirish uchun jadvalni tozalang.":"";
+}
+function setMode(m){
+  st.mode=m; var tb=tableFor(m);
+  if(tb.meta&&tb.rows.length){var me=tb.meta; st.mat=me.mat; if(me.t!==undefined)st.tmm=me.t; if(me.d!==undefined)st.dmm=me.d; if(me.T!==undefined)st.T=me.T;}
+  if(m!=="A"&&st.sch!==4){st.sch=4;setStatus("B va C bosqichlarida voltmetr 4 zondli sxemada ulanadi.","info");}
+  applyInputs(); renderAll(); updateMeters(); M.need=true;
+}
+document.querySelectorAll("[data-mode]").forEach(function(b){b.addEventListener("click",function(){setMode(b.dataset.mode);});});
+document.querySelectorAll("[data-sch]").forEach(function(b){b.addEventListener("click",function(){
+  var s=+b.dataset.sch; if(st.mode!=="A"&&s===2){setStatus("2 zondli sxema faqat A bosqichida (kontakt qarshiligini ko'rish uchun) ishlatiladi.","bad");return;}
+  st.sch=s; syncLabels(); renderSlots(); updateMeters();});});
+el.selMat.addEventListener("change",function(){var m=MATS[this.value];st.mat=this.value;st.tmm=m.t;st.dmm=m.d;applyInputs();syncLabels();updateMeters();M.need=true;renderAll();});
+el.rngT.addEventListener("input",function(){st.tmm=Math.round(parseFloat(this.value)*100)/100;syncLabels();updateMeters();renderSlots();});
+el.rngD.addEventListener("input",function(){st.dmm=parseInt(this.value,10);syncLabels();updateMeters();renderSlots();});
+el.rngTemp.addEventListener("input",function(){st.T=parseInt(this.value,10);syncLabels();updateMeters();renderSlots();});
+el.rngI.addEventListener("input",function(){st.Ii=parseInt(this.value,10);syncLabels();updateMeters();renderSlots();});
+el.polI.addEventListener("click",function(){st.sI=-st.sI;syncLabels();updateMeters();renderSlots();});
+el.btnProbe.addEventListener("click",function(){st.down=!st.down;syncLabels();updateMeters();setStatus(st.down?"Zondlar namunaga tushirildi.":"Zondlar ko'tarildi: zanjir ochiq.","info");});
+el.chkLight.addEventListener("change",function(){st.light=this.checked;updateMeters();});
+el.chkIdeal.addEventListener("change",function(){st.ideal=this.checked;updateMeters();});
+
+function setLcd(id,txt,cls){var d=$(id);d.querySelector(".dig").textContent=txt;d.className="lcd"+(cls?" "+cls:"");}
+function updateMeters(){
+  var r=measure(st.sI,true); st.read=r;
+  if(r.open){
+    setLcd("#lcdI","0.000","off"); setLcd("#lcdV",mvs(r.V)); setLcd("#lcdU","0.00","off");
+  } else {
+    setLcd("#lcdI",istr(r.I*1e3),r.over?"warn":""); setLcd("#lcdV",mvs(r.V)); setLcd("#lcdU",minus(r.U.toFixed(2)),r.over?"warn":"");
+  }
+  setLcd("#lcdT",r.Ts.toFixed(1));
+  if(r.over) setStatus("Tok manbai 20 V chegarasida: kontaktlar va namuna qarshiligi bu tok uchun juda katta. Tokni kamaytiring.","bad");
+  else if(el.status.textContent.indexOf("20 V chegarasi")>=0) setStatus("","info");
+  panels3D(r);
+}
+
+/* ---------- yozib olish ---------- */
+function metaNow(m){ if(m==="A")return {mat:st.mat,t:st.tmm,d:st.dmm,T:st.T}; if(m==="B")return {mat:st.mat,T:st.T}; return {mat:st.mat,t:st.tmm,d:st.dmm}; }
+function rowKey(m){ if(m==="A") return {Ii:st.Ii,sch:st.sch}; if(m==="B") return {t:st.tmm,d:st.dmm}; return {T:st.T}; }
+function sameKey(r,k){return Object.keys(k).every(function(x){return r[x]===k[x];});}
+function curRow(){var tb=tableFor(st.mode),k=rowKey(st.mode);return tb.rows.filter(function(r){return sameKey(r,k);})[0]||null;}
+function rowDone(r){return typeof r.vp==="number"&&typeof r.vn==="number";}
+function rowR(r){return (r.vp-r.vn)/(r.ip-r.in);}
+function canRecord(){
+  if(!st.down) return "Avval zondlarni namunaga tushiring.";
+  if(st.mode!=="A"&&st.sch!==4) return "B va C bosqichlarida 4 zondli sxema kerak.";
+  var r=measure(1,false);
+  if(r.over) return "Tok manbai kuchlanish chegarasiga (20 V) yetgan. Tokni kamaytiring, aks holda o'lchangan tok tanlangan qiymatdan kichik bo'ladi.";
+  if(Math.abs(r.V)<20e-6) return "Kuchlanish juda kichik (< 0.02 mV): termo-EYuK va shovqin ulushi katta bo'ladi. Tokni oshiring.";
+  return null;
+}
+function recordOne(sI){
+  var tb=tableFor(st.mode), k=rowKey(st.mode), r=measure(sI,true);
+  if(!tb.meta||!tb.rows.length) tb.meta=metaNow(st.mode);
+  var row=tb.rows.filter(function(x){return sameKey(x,k);})[0];
+  if(!row){row=Object.assign({},k);if(st.mode==="A")row.I=IVALS[st.Ii];tb.rows.push(row);}
+  if(sI>0){row.vp=r.V;row.ip=r.I;}else{row.vn=r.V;row.in=r.I;}
+  if(st.mode==="C") row.Ts=r.Ts;
+  tb.rows.sort(function(a,b){ if(st.mode==="A")return (b.sch-a.sch)||(a.Ii-b.Ii); if(st.mode==="B")return (a.t-b.t)||(a.d-b.d); return a.T-b.T; });
+}
+$("#btnRec").addEventListener("click",function(){
+  var e=canRecord(); if(e){setStatus(e,"bad");return;}
+  recordOne(st.sI); save(); renderAll();
+  var row=curRow(); setStatus(rowDone(row)?"Yozildi. Ikkala yo'nalish ham o'lchandi: qator to'liq.":"Yozildi ("+(st.sI>0?"+I":"−I")+"). Endi tok yo'nalishini almashtirib, yana yozib oling.","ok");
+});
+$("#btnAuto").addEventListener("click",function(){
+  var e=canRecord(); if(e){setStatus(e,"bad");return;}
+  recordOne(1); recordOne(-1); save(); renderAll();
+  var row=curRow(); setStatus("Yozildi: V(+I) = "+mvs(row.vp)+" mV, V(−I) = "+mvs(row.vn)+" mV, V/I = "+sci(rowR(row),4)+" Ω.","ok");
+});
+function renderSlots(){
+  var row=curRow();
+  $("#slots").innerHTML=[[1,"+I (1→4)"],[-1,"−I (4→1)"]].map(function(s){var done=row&&(s[0]>0?typeof row.vp==="number":typeof row.vn==="number");return "<div class='slot"+(done?" done":"")+(s[0]===st.sI?" now":"")+"'>"+s[1]+(done?" ✓":"")+"</div>";}).join("");
+}
+["A","B","C"].forEach(function(t){$("#clr"+t).addEventListener("click",function(){var tb=tableFor(t);if(!tb.rows.length)return;if(!confirm("Jadvaldagi barcha qatorlar o'chiriladi. Davom etasizmi?"))return;tb.rows=[];tb.meta=null;save();renderAll();});});
+document.addEventListener("click",function(e){var b=e.target.closest("[data-del]");if(!b)return;var tb=tableFor(b.dataset.del);tb.rows.splice(+b.dataset.i,1);if(!tb.rows.length)tb.meta=null;save();renderAll();});
+
+/* ---------- grafiklar ---------- */
+function niceStep(range,n){var raw=range/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),r=raw/mag;return (r<1.5?1:r<3?2:r<7?5:10)*mag;}
+function tickFmt(v,step){if(Math.abs(v)<step*1e-6)return "0";var a=Math.abs(v);if(a>=1e4||a<1e-2)return sci(v,2);var dec=Math.max(0,-Math.floor(Math.log10(step)));return minus(v.toFixed(Math.min(dec,4)));}
+function linfit(pts){var n=pts.length;if(n<2)return null;var sx=0,sy=0,sxx=0,sxy=0;pts.forEach(function(p){sx+=p[0];sy+=p[1];sxx+=p[0]*p[0];sxy+=p[0]*p[1];});var d=n*sxx-sx*sx;if(Math.abs(d)<1e-30)return null;var m=(n*sxy-sx*sy)/d;return {m:m,b:(sy-m*sx)/n};}
+function plot(cv,o){
+  if(!cv.clientWidth) return;
+  var dpr=Math.min(2,window.devicePixelRatio||1); if(cv.width!==Math.round(cv.clientWidth*dpr)){cv.width=Math.round(cv.clientWidth*dpr);cv.height=Math.round(cv.clientHeight*dpr);}
+  var g=cv.getContext("2d"),W=cv.width,H=cv.height; if(!W||!H) return;
+  var s=W/cv.clientWidth; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,W,H); g.setTransform(s,0,0,s,0,0);
+  var w=cv.clientWidth,h=cv.clientHeight,L=62,R=14,T=26,Bm=40;
+  g.fillStyle=C.ink; g.font="600 12px "+FONT; g.textAlign="left"; g.fillText(o.title||"",L,16);
+  var all=[]; o.series.forEach(function(se){se.pts.forEach(function(p){all.push(p);});});
+  if(!all.length){g.fillStyle=C.muted;g.font="13px "+FONT;g.textAlign="center";g.fillText(o.empty||"Hali ma'lumot yo'q",w/2,h/2);return;}
+  var x0=o.xmin!==undefined?o.xmin:Math.min.apply(null,all.map(function(p){return p[0];})), x1=Math.max.apply(null,all.map(function(p){return p[0];}));
+  var y0=o.ymin!==undefined?Math.min(o.ymin,Math.min.apply(null,all.map(function(p){return p[1];}))):Math.min.apply(null,all.map(function(p){return p[1];})), y1=Math.max.apply(null,all.map(function(p){return p[1];}));
+  if(x1-x0<1e-30){x0-=1;x1+=1;} if(y1-y0<1e-30){var dy=Math.abs(y0)*0.2||1;y0-=dy;y1+=dy;}
+  var px=(x1-x0)*0.06,py=(y1-y0)*0.1; if(o.xmin===undefined)x0-=px; x1+=px; if(o.ymin===undefined)y0-=py; y1+=py;
+  var X=function(v){return L+(v-x0)/(x1-x0)*(w-L-R);}, Y=function(v){return h-Bm-(v-y0)/(y1-y0)*(h-Bm-T);};
+  var xs=niceStep(x1-x0,5), ys=niceStep(y1-y0,5);
+  g.font="11px "+MONO; g.lineWidth=1;
+  for(var v=Math.ceil(x0/xs)*xs;v<=x1+1e-12;v+=xs){g.strokeStyle=C.line;g.globalAlpha=.7;g.beginPath();g.moveTo(X(v),T);g.lineTo(X(v),h-Bm);g.stroke();g.globalAlpha=1;g.fillStyle=C.muted;g.textAlign="center";g.fillText(tickFmt(v,xs),X(v),h-Bm+15);}
+  for(var u=Math.ceil(y0/ys)*ys;u<=y1+1e-12*Math.abs(y1);u+=ys){g.strokeStyle=C.line;g.globalAlpha=.7;g.beginPath();g.moveTo(L,Y(u));g.lineTo(w-R,Y(u));g.stroke();g.globalAlpha=1;g.fillStyle=C.muted;g.textAlign="right";g.fillText(tickFmt(u,ys),L-6,Y(u)+4);}
+  g.strokeStyle=C.ink; g.globalAlpha=.8; g.beginPath(); g.moveTo(L,T); g.lineTo(L,h-Bm); g.lineTo(w-R,h-Bm); g.stroke(); g.globalAlpha=1;
+  g.fillStyle=C.muted; g.font="12px "+FONT; g.textAlign="center"; g.fillText(o.xlabel,L+(w-L-R)/2,h-8);
+  g.save(); g.translate(13,T+(h-Bm-T)/2); g.rotate(-Math.PI/2); g.fillText(o.ylabel,0,0); g.restore();
+  g.save(); g.beginPath(); g.rect(L,T,w-L-R,h-Bm-T); g.clip();
+  o.series.forEach(function(se){
+    if(se.fit){g.strokeStyle=se.fitColor||se.color;g.lineWidth=1.6;g.setLineDash([6,4]);g.beginPath();g.moveTo(X(se.fit.xa),Y(se.fit.m*se.fit.xa+se.fit.b));g.lineTo(X(se.fit.xb),Y(se.fit.m*se.fit.xb+se.fit.b));g.stroke();g.setLineDash([]);}
+    if(se.line&&se.pts.length>1){g.strokeStyle=se.color;g.lineWidth=1.5;g.beginPath();se.pts.forEach(function(p,i){if(i)g.lineTo(X(p[0]),Y(p[1]));else g.moveTo(X(p[0]),Y(p[1]));});g.stroke();}
+    se.pts.forEach(function(p){g.fillStyle=se.color;g.beginPath();if(se.sq)g.rect(X(p[0])-3.6,Y(p[1])-3.6,7.2,7.2);else g.arc(X(p[0]),Y(p[1]),3.8,0,7);g.fill();g.strokeStyle=C.surface;g.lineWidth=1;g.stroke();});
+  });
+  g.restore();
+  if(o.legend){var lx=L+10,ly=T+14;g.font="11px "+FONT;g.textAlign="left";o.series.forEach(function(se){if(!se.name)return;g.fillStyle=se.color;if(se.sq)g.fillRect(lx,ly-7,7,7);else{g.beginPath();g.arc(lx+3.5,ly-3.5,3.6,0,7);g.fill();}g.fillStyle=C.ink;g.fillText(se.name,lx+12,ly);ly+=15;});}
+}
+
+/* ---------- natijalar ---------- */
+function majMu(mat,T){var c=carriers(mat,T,0);return MATS[mat].type==="n"?c.mun:c.mup;}
+function expA(){
+  var tb=st.tabA; if(!tb.meta) return null;
+  var pts=tb.rows.filter(function(r){return r.sch===4&&rowDone(r);}).map(function(r){return [(r.ip-r.in)/2*1e3,(r.vp-r.vn)/2*1e3];});
+  if(pts.length<2) return null;
+  var f=linfit(pts), g=geomF(tb.meta.t,tb.meta.d), rho=2*Math.PI*SP*f.m*g.F, mu=majMu(tb.meta.mat,tb.meta.T);
+  var my=pts.reduce(function(s,p){return s+p[1];},0)/pts.length, ssr=0, sst=0;
+  pts.forEach(function(p){var e=p[1]-(f.m*p[0]+f.b);ssr+=e*e;sst+=(p[1]-my)*(p[1]-my);});
+  var truth=carriers(tb.meta.mat,tb.meta.T,0).rho;
+  return {k:f.m,f:f,g:g,rho:rho,rhoCm:rho*100,sig:1/rho,mu:mu,n:1/(rho*E*mu),pts:pts,r2:sst>0?1-ssr/sst:1,intr:tb.meta.mat==="iGe",truth:truth,meta:tb.meta};
+}
+function exp2(){
+  var pts=st.tabA.rows.filter(function(r){return r.sch===2&&rowDone(r);}).map(function(r){return [(r.ip-r.in)/2*1e3,(r.vp-r.vn)/2*1e3];});
+  return pts.length?pts:null;
+}
+function renderData(){
+  // A
+  var ta="<thead><tr><th>№</th><th>Sxema</th><th class='num'>\\(I\\), mA</th><th class='num'>\\(V(+I)\\), mV</th><th class='num'>\\(V(-I)\\), mV</th><th class='num'>\\(\\bar V\\), mV</th><th class='num'>\\(V/I\\), Ω</th><th></th></tr></thead><tbody>";
+  if(!st.tabA.rows.length) ta+="<tr><td colspan='8' style='color:var(--muted)'>A rejimida tokni o'zgartirib, har bir qiymatda «Avtomatik (+I va −I)» ni bosing. Keyin xuddi shuni 2 zondli sxemada takrorlang.</td></tr>";
+  st.tabA.rows.forEach(function(r,i){var ok=rowDone(r);
+    ta+="<tr><td>"+(i+1)+"</td><td>"+r.sch+" zondli</td><td class='num'>"+istr(r.I)+"</td><td class='num'>"+(typeof r.vp==="number"?mvs(r.vp):"…")+"</td><td class='num'>"+(typeof r.vn==="number"?mvs(r.vn):"…")+"</td><td class='num'>"+(ok?mvs((r.vp-r.vn)/2):"—")+"</td><td class='num'>"+(ok?sci(rowR(r),4):"—")+"</td><td><button class='delbtn' data-del='A' data-i='"+i+"' aria-label='Qatorni o`chirish'>✕</button></td></tr>";});
+  $("#tblA").innerHTML=ta+"</tbody>";
+  var ex=expA(), p2=exp2(), sA=[];
+  if(st.tabA.rows.length){
+    var p4=st.tabA.rows.filter(function(r){return r.sch===4&&rowDone(r);}).map(function(r){return [(r.ip-r.in)/2*1e3,(r.vp-r.vn)/2*1e3];});
+    sA.push({name:"4 zondli",pts:p4,color:C.accent,fit:ex?{m:ex.f.m,b:ex.f.b,xa:0,xb:Math.max.apply(null,p4.map(function(p){return p[0];}))}:null});
+    if(p2) sA.push({name:"2 zondli",pts:p2,color:C.hole,sq:true,line:true});
+  }
+  plot($("#plotA"),{title:"\u0056\u0304(I): 4 zondli va 2 zondli sxema",xlabel:"I, mA",ylabel:"V̄, mV",series:sA,xmin:0,ymin:0,legend:true,empty:"Hali ma'lumot yo'q"});
+  var me=st.tabA.meta;
+  if(me){var mu=majMu(me.mat,me.T);
+    setMath($("#givenA"),"<span>Namuna: <b>"+MATS[me.mat].short+"</b></span><span>\\(s\\) = <b>1.00 mm</b></span><span>\\(t\\) = <b>"+me.t.toFixed(2)+" mm</b></span><span>\\(d\\) = <b>"+me.d+" mm</b></span><span>\\(T\\) = <b>"+me.T+" K</b></span><span>Qiyalik (4 zondli) \\(V/I\\) = <b>"+(ex?sci(ex.k,4)+" Ω":"—")+"</b></span><span>\\("+(MATS[me.mat].type==="n"?"\\mu_n":"\\mu_p")+"\\)("+me.T+" K) = <b>"+mu.toFixed(4)+" m²/(V·s)</b></span>");}
+  else setMath($("#givenA"),"<span>Avval A bosqichida o'lchang.</span>");
+  // B
+  var tbB="<thead><tr><th>№</th><th class='num'>\\(t\\), mm</th><th class='num'>\\(d\\), mm</th><th class='num'>\\(t/s\\)</th><th class='num'>\\(V/I\\), Ω</th><th class='num'>\\(\\rho_0\\), Ω·cm</th><th class='num'>\\(F_1\\)</th><th class='num'>\\(F_2\\)</th><th class='num'>\\(\\rho\\), Ω·cm</th><th class='num'>\\(R_\\square\\), Ω/□</th><th></th></tr></thead><tbody>";
+  if(!st.tabB.rows.length) tbB+="<tr><td colspan='11' style='color:var(--muted)'>B rejimida qalinlik va diametrni o'zgartirib, har birida «Avtomatik (+I va −I)» ni bosing.</td></tr>";
+  var sB0=[],sB1=[];
+  st.tabB.rows.forEach(function(r,i){var ok=rowDone(r),R=ok?rowR(r):NaN,g=geomF(r.t,r.d),r0=2*Math.PI*SP*R*100;
+    if(ok){sB0.push([r.t,r0]);sB1.push([r.t,r0*g.F]);}
+    tbB+="<tr><td>"+(i+1)+"</td><td class='num'>"+r.t.toFixed(2)+"</td><td class='num'>"+r.d+"</td><td class='num'>"+(r.t).toFixed(2)+"</td><td class='num'>"+(ok?sci(R,4):"…")+"</td><td class='num'>"+(ok?sci(r0,4):"—")+"</td><td class='num'>"+g.f1.toFixed(4)+"</td><td class='num'>"+g.f2.toFixed(4)+"</td><td class='num'>"+(ok?sci(r0*g.F,4):"—")+"</td><td class='num'>"+(ok&&r.t<=0.4?sci(R*Math.PI/LN2*g.f2,4):"—")+"</td><td><button class='delbtn' data-del='B' data-i='"+i+"' aria-label='Qatorni o`chirish'>✕</button></td></tr>";});
+  $("#tblB").innerHTML=tbB+"</tbody>";
+  plot($("#plotB"),{title:"ρ₀ va ρ ning t/s ga bog'liqligi",xlabel:"t/s",ylabel:"ρ, Ω·cm",series:[{name:"ρ₀ = 2πs·V/I (tuzatishsiz)",pts:sB0,color:C.hole,sq:true},{name:"ρ = ρ₀·F₁F₂ (tuzatilgan)",pts:sB1,color:C.accent}],ymin:0,legend:true});
+  // C
+  var tc="<thead><tr><th>№</th><th class='num'>\\(T\\), K</th><th class='num'>\\(V/I\\), Ω</th><th class='num'>\\(\\rho\\), Ω·cm</th><th class='num'>\\(1000/T\\), K⁻¹</th><th class='num'>\\(\\ln(\\rho/\\Omega\\cdot\\text{cm})\\)</th><th></th></tr></thead><tbody>";
+  if(!st.tabC.rows.length) tc+="<tr><td colspan='7' style='color:var(--muted)'>C rejimida haroratni 150 K dan 600 K gacha o'zgartirib, har safar «Avtomatik (+I va −I)» ni bosing.</td></tr>";
+  var sC1=[],sC2=[],gC=st.tabC.meta?geomF(st.tabC.meta.t,st.tabC.meta.d):null;
+  st.tabC.rows.forEach(function(r,i){var ok=rowDone(r),R=ok?rowR(r):NaN,rho=ok?2*Math.PI*SP*R*gC.F*100:NaN;
+    if(ok){sC1.push([r.T,Math.log10(rho)]);sC2.push([1000/r.T,Math.log(rho)]);}
+    tc+="<tr><td>"+(i+1)+"</td><td class='num'>"+r.T+"</td><td class='num'>"+(ok?sci(R,4):"…")+"</td><td class='num'>"+(ok?sci(rho,4):"—")+"</td><td class='num'>"+(1000/r.T).toFixed(3)+"</td><td class='num'>"+(ok?minus(Math.log(rho).toFixed(3)):"—")+"</td><td><button class='delbtn' data-del='C' data-i='"+i+"' aria-label='Qatorni o`chirish'>✕</button></td></tr>";});
+  $("#tblC").innerHTML=tc+"</tbody>";
+  plot($("#plotC1"),{title:"lg ρ ning haroratga bog'liqligi",xlabel:"T, K",ylabel:"lg(ρ / Ω·cm)",series:[{pts:sC1.slice().sort(function(a,b){return a[0]-b[0];}),color:C.accent,line:true}]});
+  var nE=+$("#egN").value, hot=sC2.slice().sort(function(a,b){return a[0]-b[0];}).slice(0,nE), fe=hot.length>=2?linfit(hot):null, egTxt="—";
+  if(fe&&hot.length>=3){var Eg=2*KB*1000*fe.m; egTxt=Eg>0.05?"E_g ≈ "+Eg.toFixed(3)+" eV ("+hot.length+" nuqta, "+Math.round(1000/hot[hot.length-1][0])+"–"+Math.round(1000/hot[0][0])+" K)":"qiyalik musbat emas: bu nuqtalar hali xususiy sohada emas";}
+  $("#egOut").textContent=egTxt;
+  plot($("#plotC2"),{title:"ln ρ ning 1000/T ga bog'liqligi",xlabel:"1000/T, K⁻¹",ylabel:"ln(ρ / Ω·cm)",series:[{pts:sC2,color:C.accent,fit:fe&&hot.length>=3?{m:fe.m,b:fe.b,xa:hot[0][0],xb:hot[hot.length-1][0]}:null,fitColor:C.hole}]});
+  mjx($("#tblA")); mjx($("#tblB")); mjx($("#tblC"));
+}
+$("#egN").addEventListener("change",renderData);
+
+function chk(id,exp,name,hint){var v=parseNum($(id).value);if(!$(id).value)return null;if(!isFinite(v))return {ok:false,t:name+": sonni o'qib bo'lmadi."};var ok=Math.abs(v-exp)/Math.abs(exp)<=0.03;return {ok:ok,t:name+(ok?": to'g'ri ("+sci(v,4)+").":": noto'g'ri. "+hint)};}
+$("#btnCheck").addEventListener("click",function(){
+  var ex=expA(), fb=$("#feedA");
+  if(!ex){fb.innerHTML="<p class='callout warn'>Hisoblash uchun 4 zondli sxemada kamida 2 ta to'liq qator (+I va −I) kerak.</p>";return;}
+  var L=[chk("#inF",ex.g.F,"\\(F = F_1F_2\\)","\\(t/s = "+ex.meta.t.toFixed(2)+"\\) va \\(d/s = "+ex.meta.d+"\\) uchun Valdes va Smits formulalaridan foydalaning."),
+    chk("#inRho",ex.rhoCm,"\\(\\rho\\)","\\(\\rho = 2\\pi s\\,(V/I)\\,F\\). \\(s\\) ni metrda oling, natijani Ω·m dan Ω·cm ga o'tkazish uchun 100 ga ko'paytiring."),
+    chk("#inSig",ex.sig,"\\(\\sigma\\)","\\(\\sigma = 1/\\rho\\), bunda \\(\\rho\\) Ω·m da bo'lishi kerak."),
+    ex.intr?($("#inN").value?{ok:true,t:"i-Ge deyarli xususiy: unda elektronlar ham, kovaklar ham bor, shuning uchun konsentratsiya bitta \\(\\rho\\) dan topilmaydi."}:null):chk("#inN",ex.n,"Konsentratsiya","\\(n = 1/(e\\rho\\mu)\\), \\(\\rho\\) Ω·m da, \\(\\mu\\) m²/(V·s) da.")].filter(Boolean);
+  if(!L.length){fb.innerHTML="<p class='callout warn'>Hech bo'lmasa bitta qiymatni kiriting.</p>";return;}
+  var dv=(ex.rho/ex.truth-1)*100;
+  fb.innerHTML="<ul class='fb-list'>"+L.map(function(x){return "<li class='"+(x.ok?"ok":"bad")+"'>"+x.t+"</li>";}).join("")+"</ul><p class='hint'>Sizning ma'lumotlaringizdan \\(\\rho\\) = "+sci(ex.rhoCm,4)+" Ω·cm. Modelning "+ex.meta.T+" K dagi haqiqiy qiymati "+sci(ex.truth*100,4)+" Ω·cm, farq "+minus(dv.toFixed(2))+" %."+(Math.abs(dv)>1?" Farq sabablari: shovqin, katta tokdagi qizish yoki yorug'lik.":"")+"</p>";
+  mjx(fb);
+});
+
+/* ---------- mikro-ko'rinish: zondlar ostidagi kesim ---------- */
+// Maydon tasvir manbalari usulida: zond 1 (+I) va zond 4 (−I), izolyatsiyalangan taglik uchun z = ±2kt dagi tasvirlar
+var PXM=120, MX0=320, SY=88, XMM=MW/2/PXM, PRX=[-1.5,-0.5,0.5,1.5], NXS=Math.floor(2*XMM/0.15);
+var M={parts:[],ions:[],running:true,speed:1,need:true,gkey:"",ckey:"",lines:[],eqs:[],Eref:1,Gx:2*XMM/NXS,Gz:0.15,nz:1,dep:1,bottom:true,cc:null,text:null};
+function pxx(x){return MX0+x*PXM;} function pyz(z){return SY+z*PXM;}
+function ab(){return st.sI>0?{a:PRX[0],b:PRX[3]}:{a:PRX[3],b:PRX[0]};}
+function nImg(t){return Math.min(90,Math.ceil(14/t));}
+function fieldAt(x,z,o){var t=st.tmm,K=nImg(t),ex=0,ez=0;for(var k=-K;k<=K;k++){var dz=z-2*k*t,d1=x-o.a,d2=x-o.b,r1=d1*d1+dz*dz,r2=d2*d2+dz*dz;r1=r1*Math.sqrt(r1)+1e-12;r2=r2*Math.sqrt(r2)+1e-12;ex+=d1/r1-d2/r2;ez+=dz/r1-dz/r2;}return [ex,ez];}
+function phiAt(x,z,o){var t=st.tmm,K=nImg(t),s=0;for(var k=-K;k<=K;k++){var dz=z-2*k*t;s+=1/Math.sqrt((x-o.a)*(x-o.a)+dz*dz+1e-6)-1/Math.sqrt((x-o.b)*(x-o.b)+dz*dz+1e-6);}return s;}
+function microGeom(){
+  var o=ab(), t=st.tmm;
+  M.dep=Math.min(t,(MH-SY-10)/PXM); M.bottom=t<=M.dep+1e-9;
+  M.nz=Math.max(1,Math.round(M.dep/0.15)); M.Gz=M.dep/M.nz;
+  var e0=fieldAt(0,Math.min(0.03,M.dep/2),o); M.Eref=Math.hypot(e0[0],e0[1])||1;
+  M.lines=[]; var n=15;
+  for(var i=0;i<n;i++){
+    var th=(i+0.5)/n*Math.PI, x=o.a+0.04*Math.cos(th), z=Math.min(0.04*Math.sin(th),M.dep*0.95), pts=[[x,z]];
+    for(var s=0;s<1100;s++){
+      var e=fieldAt(x,z,o),m=Math.hypot(e[0],e[1]); if(!m)break; var h=0.012;
+      var xm=x+e[0]/m*h/2, zm=z+e[1]/m*h/2, e2=fieldAt(xm,zm,o), m2=Math.hypot(e2[0],e2[1])||1;
+      x+=e2[0]/m2*h; z+=e2[1]/m2*h; if(z<0)z=0; if(M.bottom&&z>t)z=t;
+      pts.push([x,z]); if(Math.hypot(x-o.b,z)<0.04||Math.abs(x)>XMM+0.2||z>M.dep+0.08)break;
+    }
+    M.lines.push(pts);
+  }
+  // ekvipotensiallar (marching squares)
+  var nx=161, ny=Math.max(4,Math.round(M.dep*PXM/4)+1), dx=2*XMM/(nx-1), dz=M.dep/(ny-1), grid=new Float64Array(nx*ny);
+  for(var j=0;j<ny;j++)for(var q=0;q<nx;q++)grid[j*nx+q]=phiAt(-XMM+q*dx,j*dz+1e-4,o);
+  var ref=Math.abs(phiAt(PRX[1],0,o))||1, segs=[];
+  [0,0.25,-0.25,0.5,-0.5,0.8,-0.8,1.2,-1.2,1.8,-1.8,2.7,-2.7,4,-4].forEach(function(k){contour(grid,nx,ny,-XMM,dx,dz,k*ref,segs);});
+  M.eqs=segs;
+}
+function contour(grid,nx,ny,x0,dx,dz,lev,out){
+  var p=[];
+  function ed(a,b,x1,z1,x2,z2){if((a<0)!==(b<0)){var f=a/(a-b);p.push(x1+(x2-x1)*f,z1+(z2-z1)*f);}}
+  for(var j=0;j<ny-1;j++)for(var i=0;i<nx-1;i++){
+    var a=grid[j*nx+i]-lev,b=grid[j*nx+i+1]-lev,c=grid[(j+1)*nx+i+1]-lev,d=grid[(j+1)*nx+i]-lev,X=x0+i*dx,Z=j*dz;
+    p.length=0; ed(a,b,X,Z,X+dx,Z); ed(b,c,X+dx,Z,X+dx,Z+dz); ed(c,d,X+dx,Z+dz,X,Z+dz); ed(d,a,X,Z+dz,X,Z);
+    if(p.length>=4) out.push([p[0],p[1],p[2],p[3]]); if(p.length===8) out.push([p[4],p[5],p[6],p[7]]);
+  }
+}
+function microCounts(){
+  var r=st.read, c=r?r.c:carriers(st.mat,st.T,0), m=MATS[st.mat];
+  var maj=m.type==="n"?c.n:c.p, mi=m.type==="n"?c.p:c.n, ratio=mi/maj, nMaj=70, nMin=Math.round(nMaj*Math.min(1,ratio));
+  if(ratio>0.003&&nMin<1)nMin=1;
+  return {c:c,nMaj:nMaj,nMin:nMin,majE:m.type==="n",ve:m.type==="n"?1:c.mun/c.mup,vh:m.type==="n"?c.mup/c.mun:1};
+}
+function snapH(p){p.i=Math.max(0,Math.min(NXS-1,Math.round((p.x+XMM)/M.Gx-0.5)));p.j=Math.max(0,Math.min(M.nz-1,Math.round(p.z/M.Gz-0.5)));p.x=-XMM+(p.i+0.5)*M.Gx;p.z=(p.j+0.5)*M.Gz;}
+function placeP(p,x,z){p.x=x;p.z=Math.max(0.004,Math.min(M.dep-0.004,z));p.ax=0;p.az=0;p.hop=null;if(p.h)snapH(p);}
+function spawnRandom(p){placeP(p,(Math.random()*2-1)*XMM*0.98,Math.random()*M.dep);}
+function spawnAtProbe(p,xp){var th=0.15+Math.random()*(Math.PI-0.3),r=0.06+Math.random()*0.08;placeP(p,xp+r*Math.cos(th),r*Math.sin(th));}
+function setupMicro(){
+  microGeom(); M.gkey=st.tmm+"|"+st.sI;
+  var cc=microCounts(); M.cc=cc; M.parts=[];
+  function add(isH,n){for(var i=0;i<n;i++){var p={h:isH};spawnRandom(p);M.parts.push(p);}}
+  add(!cc.majE,cc.nMaj); add(cc.majE,cc.nMin);
+  M.ions=[]; var m=MATS[st.mat], ni=m.N<1e19?3:14;
+  for(var k=0;k<ni;k++){M.ions.push({i:Math.floor(Math.random()*NXS),j:Math.floor(Math.random()*M.nz),s:m.type==="n"?1:-1});}
+  M.ckey=st.mat+"|"+st.tmm+"|"+Math.round(st.T/25)+"|"+st.light+"|"+st.ideal; M.need=false;
+}
+function checkMicro(){
+  if(M.need||M.ckey!==st.mat+"|"+st.tmm+"|"+Math.round(st.T/25)+"|"+st.light+"|"+st.ideal){setupMicro();return;}
+  if(M.gkey!==st.tmm+"|"+st.sI){microGeom();M.gkey=st.tmm+"|"+st.sI;}
+}
+function stepMicro(dt){
+  var r=st.read, on=!!(r&&!r.open&&Math.abs(r.I)>0), o=ab(), cc=M.cc; if(!cc) return;
+  var Ima=on?Math.abs(r.I)*1e3:0, base=on?60*Math.max(0.35,Math.min(1.7,Math.sqrt(Ima))):0;
+  var jit=0.035*Math.sqrt(((r&&r.Ts)||st.T)/300);
+  M.parts.forEach(function(p){
+    var dir=p.h?1:-1, sink=p.h?o.b:o.a, src=p.h?o.a:o.b, v=base*(p.h?cc.vh:cc.ve), dx=0, dz=0;
+    if(on){var e=fieldAt(p.x,p.z,o),m=Math.hypot(e[0],e[1])||1,f=Math.pow(Math.min(5,m/M.Eref),0.55);dx=dir*e[0]/m*v*f*dt/PXM;dz=dir*e[1]/m*v*f*dt/PXM;}
+    dx+=gauss()*jit*Math.sqrt(dt); dz+=gauss()*jit*Math.sqrt(dt);
+    var out=false;
+    if(!p.h){
+      p.x+=dx; p.z+=dz; if(p.z<0.004)p.z=0.008-p.z; if(M.bottom&&p.z>M.dep-0.004)p.z=2*(M.dep-0.004)-p.z;
+      if(Math.abs(p.x)>XMM||(!M.bottom&&p.z>M.dep))out=true;
+    } else {
+      p.ax=Math.max(-2*M.Gx,Math.min(2*M.Gx,p.ax+dx)); p.az=Math.max(-2*M.Gz,Math.min(2*M.Gz,p.az+dz));
+      if(p.hop){p.hop.k+=dt/0.16; if(p.hop.k>=1)p.hop=null;}
+      else{
+        var si=Math.abs(p.ax)>=M.Gx?(p.ax>0?1:-1):0, sj=Math.abs(p.az)>=M.Gz?(p.az>0?1:-1):0;
+        if(sj&&(p.j+sj<0||(M.bottom&&p.j+sj>=M.nz))){sj=0;p.az=0;}
+        if(si||sj){
+          p.ax-=si*M.Gx; p.az-=sj*M.Gz; var ni=p.i+si, nj=p.j+sj;
+          if(ni<0||ni>=NXS||nj>=M.nz) out=true;
+          else {p.hop={fx:p.x,fz:p.z,k:0}; p.i=ni; p.j=nj; p.x=-XMM+(ni+0.5)*M.Gx; p.z=(nj+0.5)*M.Gz;}
+        }
+      }
+    }
+    if(on&&Math.hypot(p.x-sink,p.z)<0.1) spawnAtProbe(p,src);
+    else if(out){ if(on&&Math.random()<0.5) spawnAtProbe(p,src); else spawnRandom(p); }
+  });
+}
+function drawCarrierE(g,x,y){g.fillStyle=C.electron;g.beginPath();g.arc(x,y,3.3,0,7);g.fill();}
+function drawHole(g,x,y,a){g.globalAlpha=a;g.strokeStyle=C.hole;g.lineWidth=1.6;g.setLineDash([2.5,2.2]);g.beginPath();g.arc(x,y,4.4,0,7);g.stroke();g.setLineDash([]);g.globalAlpha=1;}
+function drawMicro(){
+  var g=mctx; if(!microCv.width) return;
+  g.setTransform(mS,0,0,mS,0,0); g.clearRect(0,0,MW,MH);
+  var r=st.read, on=!!(r&&!r.open&&Math.abs(r.I)>0), o=ab(), yb=pyz(M.dep);
+  g.fillStyle=C.surface; g.fillRect(0,0,MW,MH);
+  // namuna
+  g.fillStyle=C.surface2; g.fillRect(0,SY,MW,yb-SY);
+  g.fillStyle=C.accent; g.globalAlpha=0.06; g.fillRect(0,SY,MW,yb-SY); g.globalAlpha=1;
+  if(M.bottom){
+    g.fillStyle=C.line; g.fillRect(0,yb,MW,9);
+    g.strokeStyle=C.muted; g.globalAlpha=0.5; g.lineWidth=1; for(var hx=-10;hx<MW;hx+=9){g.beginPath();g.moveTo(hx,yb+9);g.lineTo(hx+9,yb);g.stroke();} g.globalAlpha=1;
+    g.fillStyle=C.muted; g.font="11px "+FONT; g.textAlign="right"; g.fillText("izolyatsiyalovchi taglik (slyuda) · t = "+st.tmm.toFixed(2)+" mm",MW-8,Math.min(MH-4,yb+22));
+  } else {
+    g.fillStyle=C.surface; for(var fz=0;fz<10;fz++){g.globalAlpha=0.09*(fz+1);g.fillRect(0,yb-30+fz*3,MW,3);} g.globalAlpha=1;
+    g.fillStyle=C.muted; g.font="11px "+FONT; g.textAlign="right"; g.fillText("namuna pastga davom etadi · t = "+st.tmm.toFixed(2)+" mm",MW-8,MH-6);
+  }
+  g.save(); g.beginPath(); g.rect(0,SY,MW,yb-SY); g.clip();
+  // panjara atomlari
+  g.fillStyle=C.steel; g.globalAlpha=0.28;
+  for(var j=0;j<M.nz;j++)for(var i=0;i<NXS;i++){g.beginPath();g.arc(pxx(-XMM+(i+0.5)*M.Gx),pyz((j+0.5)*M.Gz),1.7,0,7);g.fill();}
+  g.globalAlpha=1;
+  // ekvipotensiallar
+  if(on&&$("#chkEq").checked){g.strokeStyle=C.fe;g.globalAlpha=0.55;g.lineWidth=1;g.beginPath();M.eqs.forEach(function(s){g.moveTo(pxx(s[0]),pyz(s[1]));g.lineTo(pxx(s[2]),pyz(s[3]));});g.stroke();g.globalAlpha=1;}
+  // tok chiziqlari
+  if(on&&$("#chkLines").checked){
+    g.strokeStyle=C.fb; g.globalAlpha=0.75; g.lineWidth=1.4; g.setLineDash([6,4]); g.lineDashOffset=-(performance.now()/60)%10;
+    M.lines.forEach(function(L){g.beginPath();L.forEach(function(p,k){if(k)g.lineTo(pxx(p[0]),pyz(p[1]));else g.moveTo(pxx(p[0]),pyz(p[1]));});g.stroke();});
+    g.setLineDash([]); g.globalAlpha=1;
+  }
+  // ionlar
+  M.ions.forEach(function(q){var x=pxx(-XMM+(q.i+0.5)*M.Gx),y=pyz((q.j+0.5)*M.Gz);g.strokeStyle=C.hole;g.lineWidth=1.3;g.strokeRect(x-4,y-4,8,8);g.beginPath();g.moveTo(x-2.4,y);g.lineTo(x+2.4,y);if(q.s>0){g.moveTo(x,y-2.4);g.lineTo(x,y+2.4);}g.stroke();});
+  // tashuvchilar
+  M.parts.forEach(function(p){
+    if(!p.h){drawCarrierE(g,pxx(p.x),pyz(p.z));return;}
+    var X=pxx(p.x),Y=pyz(p.z);
+    if(p.hop){var k=p.hop.k,FX=pxx(p.hop.fx),FY=pyz(p.hop.fz);drawHole(g,FX,FY,1-k);drawHole(g,X,Y,k);
+      g.fillStyle=C.electron;g.globalAlpha=0.85;g.beginPath();g.arc(X+(FX-X)*k,Y+(FY-Y)*k,1.9,0,7);g.fill();g.globalAlpha=1;}
+    else drawHole(g,X,Y,1);
+  });
+  g.restore();
+  // sirt chizig'i
+  g.strokeStyle=C.ink; g.lineWidth=1.5; g.beginPath(); g.moveTo(0,SY); g.lineTo(MW,SY); g.stroke();
+  // zondlar va zanjir
+  var lift=st.down?0:22, top=SY-36, wy=14, vy=40;
+  g.lineWidth=1.6; g.strokeStyle=C.ink;
+  var vx=st.sch===4?[pxx(PRX[1]),pxx(PRX[2])]:[pxx(PRX[0]),pxx(PRX[3])];
+  g.beginPath(); g.moveTo(pxx(PRX[0]),top); g.lineTo(pxx(PRX[0]),wy); g.lineTo(MX0-34,wy); g.moveTo(MX0+34,wy); g.lineTo(pxx(PRX[3]),wy); g.lineTo(pxx(PRX[3]),top);
+  g.moveTo(vx[0],top); g.lineTo(vx[0],vy); g.lineTo(MX0-13,vy); g.moveTo(MX0+13,vy); g.lineTo(vx[1],vy); g.lineTo(vx[1],top); g.stroke();
+  if(st.sch===2){g.fillStyle=C.ink;[vx[0],vx[1]].forEach(function(x){g.beginPath();g.arc(x,vy,2.6,0,7);g.fill();});}
+  g.fillStyle=C.surface2; g.strokeStyle=C.ink; g.lineWidth=1.4;
+  g.fillRect(MX0-34,wy-11,68,22); g.strokeRect(MX0-34,wy-11,68,22);
+  g.beginPath(); g.arc(MX0,vy,13,0,7); g.fill(); g.stroke();
+  g.fillStyle=C.ink; g.font="600 11px "+FONT; g.textAlign="center"; g.fillText("I manba",MX0,wy+4);
+  g.font="italic 15px "+MATHF; g.fillText("V",MX0,vy+5);
+  if(on){var ax=st.sI>0?1:-1, ax0=st.sI>0?pxx(PRX[0])+40:pxx(PRX[3])-40; g.strokeStyle=C.fb; g.fillStyle=C.fb; g.lineWidth=2; g.beginPath(); g.moveTo(ax0,wy); g.lineTo(ax0+ax*28,wy); g.stroke(); g.beginPath(); g.moveTo(ax0+ax*34,wy); g.lineTo(ax0+ax*26,wy-5); g.lineTo(ax0+ax*26,wy+5); g.fill();
+    g.font="11px "+FONT; g.fillText("I",ax0+ax*14,wy-6);}
+  for(var q=0;q<4;q++){
+    var x=pxx(PRX[q]), tip=SY-lift, used=st.sch===4||q===0||q===3;
+    g.fillStyle=C.steel; g.globalAlpha=used?1:0.4;
+    g.beginPath(); g.moveTo(x-5,top); g.lineTo(x+5,top); g.lineTo(x+0.8,tip); g.lineTo(x-0.8,tip); g.closePath(); g.fill(); g.globalAlpha=1;
+    g.fillStyle=C.ink; g.font="600 12px "+FONT; g.textAlign="left"; g.fillText(String(q+1),x+7,top+12);
+  }
+  if(st.down&&on){
+    g.font="11px "+FONT; g.textAlign="center";
+    if(st.sch===4){g.fillStyle=C.ok;g.textAlign="right";[1,2].forEach(function(q){g.fillText("I ≈ 0",pxx(PRX[q])-7,SY-6);});g.textAlign="center";}
+    else{g.strokeStyle=C.hole;g.lineWidth=1.6;[0,3].forEach(function(q){var x=pxx(PRX[q])+10;g.beginPath();g.moveTo(x,SY-22);for(var z=0;z<5;z++)g.lineTo(x+(z%2?4:-4),SY-19+z*3.5);g.lineTo(x,SY-2);g.stroke();g.fillStyle=C.hole;g.textAlign="left";g.fillText("R_c",x+7,SY-8);});}
+    g.fillStyle=C.muted; g.textAlign="left"; g.fillText(st.sI>0?"+I kiradi":"−I chiqadi",pxx(PRX[0])-58,SY-8); g.textAlign="right"; g.fillText(st.sI>0?"I chiqadi":"I kiradi",pxx(PRX[3])+58,SY-8);
+  }
+  if(!st.down){g.fillStyle=C.warn;g.font="600 12px "+FONT;g.textAlign="center";g.fillText("Zondlar ko'tarilgan: tok yo'q, tashuvchilar faqat tartibsiz issiqlik harakatida",MX0,SY+Math.min(40,(yb-SY)/2+4));}
+  // masshtab
+  g.strokeStyle=C.ink; g.lineWidth=2; g.beginPath(); g.moveTo(14,MH-10); g.lineTo(14+0.5*PXM,MH-10); g.stroke();
+  g.fillStyle=C.ink; g.font="11px "+MONO; g.textAlign="left"; g.fillText("0.5 mm",14,MH-15);
+}
+function drawPhi(){
+  var cv=phiCv,g=pctx,W=cv.width; if(!W) return;
+  var s=W/cv.clientWidth,w=cv.clientWidth,h=cv.clientHeight; g.setTransform(s,0,0,s,0,0); g.clearRect(0,0,w,h);
+  g.fillStyle=C.ink; g.font="600 11px "+FONT; g.textAlign="left"; g.fillText("Sirt bo'ylab potensial φ(x)",8,14);
+  var r=st.read; if(!r||r.open||!r.I){g.fillStyle=C.muted;g.font="12px "+FONT;g.textAlign="center";g.fillText("Tok yo'q: potensial hamma joyda bir xil",w/2,h/2+6);return;}
+  var o=ab(), q2=phiAt(PRX[1],0,o), q3=phiAt(PRX[2],0,o), K=Math.abs(r.I)*r.R23*1000/(Math.abs(q2-q3)||1); // mV, V23 = I*R23 ga moslangan
+  var p2=K*q2, p3=K*q3, pm=Math.max(Math.abs(p2),Math.abs(p3))*2.6||1;
+  var L=10,R=10,T=24,B=18, X=function(x){return L+(x+XMM)/(2*XMM)*(w-L-R);}, Y=function(v){return T+(h-T-B)/2-(Math.max(-pm,Math.min(pm,v))/pm)*(h-T-B)/2;};
+  g.strokeStyle=C.line; g.lineWidth=1; g.beginPath(); g.moveTo(L,Y(0)); g.lineTo(w-R,Y(0)); g.stroke();
+  PRX.forEach(function(x,i){g.strokeStyle=C.muted;g.setLineDash([2,3]);g.beginPath();g.moveTo(X(x),T);g.lineTo(X(x),h-B);g.stroke();g.setLineDash([]);g.fillStyle=C.muted;g.font="10px "+FONT;g.textAlign="center";g.fillText(String(i+1),X(x),h-5);});
+  g.strokeStyle=C.accent; g.lineWidth=1.8; g.beginPath();
+  for(var i=0;i<=320;i++){var x=-XMM+i/320*2*XMM, v=K*phiAt(x,0.002,o); if(i)g.lineTo(X(x),Y(v)); else g.moveTo(X(x),Y(v));}
+  g.stroke();
+  if(st.sch===2){g.strokeStyle=C.hole;g.lineWidth=3;[[o.a,1],[o.b,-1]].forEach(function(q){var x=X(q[0]);g.beginPath();g.moveTo(x+4,Y(q[1]*pm*0.95));g.lineTo(x+4,q[1]>0?T-4:h-B+4);g.stroke();});
+    g.fillStyle=C.hole;g.font="10px "+FONT;g.textAlign="left";g.fillText("+ I·R_c = "+(Math.abs(r.I)*r.Rc).toFixed(2)+" V (har bir kontaktda)",X(o.a)+(o.a<0?8:-180),T+10);}
+  [p2,p3].forEach(function(v,i){g.fillStyle=C.fe;g.beginPath();g.arc(X(PRX[1+i]),Y(v),4,0,7);g.fill();});
+  var xm=(X(PRX[1])+X(PRX[2]))/2; g.strokeStyle=C.fe; g.lineWidth=1.2; g.beginPath(); g.moveTo(xm,Y(p2)); g.lineTo(xm,Y(p3)); g.stroke();
+  g.fillStyle=C.fe; g.font="600 12px "+FONT; g.textAlign="center"; g.fillText("V₂₃ = "+mvs((p2-p3)/1000)+" mV",xm,Y(Math.max(p2,p3))-8);
+}
+function updateMicroText(){
+  var r=st.read; if(!r) return; var m=MATS[st.mat], t=st.tmm, step, title, text;
+  var nT=m.type==="n";
+  if(!st.down){step="zanjir ochiq";title="Zondlar ko'tarilgan";text="Namunadan tok o'tmayapti. Tashuvchilar faqat tartibsiz issiqlik harakatida va hech qayerga dreyf qilmaydi, potensial hamma joyda bir xil. «Zondlarni namunaga tushirish» ni bosing.";}
+  else if(st.sch===2){step="2 zondli sxema";title="Voltmetr tok o'tayotgan zondlarga ulangan";text="Voltmetr 1 va 4-zondlar orasidagi \\(V_{14}\\) ni o'lchaydi. Unga namuna qarshiligidan tashqari ikkala kontaktdagi kuchlanish tushuvi \\(2IR_c\\) va igna uchlari atrofidagi yoyilish qarshiligi ham qo'shiladi. Hozir \\(R_c\\) ≈ "+sci(r.Rc,3)+" Ω, ya'ni har bir kontaktda \\(IR_c\\) ≈ "+(Math.abs(r.I)*r.Rc).toFixed(3)+" V. Bu \\(V_{23}\\) dan "+Math.round(r.Rtot/r.R23)+" marta katta. \\(R_c\\) tokka bog'liq bo'lgani uchun V–I grafigi to'g'ri chiziq bo'lmaydi.";}
+  else{
+    step="4 zondli sxema · "+(t<0.5?"yupqa namuna":t>2?"qalin namuna":"oraliq qalinlik");
+    title=nT?"Elektronlar tokka teskari dreyf qiladi":"Kovaklar bog'dan bog'ga sakrab tok bo'ylab ko'chadi";
+    text=(nT?"Erkin elektronlar (ko'k) "+(st.sI>0?"4 → 1":"1 → 4")+" yo'nalishda, ya'ni tokka teskari harakatlanadi.":"Kovak — bog'dagi bo'sh joy. Qo'shni valent elektron unga sakraydi, bo'sh joy esa tok yo'nalishida ("+(st.sI>0?"1 → 4":"4 → 1")+") bir tugunga siljiydi. Yadrolar va ionlar joyida qoladi.")+
+      " Voltmetr qarshiligi \\(> 10^7\\ \\Omega\\), shuning uchun 2 va 3-zondlardan tok o'tmaydi va ularning kontakt qarshiligida kuchlanish tushmaydi: voltmetr aynan \\(\\varphi_2-\\varphi_3\\) ni ko'rsatadi. "+
+      (t<0.5?"Namuna yupqa (\\(t/s\\) = "+t.toFixed(2)+"): tok qatlam ichida qisiladi, \\(V\\) yarim cheksiz namunadagidan \\(1/F_1\\) = "+(1/r.g.f1).toFixed(2)+" marta katta.":t>2?"Namuna qalin (\\(t/s\\) = "+t.toFixed(2)+"): tok yarim sfera bo'ylab yoyiladi, \\(F_1\\) ≈ "+r.g.f1.toFixed(3)+" → 1.":"Oraliq holat: \\(F_1\\) = "+r.g.f1.toFixed(3)+", tuzatish albatta kiritiladi.");
+  }
+  $("#phaseStep").textContent=step; setMath($("#phaseTitle"),title); setMath($("#phaseText"),text);
+  M.text={title:title,text:text};
+  var c=r.c;
+  if(!$("#liveNums")._b){$("#liveNums").innerHTML="<dt>\\(\\rho\\)</dt><dd id='lv1'></dd><dt>\\(n\\) / \\(p\\)</dt><dd id='lv2'></dd><dt>\\(\\mu_n\\) / \\(\\mu_p\\)</dt><dd id='lv3'></dd><dt>\\(F_1\\) · \\(F_2\\)</dt><dd id='lv4'></dd><dt>\\(V_{23}\\) (ideal)</dt><dd id='lv5'></dd><dt>Manba \\(U\\) / \\(R_c\\)</dt><dd id='lv6'></dd>";$("#liveNums")._b=1;mjx($("#liveNums"));}
+  $("#lv1").textContent=sci(c.rho*100,4)+" Ω·cm"; $("#lv2").textContent=sci(c.n,3)+" / "+sci(c.p,3)+" m⁻³";
+  $("#lv3").textContent=c.mun.toFixed(3)+" / "+c.mup.toFixed(3)+" m²/(V·s)"; $("#lv4").textContent=r.g.f1.toFixed(4)+" · "+r.g.f2.toFixed(4);
+  $("#lv5").textContent=r.open?"—":mvs(r.I*r.R23)+" mV"; $("#lv6").textContent=r.open?"—":Math.abs(r.U).toFixed(2)+" V / "+sci(r.Rc,3)+" Ω";
+}
+$("#btnPlay").addEventListener("click",function(){M.running=!M.running;this.textContent=M.running?"Pauza":"Davom etish";});
+$("#btnReset").addEventListener("click",function(){M.need=true;});
+$("#speedR").addEventListener("input",function(){M.speed=parseFloat(this.value);});
+
+/* ---------- 2D zaxira (WebGL bo'lmasa) ---------- */
+function drawApp(){
+  var g=actx; if(!appCv.width) return; g.setTransform(aS,0,0,aS,0,0); g.clearRect(0,0,AW,AH);
+  g.fillStyle=C.surface2; g.fillRect(0,0,AW,AH);
+  g.fillStyle=C.muted; g.font="13px "+FONT; g.textAlign="center"; g.fillText("Brauzerda 3D grafika (WebGL) ishlamadi. Quyida zondlar ostidagi kesim ko'rsatilgan.",AW/2,28);
+  if(microCv.width) g.drawImage(microCv,0,0,microCv.width,microCv.height,30,50,AW-60,(AW-60)/2);
+}
+
+/* ---------- 3D laboratoriya (Three.js) ---------- */
+var T3=null, L3={x:0,y:0,r:70,init:false,drag:null}, CHUCK=3.4;
+function m3(color,o){return new THREE.MeshStandardMaterial(Object.assign({color:color,roughness:0.6,metalness:0.1},o||{}));}
+function box3(w,h,d,m,x,y,z){var me=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);me.position.set(x||0,y||0,z||0);me.castShadow=true;me.receiveShadow=true;return me;}
+function cyl3(rt,rb,h,m,seg){var me=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||40),m);me.castShadow=true;me.receiveShadow=true;return me;}
+function ctex(w,h,draw){var c=document.createElement("canvas");c.width=w;c.height=h;if(draw)draw(c.getContext("2d"),w,h);var t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return {c:c,t:t};}
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function V3(x,y,z){return new THREE.Vector3(x,y,z);}
+function cable3(S,pts,color,r){
+  r=r||0.3;
+  var v=pts.map(function(p){return p.isVector3?p.clone():V3(p[0],p[1],p[2]);}), dense=[];
+  v.forEach(function(p,i){
+    if(p.y<=0.6)p.y=r+0.03;
+    if(i>0){var q=v[i-1];if(q.y<=r+0.04&&p.y<=r+0.04){var d=q.distanceTo(p),n=Math.floor(d/4);for(var k=1;k<n;k++)dense.push(q.clone().lerp(p,k/n));}}
+    dense.push(p);
+  });
+  var curve=new THREE.CatmullRomCurve3(dense,false,"centripetal");
+  var me=new THREE.Mesh(new THREE.TubeGeometry(curve,Math.max(120,dense.length*12),r,8,false),m3(color,{roughness:0.45}));
+  me.castShadow=true; S.scene.add(me); return me;
+}
+function instrument3(S,o){
+  var g=new THREE.Group(); g.position.set(o.x,o.y+o.h/2+0.6,o.z); g.rotation.y=o.ry||0;
+  g.add(box3(o.w,o.h,o.d,m3("#3a4047",{roughness:0.5,metalness:0.25})));
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(a){g.add(box3(1.8,0.6,1.8,m3("#15181b"),a[0]*(o.w/2-1.6),-o.h/2-0.3,a[1]*(o.d/2-1.6)));});
+  g.add(box3(o.w+0.3,0.5,o.d+0.3,m3("#2b3036",{metalness:0.3}),0,o.h/2-0.1,0));
+  var pw=o.w-0.9, ph=o.h-0.9, cw=640, ch=Math.round(640*ph/pw), tx=ctex(cw,ch);
+  var front=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),new THREE.MeshStandardMaterial({map:tx.t,roughness:0.55,metalness:0.05}));
+  front.position.z=o.d/2+0.02; g.add(front);
+  var kx=pw*0.33, ky=-ph*0.04, z0=o.d/2+0.02;
+  var knob=new THREE.Group(); knob.position.set(kx,ky,z0);
+  var kb=cyl3(1.15,1.35,1.2,m3("#1b1f24",{roughness:0.35,metalness:0.3})); kb.rotation.x=Math.PI/2; kb.position.z=0.6; knob.add(kb);
+  var kc=cyl3(0.9,0.9,0.15,m3("#9aa3ac",{metalness:0.7,roughness:0.3})); kc.rotation.x=Math.PI/2; kc.position.z=1.25; knob.add(kc);
+  knob.add(box3(0.2,0.75,0.1,m3("#ffffff",{emissive:"#ffffff",emissiveIntensity:0.3}),0,0.45,1.36));
+  g.add(knob);
+  var lever=null;
+  if(o.lever){
+    g.add(box3(1.5,1.1,0.4,m3("#202429"),pw*0.15,ky,z0+0.2));
+    lever=new THREE.Group(); lever.position.set(pw*0.15,ky,z0+0.4);
+    var stick=cyl3(0.16,0.2,1.5,m3("#c8ced4",{metalness:0.8,roughness:0.25})); stick.position.y=0.7; lever.add(stick);
+    var tip=new THREE.Mesh(new THREE.SphereGeometry(0.28,12,10),m3("#d63b2a")); tip.position.y=1.45; lever.add(tip);
+    lever.rotation.x=Math.PI/2.6; g.add(lever);
+  }
+  var posts=[];
+  [["#c0392b",0.20],["#1a1a1a",0.36]].forEach(function(pc){var p=cyl3(0.42,0.42,0.9,m3(pc[0],{roughness:0.35}));p.rotation.x=Math.PI/2;p.position.set(pw*pc[1],-ph*0.36,z0+0.45);g.add(p);posts.push(p);});
+  var led=new THREE.Mesh(new THREE.SphereGeometry(0.3,12,8),new THREE.MeshStandardMaterial({color:"#1b5e2a",emissive:"#2bff6a",emissiveIntensity:0}));
+  led.position.set(-pw*0.43,-ph*0.36,z0+0.1); g.add(led);
+  S.scene.add(g);
+  return {g:g,o:o,tx:tx,cw:cw,ch:ch,pw:pw,ph:ph,knob:knob,lever:lever,posts:posts,led:led};
+}
+function drawPanel3(P,val,on,warn,sub){
+  var g=P.tx.c.getContext("2d"),w=P.cw,h=P.ch,o=P.o;
+  var gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,"#eef0f2");gr.addColorStop(1,"#cfd4d9");g.fillStyle=gr;g.fillRect(0,0,w,h);
+  g.strokeStyle="rgba(0,0,0,0.18)";g.lineWidth=3;g.strokeRect(1.5,1.5,w-3,h-3);
+  g.fillStyle="#1b2530";g.textAlign="left";g.font="600 "+Math.round(h*0.085)+"px "+FONT;g.fillText(o.title,w*0.05,h*0.15);
+  g.fillStyle="#5b6670";g.font=Math.round(h*0.058)+"px "+MONO;g.fillText(o.model,w*0.05,h*0.245);
+  var lx=w*0.05,ly=h*0.31,lw=w*0.52,lh=h*0.38;
+  g.fillStyle="#0c1115";rr(g,lx,ly,lw,lh,12);g.fill();
+  g.fillStyle=warn?"#ff4a3a":on?"#ffb23e":"#4d3d22";g.textAlign="right";g.font="500 "+Math.round(lh*0.5)+"px "+MONO;g.fillText(val,lx+lw-w*0.1,ly+lh*0.68);
+  g.font=Math.round(lh*0.22)+"px "+MONO;g.fillText(o.unit,lx+lw-w*0.02,ly+lh*0.68);
+  if(sub){g.textAlign="left";g.font=Math.round(lh*0.17)+"px "+MONO;g.fillText(sub,lx+w*0.02,ly+lh*0.92);}
+  g.fillStyle="#3c4651";g.textAlign="center";g.font="600 "+Math.round(h*0.052)+"px "+FONT;
+  var ky=h*0.54+(1.9/P.ph)*h;
+  g.fillText(o.knobLabel||"SOZLASH",w*0.83,ky);
+  if(o.lever)g.fillText(o.lever,w*0.65,ky);
+  g.font=Math.round(h*0.045)+"px "+FONT;g.fillStyle="#5b6670";
+  g.fillText("+",w*0.70,h*0.97);g.fillText("−",w*0.86,h*0.97);
+  g.textAlign="left";g.fillText("TARMOQ",w*0.1,h*0.97);
+  P.tx.t.needsUpdate=true;
+}
+function init3D(){
+  if(!window.THREE||!THREE.OrbitControls) return null;
+  var host=$("#app3d"), renderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});}catch(e){return null;}
+  if(!renderer||!renderer.getContext()) return null;
+  host.hidden=false; appCv.hidden=true; $("#lensCv").hidden=false; $("#viewBtns").hidden=false;
+  $("#appTitle").textContent="Laboratoriya stoli (3D)";
+  $("#appHint").textContent="Sichqoncha bilan aylantiring (chap tugma), suring (o'ng tugma), yaqinlashtiring (g'ildirak). Telefonda: bir barmoq bilan aylantirish, ikki barmoq bilan yaqinlashtirish. Lupani tortib namunaga olib boring (yoki ← ↑ → ↓).";
+  host.appendChild(renderer.domElement);
+  renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+  renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputEncoding=THREE.sRGBEncoding;
+  var scene=new THREE.Scene(); scene.background=new THREE.Color(C.surface2);
+  var camera=new THREE.PerspectiveCamera(36,1.5,0.05,700);
+  camera.position.set(0,44,80);
+  var controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.target.set(0,5,0); controls.enableDamping=true; controls.dampingFactor=0.08;
+  controls.minDistance=1.5; controls.maxDistance=200; controls.maxPolarAngle=Math.PI*0.49;
+  var S={renderer:renderer,scene:scene,camera:camera,controls:controls,host:host,P:{},over:false,anim:null,w:0,h:0,lift:0};
+
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8d7a64,0.8));
+  var dl=new THREE.DirectionalLight(0xffffff,0.9); dl.position.set(35,80,50); dl.castShadow=true; dl.shadow.mapSize.set(2048,2048);
+  var sc=dl.shadow.camera; sc.left=-70;sc.right=70;sc.top=55;sc.bottom=-55;sc.near=10;sc.far=220; dl.shadow.bias=-0.0004; scene.add(dl);
+  var fl=new THREE.DirectionalLight(0xcfe0ff,0.35); fl.position.set(-60,40,-40); scene.add(fl);
+
+  // stol
+  var wood=ctex(1024,256,function(g,w,h){g.fillStyle="#b58756";g.fillRect(0,0,w,h);for(var i=0;i<160;i++){var y=Math.random()*h;g.strokeStyle="rgba("+(85+Math.random()*45|0)+","+(52+Math.random()*28|0)+",28,"+(0.08+Math.random()*0.2)+")";g.lineWidth=0.6+Math.random()*1.8;g.beginPath();g.moveTo(0,y);for(var x=0;x<=w;x+=32)g.lineTo(x,y+Math.sin(x/90+i)*3);g.stroke();}});
+  wood.t.wrapS=wood.t.wrapT=THREE.RepeatWrapping; wood.t.repeat.set(1.3,1);
+  scene.add(box3(120,3,64,m3("#ffffff",{map:wood.t,roughness:0.75}),0,-1.5,0));
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(a){scene.add(box3(4,60,4,m3("#5b4a38"),a[0]*55,-33,a[1]*28));});
+  var floor=new THREE.Mesh(new THREE.PlaneGeometry(500,500),m3("#9aa0a6",{roughness:0.95})); floor.rotation.x=-Math.PI/2; floor.position.y=-63; floor.receiveShadow=true; scene.add(floor);
+
+  // to'rt zondli stend
+  var paint=m3("#2d4257",{roughness:0.45,metalness:0.35}), steel=m3("#c4cad0",{roughness:0.28,metalness:0.6}), dark=m3("#1d2126",{roughness:0.5});
+  scene.add(box3(24,1.6,18,paint,0,0.8,0));
+  [[-11,-8],[11,-8],[-11,8],[11,8]].forEach(function(a){scene.add(box3(1.8,0.4,1.8,dark,a[0],0.2,a[1]));});
+  var plT=ctex(512,64,function(g,w,h){g.fillStyle="#d9dde1";g.fillRect(0,0,w,h);g.fillStyle="#1b2530";g.font="600 30px "+FONT;g.textAlign="center";g.fillText("TO'RT ZONDLI STEND  ·  s = 1.00 mm",w/2,43);});
+  var np=new THREE.Mesh(new THREE.PlaneGeometry(14,1.75),m3("#ffffff",{map:plT.t,metalness:0.3,roughness:0.4})); np.position.set(0,0.8,9.02); scene.add(np);
+  var col=cyl3(0.9,0.9,17,steel); col.position.set(0,1.6+8.5,-6.5); scene.add(col);
+  scene.add(box3(2.6,1.8,8.6,paint,0,16,-2.6));
+  var knob=new THREE.Group(); knob.position.set(0,17.4,0); scene.add(knob);
+  knob.add(cyl3(1.15,1.15,1.0,dark,24)); var kr=cyl3(1.2,1.2,0.25,steel,24); kr.position.y=-0.3; knob.add(kr);
+  knob.add(box3(0.25,0.3,1.1,m3("#d63b2a"),0,0.5,0.6));
+  S.knob=knob;
+  var rod=cyl3(0.22,0.22,1,steel,16); scene.add(rod); S.rod=rod;
+  // ulagich bloki (kabellar shu yerdan chiqadi)
+  scene.add(box3(2.4,2.6,1.2,dark,0,13.2,-7.9));
+  var jackCols=["#c0392b","#2e9c5a","#e2c23a","#1f1f1f"];
+  jackCols.forEach(function(c,i){var j=cyl3(0.2,0.2,0.4,m3(c,{roughness:0.35}),12);j.rotation.x=Math.PI/2;j.position.set(-0.75+0.5*i,13.2,-8.65);scene.add(j);});
+  // termostolik
+  var chuck=cyl3(4.3,4.5,1.6,m3("#3a4047",{metalness:0.5,roughness:0.35}),48); chuck.position.y=2.4; scene.add(chuck);
+  var heatMat=m3("#7a4a2a",{metalness:0.6,roughness:0.35,emissive:"#000000"}); var ring=cyl3(4.36,4.36,0.16,heatMat,48); ring.position.y=3.2; scene.add(ring); S.heatMat=heatMat;
+  var ins=cyl3(3.9,3.9,0.14,m3("#ece6d8",{roughness:0.85}),48); ins.position.y=CHUCK-0.07; scene.add(ins);
+  // namuna (plastina / disk)
+  var sm=m3(MATS[st.mat].col,{roughness:0.18,metalness:0.55}); var sample=cyl3(1,1,1,sm,72); scene.add(sample); S.sample=sample;
+  // zond kallagi
+  var headG=new THREE.Group(); scene.add(headG); S.headG=headG;
+  var tung=m3("#8e979f",{metalness:0.85,roughness:0.25});
+  for(var i=0;i<4;i++){var nd=cyl3(0.028,0.005,1.1,tung,10);nd.position.set((-1.5+i)*0.1,0.55,0);headG.add(nd);}
+  headG.add(box3(0.75,0.4,0.4,m3("#f2efe8",{roughness:0.6}),0,1.25,0));
+  var body=cyl3(1.4,1.4,3.0,m3("#c8cdd2",{metalness:0.7,roughness:0.3}),40); body.position.y=2.95; headG.add(body);
+  var band=cyl3(1.42,1.42,0.35,m3("#0d6e7a",{roughness:0.4}),40); band.position.y=3.6; headG.add(band);
+  var cap=cyl3(0.8,1.4,0.5,m3("#2b3036"),40); cap.position.y=1.7; headG.add(cap);
+  // stol lampasi
+  var lampG=new THREE.Group(); lampG.position.set(16,0,6); scene.add(lampG);
+  var lbase=cyl3(1.8,2.0,0.6,dark,32); lbase.position.y=0.3; lampG.add(lbase);
+  var pole=cyl3(0.22,0.22,12,steel,12); pole.position.y=6.6; lampG.add(pole);
+  var arm=cyl3(0.18,0.18,9.6,steel,12); arm.rotation.z=Math.PI/2; arm.rotation.y=-0.32; arm.position.set(-4.5,12.6,-1.5); lampG.add(arm);
+  var shade=new THREE.Mesh(new THREE.CylinderGeometry(0.7,2.0,2.2,32,1,true),m3("#2d4257",{side:THREE.DoubleSide,roughness:0.4,metalness:0.3})); shade.position.set(-9.1,11.6,-3.0); lampG.add(shade);
+  var bulb=new THREE.Mesh(new THREE.SphereGeometry(0.6,16,12),new THREE.MeshStandardMaterial({color:"#fff6d8",emissive:"#ffe9a8",emissiveIntensity:0})); bulb.position.set(-9.1,11.2,-3.0); lampG.add(bulb); S.bulb=bulb;
+  var spot=new THREE.SpotLight(0xfff1c8,0,40,0.55,0.5); spot.position.set(16-9.1,11.0,3.0); spot.target.position.set(0,CHUCK,0); scene.add(spot); scene.add(spot.target); S.spot=spot;
+  // suyuq azot Dyuar idishi va shlang
+  var dew=cyl3(2.4,2.4,9,m3("#d7dce0",{metalness:0.8,roughness:0.25}),40); dew.position.set(-8,4.5,-15); scene.add(dew);
+  var lid=cyl3(1.2,1.4,0.8,dark,24); lid.position.set(-8,9.4,-15); scene.add(lid);
+  var dT=ctex(256,64,function(g,w,h){g.fillStyle="#f4f6f8";g.fillRect(0,0,w,h);g.fillStyle="#1b2530";g.font="600 34px "+FONT;g.textAlign="center";g.fillText("LN₂",w/2,45);});
+  var dl2=new THREE.Mesh(new THREE.PlaneGeometry(2.4,0.6),m3("#ffffff",{map:dT.t})); dl2.position.set(-8,6,-12.58); scene.add(dl2);
+  cable3(S,[V3(-8,9.8,-15),V3(-8,11.2,-13.6),V3(-7.2,9.5,-9.2),V3(-5.6,5.2,-5),V3(-3.6,2.6,-2.6)],"#b9c0c6",0.32);
+  // asboblar
+  S.P.src=instrument3(S,{x:-30,y:0,z:-12,w:24,h:12,d:16,title:"Doimiy tok manbai",model:"0.01–10 mA · 20 V",unit:"mA",knobLabel:"TOK",lever:"QUTB"});
+  S.P.vm=instrument3(S,{x:30,y:0,z:-12,w:24,h:12,d:16,title:"Raqamli voltmetr",model:"R kir > 10 MΩ",unit:"mV",knobLabel:"DIAPAZON",lever:"4Z / 2Z"});
+  S.P.th=instrument3(S,{x:-42,y:0,z:14,ry:0.35,w:20,h:10,d:14,title:"Harorat regulyatori",model:"150–600 K · Pt100",unit:"K",knobLabel:"HARORAT"});
+  scene.updateMatrixWorld(true);
+  function term(P,i){var c=new THREE.Vector3();P.posts[i].getWorldPosition(c);var n=new THREE.Vector3(0,0,1).applyQuaternion(P.g.quaternion);return {p:c.clone().addScaledVector(n,0.45),n:n};}
+  function fwd(t,d,y){var v=t.p.clone().addScaledVector(t.n,d);if(y!==undefined)v.y=y;return v;}
+  var T=0;
+  function fromJack(i,zl){var x=-0.75+0.5*i;return [V3(x,13.2,-8.85),V3(x,13.0,-9.5),V3(x,10,-zl+0.4),V3(x,3,-zl),V3(x,T,-zl)];}
+  // tok manbai: qizil (1-zond, +) va qora (4-zond, −)
+  var a=term(S.P.src,0), b=term(S.P.src,1);
+  cable3(S,fromJack(0,11.0).concat([V3(-15.8,T,-11.0),V3(-15.8,T,-2.0),V3(a.p.x,T,-2.0),fwd(a,1.6),a.p]),"#c0392b",0.25);
+  cable3(S,fromJack(3,10.4).concat([V3(-15.0,T,-10.4),V3(-15.0,T,-1.2),V3(b.p.x,T,-1.2),fwd(b,1.6),b.p]),"#1f1f1f",0.25);
+  // voltmetr: yashil (2-zond) va sariq (3-zond)
+  a=term(S.P.vm,0); b=term(S.P.vm,1);
+  cable3(S,fromJack(1,10.4).concat([V3(15.0,T,-10.4),V3(15.0,T,-2.0),V3(a.p.x,T,-2.0),fwd(a,1.6),a.p]),"#2e9c5a",0.22);
+  cable3(S,fromJack(2,11.0).concat([V3(15.8,T,-11.0),V3(15.8,T,-1.2),V3(b.p.x,T,-1.2),fwd(b,1.6),b.p]),"#e2c23a",0.22);
+  // harorat regulyatori: Pt100 datchigi va qizdirgich
+  a=term(S.P.th,0); b=term(S.P.th,1);
+  cable3(S,[V3(-3.7,2.3,2.4),V3(-5.2,1.85,3.4),V3(-11.6,1.85,5.2),V3(-12.8,T,5.8),fwd(a,5,T),fwd(a,1.6),a.p],"#8a929a",0.24);
+  cable3(S,[V3(-3.2,2.0,3.0),V3(-4.4,1.85,4.4),V3(-11.4,1.85,6.6),V3(-12.6,T,7.4),fwd(b,5,T),fwd(b,1.6),b.p],"#c0392b",0.24);
+  return S;
+}
+function panels3D(r){
+  if(!T3) return; var P=T3.P;
+  drawPanel3(P.src,r.open?"OCHIQ":istr(r.I*1e3),!r.open,r.over,r.open?"":"U = "+Math.abs(r.U).toFixed(2)+" V"+(r.over?" · CHEGARA":"")); P.src.led.material.emissiveIntensity=1.2;
+  drawPanel3(P.vm,mvs(r.V),true,false,st.sch===4?"zondlar 2–3":"zondlar 1–4"); P.vm.led.material.emissiveIntensity=1.2;
+  drawPanel3(P.th,r.Ts.toFixed(1),true,false,st.T<295?"sovutish (LN₂)":st.T>305?"qizdirish":"xona harorati"); P.th.led.material.emissiveIntensity=1.2;
+}
+var VIEWS={umumiy:{p:[0,44,80],t:[0,5,0]},stend:{p:[-15,19,27],t:[0,8,0]},zond:{p:[2.6,5.4,5.6],t:[0,CHUCK+0.2,0]},asbob:{p:[0,26,42],t:[0,6,-10]}};
+function goView(k){var v=VIEWS[k];if(!T3||!v)return;T3.anim={fp:T3.camera.position.clone(),ft:T3.controls.target.clone(),tp:V3(v.p[0],v.p[1],v.p[2]),tt:V3(v.t[0],v.t[1],v.t[2]),k:0};}
+document.querySelectorAll("[data-view]").forEach(function(b){b.addEventListener("click",function(){goView(b.dataset.view);});});
+function sampleRect3(){
+  if(!T3) return null;
+  var bb=new THREE.Box3().setFromObject(T3.sample), w=T3.w, h=T3.h, x0=1e9,y0=1e9,x1=-1e9,y1=-1e9, ok=false;
+  for(var i=0;i<8;i++){var v=V3(i&1?bb.max.x:bb.min.x,i&2?bb.max.y:bb.min.y,i&4?bb.max.z:bb.min.z).project(T3.camera);if(v.z>1)continue;ok=true;var sx=(v.x+1)/2*w,sy=(1-v.y)/2*h;x0=Math.min(x0,sx);x1=Math.max(x1,sx);y0=Math.min(y0,sy);y1=Math.max(y1,sy);}
+  if(!ok) return null; var c=V3(0,T3.sample.position.y,0).project(T3.camera), pad=10;
+  return {x0:x0-pad,y0:y0-pad,x1:x1+pad,y1:y1+pad,cx:(c.x+1)/2*w,cy:(1-c.y)/2*h};
+}
+function lensHome3D(){var r=sampleRect3();if(r){L3.x=Math.max(L3.r+6,Math.min(T3.w-L3.r-6,r.cx));L3.y=Math.max(L3.r+20,Math.min(T3.h-L3.r-6,r.cy));}else if(T3){L3.x=T3.w*0.5;L3.y=T3.h*0.45;}L3.init=true;}
+function render3D(dt){
+  var S=T3, w=S.host.clientWidth, h=S.host.clientHeight;
+  if(w!==S.w||h!==S.h){S.w=w;S.h=h;S.renderer.setSize(w,h,false);S.camera.aspect=w/Math.max(1,h);S.camera.updateProjectionMatrix();L3.r=Math.max(52,Math.min(92,w*0.11));}
+  if(!w||!h) return;
+  if(S.anim){S.anim.k=Math.min(1,S.anim.k+dt/0.9);var e=S.anim.k<0.5?2*S.anim.k*S.anim.k:1-Math.pow(-2*S.anim.k+2,2)/2;S.camera.position.lerpVectors(S.anim.fp,S.anim.tp,e);S.controls.target.lerpVectors(S.anim.ft,S.anim.tt,e);if(S.anim.k>=1)S.anim=null;}
+  S.controls.update();
+  S.scene.background.set(C.surface2);
+  var tv=Math.max(0.035,st.tmm/10), rad=st.dmm/20;
+  S.sample.scale.set(rad,tv,rad); S.sample.position.y=CHUCK+tv/2; S.sample.material.color.set(MATS[st.mat].col);
+  var lt=st.down?0:1.6; S.lift+=(lt-S.lift)*Math.min(1,dt*4);
+  var hy=CHUCK+tv+S.lift; S.headG.position.y=hy;
+  var top=hy+4.45, bot=15.1; S.rod.scale.y=Math.max(0.01,bot-top); S.rod.position.y=(top+bot)/2;
+  S.knob.rotation.y=S.lift*2.5;
+  var dT=st.T-300; S.heatMat.emissive.set(dT>0?"#ff3a10":"#5aa8ff"); S.heatMat.emissiveIntensity=Math.min(0.9,Math.abs(dT)/300*0.9);
+  S.bulb.material.emissiveIntensity=st.light?1.8:0; S.spot.intensity=st.light?1.3:0;
+  var P=S.P;
+  P.src.knob.rotation.z=2.36-(st.Ii/14)*4.72; P.th.knob.rotation.z=2.36-((st.T-150)/450)*4.72;
+  P.src.lever.rotation.z=st.sI>0?-0.55:0.55; P.vm.lever.rotation.z=st.sch===4?-0.55:0.55;
+  S.renderer.render(S.scene,S.camera);
+  drawLens3D();
+}
+function tag(g,x,y,txt,col,align){g.font="600 11px "+FONT;var w=g.measureText(txt).width+12;var x0=align==="center"?x-w/2:x;g.fillStyle=C.surface;g.globalAlpha=0.92;g.fillRect(x0,y-10,w,18);g.globalAlpha=1;g.strokeStyle=col;g.lineWidth=1;g.strokeRect(x0+0.5,y-9.5,w-1,17);g.fillStyle=col;g.textAlign="left";g.fillText(txt,x0+6,y+3);}
+function drawLens3D(){
+  var S=T3, cv=$("#lensCv"), w=S.w, h=S.h, pr=Math.min(2,window.devicePixelRatio||1);
+  if(cv.width!==Math.round(w*pr)||cv.height!==Math.round(h*pr)){cv.width=Math.round(w*pr);cv.height=Math.round(h*pr);}
+  var g=cv.getContext("2d"); g.setTransform(pr,0,0,pr,0,0); g.clearRect(0,0,w,h);
+  if(!L3.init){ if(L3.first===undefined){L3.first=1;L3.x=w*0.82;L3.y=Math.max(L3.r+22,h*0.2);L3.init=true;} else lensHome3D(); }
+  var r=sampleRect3();
+  S.over=!!(r&&st.lensOn&&L3.x>=r.x0&&L3.x<=r.x1&&L3.y>=r.y0&&L3.y<=r.y1);
+  if(!st.lensOn) return;
+  if(r&&!S.over){g.strokeStyle=C.accent;g.setLineDash([4,4]);g.lineWidth=1.5;g.strokeRect(r.x0,r.y0,r.x1-r.x0,r.y1-r.y0);g.setLineDash([]);}
+  var R=L3.r;
+  g.save(); g.beginPath(); g.arc(L3.x,L3.y,R,0,7); g.clip();
+  if(S.over&&microCv.width){g.fillStyle=C.surface;g.fillRect(L3.x-R,L3.y-R,2*R,2*R);var cw=MW*0.78*mS;g.drawImage(microCv,(MW-MW*0.78)/2*mS,0,cw,MH*mS,L3.x-R,L3.y-R*0.82,2*R,2*R*MH/(MW*0.78));}
+  else{var src=2*R/2.4, rp=S.renderer.getPixelRatio(); g.fillStyle=C.surface2; g.fillRect(L3.x-R,L3.y-R,2*R,2*R); try{g.drawImage(S.renderer.domElement,(L3.x-src/2)*rp,(L3.y-src/2)*rp,src*rp,src*rp,L3.x-R,L3.y-R,2*R,2*R);}catch(e){}}
+  var gr=g.createRadialGradient(L3.x-R*0.4,L3.y-R*0.5,2,L3.x,L3.y,R);gr.addColorStop(0,"rgba(255,255,255,0.22)");gr.addColorStop(0.5,"rgba(255,255,255,0)");g.fillStyle=gr;g.fillRect(L3.x-R,L3.y-R,2*R,2*R);
+  g.restore();
+  var ang=Math.PI/4, k=R/82;
+  var hx1=L3.x+Math.cos(ang)*(R+4),hy1=L3.y+Math.sin(ang)*(R+4),hx2=L3.x+Math.cos(ang)*(R+60*k),hy2=L3.y+Math.sin(ang)*(R+60*k);
+  g.lineCap="round"; g.strokeStyle=C.ink; g.lineWidth=12*k; g.beginPath(); g.moveTo(hx1,hy1); g.lineTo(hx2,hy2); g.stroke();
+  g.strokeStyle=C.copper; g.lineWidth=6*k; g.beginPath(); g.moveTo(hx1+Math.cos(ang)*16*k,hy1+Math.sin(ang)*16*k); g.lineTo(hx2,hy2); g.stroke();
+  g.strokeStyle=C.ink; g.lineWidth=6; g.beginPath(); g.arc(L3.x,L3.y,R+2,0,7); g.stroke();
+  g.strokeStyle=C.accent; g.lineWidth=2; g.beginPath(); g.arc(L3.x,L3.y,R-2,0,7); g.stroke();
+  tag(g,L3.x,L3.y-R-14,S.over?"zondlar ostidagi kesim":(r?"× 2.4 · namunaga olib boring":"× 2.4"),C.accent,"center");
+}
+var stage=$("#stage");
+function lpos(e){var b=stage.getBoundingClientRect();return {x:e.clientX-b.left,y:e.clientY-b.top};}
+function hitL3(p){if(Math.hypot(p.x-L3.x,p.y-L3.y)<=L3.r+8)return true;var ang=Math.PI/4,k=L3.r/82;for(var t=0;t<=60*k;t+=5){if(Math.hypot(p.x-(L3.x+Math.cos(ang)*(L3.r+t)),p.y-(L3.y+Math.sin(ang)*(L3.r+t)))<11)return true;}return false;}
+stage.addEventListener("pointerdown",function(e){if(!T3||!st.lensOn)return;var p=lpos(e);if(hitL3(p)){L3.drag={dx:p.x-L3.x,dy:p.y-L3.y};e.stopPropagation();e.preventDefault();try{stage.setPointerCapture(e.pointerId);}catch(_){}}},true);
+stage.addEventListener("pointermove",function(e){if(!T3)return;var p=lpos(e);if(L3.drag){L3.x=Math.max(10,Math.min(T3.w-10,p.x-L3.drag.dx));L3.y=Math.max(10,Math.min(T3.h-10,p.y-L3.drag.dy));e.stopPropagation();}else T3.renderer.domElement.style.cursor=(st.lensOn&&hitL3(p))?"grab":"";},true);
+function endL3(e){if(L3.drag){L3.drag=null;e.stopPropagation();}}
+stage.addEventListener("pointerup",endL3,true); stage.addEventListener("pointercancel",endL3,true);
+stage.addEventListener("keydown",function(e){var k={ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,-10],ArrowDown:[0,10]}[e.key];if(!k||!st.lensOn||!T3)return;e.preventDefault();L3.x+=k[0];L3.y+=k[1];});
+$("#chkLens").addEventListener("change",function(){st.lensOn=this.checked;});
+$("#btnLensHome").addEventListener("click",function(){st.lensOn=true;$("#chkLens").checked=true;if(T3){L3.init=false;goView("stend");setTimeout(lensHome3D,950);}});
+
+/* ---------- asosiy sikl ---------- */
+var last=performance.now(), txtT=0, metT=0;
+function frame(now){
+  var dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(curTab==="simulyator"){
+    var r=st.read, tgt=(r&&!r.open&&!st.ideal)?RTH*Math.abs(r.U*r.I):0; heat+=(tgt-heat)*Math.min(1,dt*0.8);
+    var dpr=Math.min(2,window.devicePixelRatio||1); if(microCv.clientWidth>0&&microCv.width!==Math.round(microCv.clientWidth*dpr)) resizeAll();
+    checkMicro();
+    if(M.running) stepMicro(dt*M.speed);
+    drawMicro(); drawPhi();
+    if(T3) render3D(dt); else drawApp();
+    $("#microTag").textContent=T3&&T3.over&&st.lensOn?"lupa namuna ustida · kesim y = 0":"kesim · y = 0 tekislik";
+    metT+=dt; if(metT>0.4){metT=0;updateMeters();}
+    txtT+=dt; if(txtT>0.3){txtT=0;updateMicroText();}
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- test ---------- */
+var QUIZ=[
+  {q:"Nima uchun yarimo'tkazgichlarda ikki zondli emas, to'rt zondli usul ishlatiladi?",o:["To'rtta zond tokni to'rt marta oshiradi","Kuchlanish o'lchanadigan zondlardan tok o'tmaydi, shuning uchun kontakt qarshiligi natijaga kirmaydi","To'rt zond namunani kamroq qizdiradi","Ikki zond bilan tok o'tkazib bo'lmaydi"],a:1,ex:"Voltmetr qarshiligi \\(> 10^7\\ \\Omega\\), shuning uchun 2 va 3-zondlarda \\(I_VR_c \\approx 0\\). Ikki zondli o'lchashda esa \\(V_{14} = I(R + 2R_c + 2R_{\\text{yoy}})\\) bo'ladi, \\(R_c\\) esa katta va noma'lum."},
+  {q:"Qalin namuna (\\(t \\gg s\\)), \\(s = 1\\ \\text{mm}\\), \\(I = 1\\ \\text{mA}\\), \\(V = 10\\ \\text{mV}\\). \\(\\rho\\) nimaga teng?",o:["\\(1.0\\ \\Omega\\cdot\\text{cm}\\)","\\(6.28\\ \\Omega\\cdot\\text{cm}\\)","\\(4.53\\ \\Omega\\cdot\\text{cm}\\)","\\(62.8\\ \\Omega\\cdot\\text{cm}\\)"],a:1,ex:"\\(\\rho = 2\\pi s\\,V/I = 2\\pi\\cdot 10^{-3}\\cdot 10 = 0.0628\\ \\Omega\\cdot\\text{m} = 6.28\\ \\Omega\\cdot\\text{cm}\\)."},
+  {q:"Yupqa namuna (\\(t \\ll s\\)) uchun qaysi formula to'g'ri?",o:["\\(\\rho = 2\\pi s\\,V/I\\)","\\(\\rho = \\dfrac{\\pi}{\\ln 2}\\,t\\,\\dfrac{V}{I}\\)","\\(\\rho = \\dfrac{V}{I}\\cdot\\dfrac{A}{L}\\)","\\(\\rho = 4.532\\,s\\,V/I\\)"],a:1,ex:"Yupqa qatlamda tok silindr bo'ylab yoyiladi, \\(\\varphi \\propto \\ln r\\). Shundan \\(V = \\dfrac{\\rho I}{\\pi t}\\ln 2\\), ya'ni \\(\\rho = 4.532\\,t\\,V/I\\) va \\(R_\\square = 4.532\\,V/I\\)."},
+  {q:"Yupqa namunada qalinlik ikki marta kamaytirildi, tok o'sha-o'sha. \\(V\\) qanday o'zgaradi?",o:["Ikki marta ortadi","O'zgarmaydi","Ikki marta kamayadi","\\(\\sqrt2\\) marta ortadi"],a:0,ex:"\\(V = \\dfrac{\\rho I\\ln 2}{\\pi t}\\), ya'ni yupqa namunada \\(V \\propto 1/t\\). Qalin namunada esa \\(V\\) qalinlikka deyarli bog'liq emas (\\(F_1 \\to 1\\))."},
+  {q:"Nima uchun har bir nuqtada tok yo'nalishini almashtirib, ikki marta o'lchanadi?",o:["Tok manbaini sovutish uchun","Termo-EYuK kabi tokka bog'liq bo'lmagan kuchlanishni yo'qotish uchun","Kontakt qarshiligini o'lchash uchun","Namunani magnitsizlantirish uchun"],a:1,ex:"\\(V(\\pm I) = \\pm IR + V_0\\). Ayirmada \\(V_0\\) yo'qoladi: \\(\\dfrac{V}{I} = \\dfrac{V(+I)-V(-I)}{I_+-I_-}\\)."},
+  {q:"Zondlar \\(d = 5s\\) diametrli kichik diskning markazida turibdi. Tuzatishsiz formula \\(\\rho_0 = 2\\pi s\\,V/I\\) (yupqa holat uchun \\(4.532\\,tV/I\\)) natijani qanday buzadi?",o:["\\(\\rho\\) ni kamaytirib ko'rsatadi","\\(\\rho\\) ni oshirib ko'rsatadi, chunki tok chegarada siqiladi va \\(V\\) ortadi","Ta'sir qilmaydi","Ishorani o'zgartiradi"],a:1,ex:"Chekka tokni ichkariga qaytaradi va zondlar orasidagi maydon kuchayadi. Shuning uchun \\(F_2 < 1\\): \\(d/s = 5\\) da \\(F_2 \\approx 0.74\\), ya'ni tuzatishsiz \\(\\rho\\) taxminan 35 % ortiqcha chiqadi."},
+  {q:"n-Si namunada 250–450 K oralig'ida \\(\\rho\\) harorat bilan ortadi. Sababi nima?",o:["Elektronlar konsentratsiyasi kamayadi","Konsentratsiya o'zgarmaydi (\\(n \\approx N_d\\)), lekin panjara sochilishi kuchayib, \\(\\mu\\) kamayadi","Kontaktlar oksidlanadi","Taqiqlangan zona torayadi"],a:1,ex:"Kirishmali (to'yinish) sohada \\(n \\approx N_d\\), \\(\\mu_L \\propto T^{-3/2}\\) esa kamayadi. Shuning uchun \\(\\rho = 1/(en\\mu)\\) ortadi, xuddi metallardagidek."},
+  {q:"Xususiy sohada \\(\\ln\\rho\\) ning \\(1/T\\) ga bog'liqlik grafigi qiyaligi nimaga teng?",o:["\\(E_g/k\\)","\\(E_g/2k\\)","\\(2E_g/k\\)","\\(kT/E_g\\)"],a:1,ex:"\\(\\sigma \\propto n_i\\mu \\propto \\exp(-E_g/2kT)\\) (\\(T^{3/2}\\) ko'paytuvchilar deyarli qisqaradi). Shuning uchun \\(\\ln\\rho = \\dfrac{E_g}{2kT} + \\text{const}\\) va \\(E_g = 2k\\cdot\\text{qiyalik}\\)."},
+  {q:"Nima uchun juda katta tok ishlatilmaydi?",o:["Voltmetr kuyib qoladi","Zond uchlari atrofida qizish va asosiy bo'lmagan tashuvchilar injeksiyasi \\(\\rho\\) ni o'zgartiradi, tok manbai esa kuchlanish chegarasiga yetadi","Katta tokda Om qonuni ishlamaydi","Katta tok namunani magnitlaydi"],a:1,ex:"Odatda tok \\(V \\approx 1\\text{–}20\\ \\text{mV}\\) bo'ladigan qilib tanlanadi. Simulyatorda yuqori omli namunalarda manba 20 V chegarasiga yetganini ko'rasiz."},
+  {q:"Xususiy germaniy (i-Ge) namunaga lampa yorug'ligi tushdi. \\(\\rho\\) qanday o'zgaradi?",o:["Ortadi","Kamayadi: fotonlar qo'shimcha elektron-kovak juftlarini hosil qiladi","O'zgarmaydi","Ishorasi almashadi"],a:1,ex:"Fotoo'tkazuvchanlik: \\(\\Delta\\sigma = e(\\mu_n+\\mu_p)\\Delta n\\). Xususiy namunada \\(n\\) kichik bo'lgani uchun nisbiy o'zgarish katta. Shuning uchun o'lchash qorong'ida o'tkaziladi."}
+];
+function renderQuiz(){
+  $("#quiz").innerHTML=QUIZ.map(function(q,i){return "<div class='q' id='q"+i+"'><fieldset><legend>"+(i+1)+". "+q.q+"</legend>"+q.o.map(function(o,j){return "<label><input type='radio' name='q"+i+"' value='"+j+"'> <span>"+o+"</span></label>";}).join("")+"<div class='ex' hidden></div></fieldset></div>";}).join("");
+  $("#quizScore").textContent=""; mjx($("#quiz"));
+}
+$("#btnQuiz").addEventListener("click",function(){
+  var sc=0;
+  QUIZ.forEach(function(q,i){var box=$("#q"+i),sel=document.querySelector("input[name=q"+i+"]:checked"),ex=box.querySelector(".ex");
+    box.classList.remove("right","wrong");
+    if(!sel){ex.hidden=false;ex.innerHTML="Javob tanlanmagan. "+q.ex;mjx(ex);box.classList.add("wrong");return;}
+    var ok=+sel.value===q.a; if(ok)sc++; box.classList.add(ok?"right":"wrong"); ex.hidden=false; ex.innerHTML=(ok?"To'g'ri. ":"Noto'g'ri. To'g'ri javob: "+q.o[q.a]+". ")+q.ex; mjx(ex);});
+  $("#quizScore").textContent="Natija: "+sc+" / "+QUIZ.length;
+});
+$("#btnQuizReset").addEventListener("click",renderQuiz);
+
+/* ---------- oflayn yordamchi ---------- */
+var CYR={"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"j","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"x","ц":"ts","ч":"ch","ш":"sh","щ":"sh","ъ":"","ы":"i","ь":"","э":"e","ю":"yu","я":"ya","ў":"o","қ":"q","ғ":"g","ҳ":"h"};
+function norm(s){var o="";String(s).toLowerCase().split("").forEach(function(ch){o+=CYR[ch]!==undefined?CYR[ch]:ch;});
+  return o.replace(/[‘’`ʻʼ']/g,"").replace(/_/g,"").replace(/ρ/g," rho ").replace(/σ/g," sigma ").replace(/μ/g," mu ").replace(/[^a-z0-9\s]/g," ").replace(/\s+/g," ").trim();}
+function kscore(nt,toks,keys){var sc=0;keys.forEach(function(k){if(k.indexOf(" ")>=0){if((" "+nt+" ").indexOf(" "+k)>=0)sc+=2;}else if(toks.some(function(t){return k.length>=4?t.indexOf(k)===0:t===k;}))sc+=1;});return sc;}
+var KBASE=[
+ {k:["salom","assalom","hayrli","qalesan","qalaysiz","privet"],a:function(){return "Salom! Men shu laboratoriyaning oflayn yordamchisiman. To'rt zondli usul bo'yicha savollarga javob beraman, <b>o'lchovlaringizni tekshiraman</b> va formulalar bo'yicha <b>hisoblab beraman</b>. Masalan: «Ma'lumotlarimni tekshir» yoki «V=12.4 mV, I=0.5 mA, t=0.5 mm, d=50 mm».";}},
+ {k:["rahmat","raxmat","tashakkur","spasibo"],a:"Arzimaydi! Yana savol bo'lsa, yozing."},
+ {k:["nima qila","yordam ber","imkoniyat","qanday yordam","kimsan","sen kim"],a:"Men internetsiz ishlayman va quyidagilarni qila olaman:<ul><li>To'rt zondli usul nazariyasi, formulalar va ish tartibi bo'yicha savollarga javob beraman.</li><li><b>«Ma'lumotlarimni tekshir»</b> desangiz, jadvallaringizni tahlil qilaman.</li><li><b>Hisoblayman:</b> «V=12.4 mV, I=0.5 mA, t=0.5 mm, d=50 mm» yoki «rho=9.3 Om*sm, mu=0.14».</li><li>Lupada nima bo'layotganini tushuntiraman.</li></ul>"},
+ {k:["tort zond","4 zond","usul nima","valdes","usulning mohiyati","goya","qanday ishlaydi"],a:"<b>To'rt zondli usul</b>: namuna sirtiga bir chiziqda, bir-biridan \\(s\\) masofada to'rtta igna tushiriladi. Tok \\(I\\) chetki 1 va 4-zondlardan o'tkaziladi, kuchlanish \\(V\\) ichki 2 va 3-zondlar orasida yuqori omli voltmetr bilan o'lchanadi. Qalin namuna uchun \\(\\rho = 2\\pi s\\,V/I\\). Usulni L. Valdes 1954-yilda germaniy uchun taklif qilgan. Bugun u kremniy plastinalarni nazorat qilishning standart usuli."},
+ {k:["2 zond","ikki zond","kontakt qarshilik","rc","nega tort","nima uchun tort","shottki","kontakt"],a:"<b>Nega 4 ta zond?</b> Ikki zondli o'lchashda voltmetr tok o'tayotgan kontaktlarga ulangan bo'ladi: \\(V_{14} = I(R + 2R_{\\text{yoy}} + 2R_c)\\). Metall-yarimo'tkazgich kontakti (Shottki to'sig'i) qarshiligi \\(R_c\\) katta, bosimga bog'liq va nochiziqli. To'rt zondli usulda voltmetr zondlaridan tok o'tmaydi (\\(I_V \\approx 0\\)), shuning uchun \\(I_VR_c \\approx 0\\) va kontakt qarshiligi natijaga kirmaydi.<br>Simulyatorning A bosqichida ikkala sxemani solishtiring: 2 zondli grafik egri chiziq va qiyaligi ancha katta."},
+ {k:["formula","rho formula","2pi","yarim cheksiz","qalin namuna","solishtirma qarshilik formula","rho qanday"],a:"<b>Asosiy formulalar</b> (\\(s\\) — zondlar oralig'i):<ul><li>qalin namuna (\\(t \\gg s\\)): \\(\\rho = 2\\pi s\\,V/I\\);</li><li>yupqa namuna (\\(t \\ll s\\)): \\(\\rho = \\dfrac{\\pi}{\\ln 2}\\,t\\,\\dfrac{V}{I} = 4.532\\,t\\,V/I\\);</li><li>umumiy holat: \\(\\rho = 2\\pi s\\,(V/I)\\,F_1(t/s)\\,F_2(d/s)\\).</li></ul>Kelib chiqishi: nuqtaviy manba potensiali \\(\\varphi = \\rho I/(2\\pi r)\\), 1 va 4-zondlar potensiallari qo'shiladi: \\(\\varphi_2-\\varphi_3 = \\rho I/(2\\pi s)\\)."},
+ {k:["yupqa","qatlam qarshilig","sheet","4532","4 532","kvadrat","plyonka"],a:"<b>Yupqa namuna</b>da tok silindr bo'ylab yoyiladi va \\(V = \\dfrac{\\rho I\\ln 2}{\\pi t}\\). Bundan \\(\\rho = 4.532\\,t\\,V/I\\).<br><b>Qatlam qarshiligi</b> \\(R_\\square = \\rho/t = 4.532\\,V/I\\), birligi \\(\\Omega/\\square\\). Qatlam qalinligini bilmasdan ham uni o'lchash mumkin. Formula \\(t < 0.4s\\) da 1 % dan yaxshi aniqlik beradi."},
+ {k:["tuzatish","f1","f2","koeffitsient","korreksiya","sinh","smits","diametr","chet","kichik namuna"],a:"<b>Geometrik tuzatishlar</b>: \\(\\rho = \\rho_0F_1F_2\\), \\(\\rho_0 = 2\\pi s\\,V/I\\).<ul><li>Qalinlik (izolyatsiyalangan taglik): \\(F_1 = \\dfrac{t/s}{2\\ln[\\sinh(t/s)/\\sinh(t/2s)]}\\). Masalan, \\(t/s\\) = 0.5 da 0.345, 1 da 0.615, 3 da 0.969.</li><li>Disk diametri (Smits): \\(F_2 = \\dfrac{\\ln 2}{\\ln 2 + \\ln\\frac{(d/s)^2+3}{(d/s)^2-3}}\\). Masalan, \\(d/s\\) = 5 da 0.742, 10 da 0.920, 40 da 0.995.</li></ul>To'liq jadvallar «Nazariya» bo'limida. B bosqichida ularni tajribada tekshiring."},
+ {k:["tok yonalish","almashtir","termo","zeebek","seebeck","peltye","offset","nega ikki marta","ikki yonalish"],a:"<b>Tok yo'nalishini almashtirish</b> termo-EYuK kabi tokka bog'liq bo'lmagan \\(V_0\\) kuchlanishni yo'qotadi:<br>\\(\\dfrac{V}{I} = \\dfrac{V(+I)-V(-I)}{I_+-I_-}\\).<br>\\(V_0\\) zondlar va namuna orasidagi harorat farqidan (qizdirgich, Peltye effekti) hosil bo'ladi. Haroratdan uzoqlashgan sari u kattalashadi. «Avtomatik (+I va −I)» tugmasi ikkala o'lchashni ketma-ket bajaradi."},
+ {k:["tokni qanday","qancha tok","tok tanla","katta tok","chegara","20 v","kompliance","compliance","qizish","joul","injeksiya"],a:"<b>Tokni tanlash</b>: voltmetr \\(V \\approx 1\\text{–}20\\) mV ko'rsatadigan tok tanlang.<ul><li>Tok juda kichik bo'lsa, shovqin va termo-EYuK ulushi katta bo'ladi.</li><li>Tok juda katta bo'lsa, igna uchlari qiziydi va asosiy bo'lmagan tashuvchilar injeksiyalanadi. Bundan tashqari, tok manbai 20 V chegarasiga yetadi: kontaktlarda \\(2IR_c\\) va yoyilish qarshiligida katta kuchlanish tushadi.</li></ul>Simulyatorda «MANBA KUCHLANISHI» qizil rangga o'tsa, tokni kamaytiring. Yuqori omli Si uchun odatda 0.05–1 mA, Ge uchun 1–10 mA."},
+ {k:["yoruglik","lampa","foto","fotootkazuvchan","qorongi"],a:"<b>Fotoo'tkazuvchanlik</b>: yutilgan fotonlar elektron-kovak juftlarini hosil qiladi, \\(\\Delta\\sigma = e(\\mu_n+\\mu_p)\\Delta n\\). Kuchli legirlangan namunada ta'sir kichik. Xususiy namunada (i-Ge) esa \\(\\rho\\) sezilarli kamayadi. Shuning uchun o'lchash qorong'ida o'tkaziladi. Simulyatorda «Stol lampasi yoniq» ni yoqib-o'chirib solishtiring."},
+ {k:["harorat","temperatura","qizdir","sovut","xususiy","kirishmali","toyinish","sohalar"],a:"\\(\\rho(T)\\) bo'yicha sohalar:<ul><li><b>Kirishmali (to'yinish) soha</b>: \\(n \\approx N_d\\), \\(\\mu \\propto T^{-3/2}\\) kamayadi, shuning uchun \\(\\rho\\) harorat bilan <b>ortadi</b>.</li><li><b>Xususiy soha</b>: \\(n_i \\propto T^{3/2}\\exp(-E_g/2kT)\\) kirishmalardan oshadi, \\(\\rho\\) eksponensial <b>kamayadi</b>.</li><li><b>Muzlash</b> (\\(T \\lesssim 100\\) K): kirishmalar ionlashmaydi (simulyatorda yo'q).</li></ul>Ge da xususiy soha 350–400 K dan, Si da 550 K dan yuqorida boshlanadi. i-Ge xona haroratida ham deyarli xususiy."},
+ {k:["eg","taqiqlangan","zona kengli","band gap","bandgap"],a:"<b>\\(E_g\\) ni baholash</b>: xususiy sohada \\(\\ln\\rho \\approx \\dfrac{E_g}{2kT}+\\text{const}\\). \\(\\ln\\rho\\) ni \\(1000/T\\) ga qarab chizing, eng yuqori haroratli nuqtalar bo'yicha qiyalikni toping:<br>\\(E_g = 2k\\cdot\\text{qiyalik}\\cdot 1000\\), \\(k = 8.617\\cdot 10^{-5}\\) eV/K.<br>Ge uchun ~0.66 eV chiqishi kerak. \\(\\mu(T)\\) ning \\(T^{-3/2}\\) dan farqi tufayli baho bir necha foiz farq qilishi mumkin."},
+ {k:["konsentratsiya","harakatchan","mobil","mu","n ni qanday","nechta elektron"],a:"Kirishmali sohada \\(\\sigma \\approx en\\mu_n\\) (n-tip) yoki \\(ep\\mu_p\\) (p-tip). Shundan \\(n = \\dfrac{1}{e\\rho\\mu_n}\\). \\(\\rho\\) ni Ω·m da, \\(\\mu\\) ni m²/(V·s) da oling. Harakatchanlik A jadvali ostida berilgan. Masalan, \\(\\rho\\) = 9.26 Ω·cm = 0.0926 Ω·m, \\(\\mu_n\\) = 0.142 bo'lsa, \\(n = 1/(1.602\\cdot 10^{-19}\\cdot 0.0926\\cdot 0.142) \\approx 4.7\\cdot 10^{20}\\) m⁻³."},
+ {k:["birlik","om sm","om m","omsm","ohm cm","necha marta","100 marta","metr"],a:"<b>Birliklar</b>: \\(1\\ \\Omega\\cdot\\text{cm} = 10^{-2}\\ \\Omega\\cdot\\text{m}\\). Formulaga \\(s\\) va \\(t\\) ni metrda qo'yib, \\(\\rho\\) ni Ω·m da olasiz. Ω·cm ga o'tish uchun 100 ga ko'paytiring. \\(\\sigma = 1/\\rho\\) uchun \\(\\rho\\) Ω·m da bo'lishi kerak (natija S/m da). Javob aniq 100 yoki 1000 marta farq qilsa, bu birlik xatosi."},
+ {k:["kovak nima","kovak","proton","yadro","bomba","neytron"],a:"<b>Kovak proton emas.</b> Yarimo'tkazgichda faqat elektronlar harakatlanadi. Kovak — kovalent bog'da elektron yetishmaydigan bo'sh joy. Lupada u panjara tugunlari bo'ylab sakrab ko'chadi: qo'shni valent elektron (kichik ko'k nuqta) bo'sh joyga o'tadi. Atom yadrolari va kirishma ionlari joyida qoladi. Elektron-kovak jufti uchun ~1 eV yetarli, yadrodan proton ajratish uchun esa ~8 MeV kerak."},
+ {k:["lupa","mikro","kesim","ichida nima","lupada","tok chiziq","ekvipotensial"],a:function(){var t=M.text;return "<b>Lupa</b> zondlar ostidagi vertikal kesimni ko'rsatadi:<ul><li>to'q sariq uzuq chiziqlar — tok chiziqlari;</li><li>binafsha chiziqlar — ekvipotensiallar;</li><li>ko'k nuqtalar — elektronlar;</li><li>uzuq halqalar — kovaklar.</li></ul>Maydon tasvir manbalari usulida aniq hisoblangan. Qalinlikni 0.1 mm dan 5 mm gacha o'zgartirib, tok chiziqlari qanday o'zgarishini kuzating."+(t?"<br><br><b>Hozir:</b> "+t.title+". "+t.text:"");}},
+ {k:["3d","kamera","aylantir","sichqoncha","zoom","yaqinlashtir"],a:"3D sahnani boshqarish:<ul><li>Chap tugma — aylantirish.</li><li>O'ng tugma — surish.</li><li>G'ildirak — yaqinlashtirish.</li><li>Telefonda: bir barmoq — aylantirish, ikki barmoq — yaqinlashtirish.</li></ul>Tayyor ko'rinishlar: «Umumiy ko'rinish», «Stend», «Zondlar» (ignalarni yaqindan ko'rsatadi), «Asboblar». Asboblarning ekranlari, dastaklari va zond kallagi boshqaruv paneli bilan bog'langan."},
+ {k:["zondlarni tushir","kotar","zond kallagi","igna"],a:"Zond kallagi vint bilan tushiriladi. Ignalar volfram karbiddan, oralig'i 1.00 mm, uchining radiusi ~40 μm, prujinali bosim bilan. Zondlar ko'tarilgan bo'lsa, zanjir ochiq bo'ladi: tok manbai «OCHIQ» ko'rsatadi va o'lchab bo'lmaydi. Boshqaruv panelidagi «Zondlarni ko'tarish / tushirish» tugmasidan foydalaning."},
+ {k:["ideal"],a:"<b>Ideal model</b> rejimida termo-EYuK, shovqin, Joul qizishi va yorug'lik ta'siri o'chiriladi. Bu faqat taqqoslash uchun: bitta yo'nalishdagi o'lchash va \\(\\pm I\\) o'rtachasini solishtiring. Hisobot uchun ma'lumotlarni ideal rejimni <b>o'chirib</b> oling."},
+ {k:["a bosqich","birinchi bosqich","vi xarakteristika","volt amper"],a:"<b>A bosqich</b>:<ol><li>Namunani tanlang (o'lchamlari avtomatik qo'yiladi).</li><li>4 zondli sxemada tokni 7–8 qiymatda o'zgartirib, har birida «Avtomatik (+I va −I)» ni bosing.</li><li>Xuddi shu toklarda 2 zondli sxemada takrorlang.</li><li>4 zondli qiyalikdan \\(F\\), \\(\\rho\\), \\(\\sigma\\), \\(n\\) ni hisoblab, «Tekshirish» ni bosing.</li></ol>"},
+ {k:["b bosqich","ikkinchi bosqich","geometriya"],a:"<b>B bosqich</b>:<ol><li>Bitta material (masalan, n-Ge) tanlang.</li><li>\\(d\\) = 60 mm da qalinlikni 0.1–5 mm oralig'ida 8–10 qiymatda o'lchang.</li><li>Keyin \\(t\\) = 0.3 mm da \\(d\\) ni 4–40 mm qilib o'lchang.</li></ol>Jadvalda \\(\\rho_0\\) qalinlik va diametrga bog'liq bo'ladi, tuzatilgan \\(\\rho\\) esa o'zgarmas qolishi kerak."},
+ {k:["c bosqich","uchinchi bosqich","harorat bosqich"],a:"<b>C bosqich</b>:<ol><li>i-Ge yoki n-Ge ni tanlang.</li><li>Tokni \\(V\\) ≈ 1–20 mV bo'ladigan qilib qo'ying.</li><li>\\(T\\) ni 150 dan 600 K gacha 25 K qadam bilan o'zgartirib, har safar «Avtomatik» ni bosing.</li><li>\\(\\lg\\rho(T)\\) dan sohalarni, \\(\\ln\\rho(1000/T)\\) dan \\(E_g\\) ni toping.</li></ol>"},
+ {k:["hisobot","otchet","xulosa yoz"],a:"Hisobotga kiriting:<ol><li>maqsad va qisqa nazariya (formulalarning kelib chiqishi);</li><li>A jadvali, 4 va 2 zondli \\(\\bar V(I)\\) grafiklari, kontakt qarshiligi haqida xulosa;</li><li>\\(F\\), \\(\\rho\\), \\(\\sigma\\), \\(n\\) va xatoliklar;</li><li>B jadvali va \\(\\rho_0(t/s)\\), \\(\\rho(t/s)\\) grafigi;</li><li>\\(\\lg\\rho(T)\\), \\(\\ln\\rho(1000/T)\\) va \\(E_g\\);</li><li>lupa kuzatuvlari;</li><li>xulosa.</li></ol>"},
+ {k:["material","germaniy","kremniy","namunalar","x namuna","nomalum"],a:"Namunalar:<ul><li><b>n-Si, p-Si</b> — 50 mm li plastinalar, ~9–14 Ω·cm.</li><li><b>n-Ge, p-Ge</b> — 20 mm li disklar, ~1–2 Ω·cm.</li><li><b>i-Ge</b> — deyarli xususiy, ~50 Ω·cm, harorat va yorug'likka juda sezgir.</li><li><b>X namuna</b> — kirishma konsentratsiyasi noma'lum n-Si. Uning \\(\\rho\\) va \\(n\\) ni o'zingiz aniqlang.</li></ul>"},
+ {k:["van der pauw","vanderpauw","boshqa usul"],a:"<b>Van der Pauw usuli</b> ixtiyoriy shakldagi yupqa namuna chetidagi to'rtta kontakt bilan ishlaydi: \\(\\exp(-\\pi R_{AB,CD}/R_\\square)+\\exp(-\\pi R_{BC,DA}/R_\\square)=1\\). Chiziqli to'rt zondli usul esa kontakt tayyorlashni talab qilmaydi va plastinaning istalgan nuqtasini tez o'lchaydi."},
+ {k:["tekshir","malumotlarim","xatom","xato qayer","keyingi qadam","keyin nima","notogri","togrimi","tahlil","maslahat"],w:1.6,a:function(){return analyzeLab();}}
+];
+function diagVal(name,raw,exp){
+  var v=parseNum(raw); if(!raw) return null;
+  if(!isFinite(v)) return name+": «"+raw+"» ni son sifatida o'qiy olmadim.";
+  var r=v/exp, err=Math.abs(r-1);
+  if(err<=0.03) return name+": to'g'ri.";
+  var l=Math.log10(Math.abs(r)), k=Math.round(l);
+  if(k!==0&&Math.abs(l-k)<0.03) return name+": to'g'ri qiymatdan \\(10^{"+k+"}\\) marta farq qiladi. Bu birlik xatosi (mm → m, Ω·m ↔ Ω·cm).";
+  return name+": taxminan "+(err*100).toFixed(0)+" % farq qiladi. Formulani qayta tekshiring.";
+}
+function analyzeLab(){
+  var L=[], next="";
+  L.push("Hozirgi bosqich: <b>"+MODE_NAME[st.mode]+"</b>"+(st.ideal?" · <b style='color:var(--warn)'>ideal model yoqilgan</b> (hisobot uchun o'chiring)":"")+(st.light?" · <b style='color:var(--warn)'>lampa yoniq</b>":"")+(st.down?"":" · <b style='color:var(--warn)'>zondlar ko'tarilgan</b>")+".");
+  var ra=st.tabA.rows;
+  if(!ra.length){next="A bosqichida 4 zondli sxemada kamida 6 ta tok qiymatini o'lchang.";}
+  else{
+    var c4=ra.filter(function(r){return r.sch===4&&rowDone(r);}).length, c2=ra.filter(function(r){return r.sch===2&&rowDone(r);}).length, inc=ra.filter(function(r){return !rowDone(r);}).length;
+    L.push("A jadvali: 4 zondli — "+c4+" ta, 2 zondli — "+c2+" ta to'liq qator"+(inc?", "+inc+" ta chala qator (bitta yo'nalish yetishmaydi)":"")+". Namuna: "+MATS[st.tabA.meta.mat].short+", \\(t\\) = "+st.tabA.meta.t.toFixed(2)+" mm, \\(d\\) = "+st.tabA.meta.d+" mm.");
+    var ex=expA(), p2=exp2();
+    if(ex){
+      L.push("4 zondli qiyalik \\(V/I\\) = "+sci(ex.k,4)+" Ω, \\(R^2\\) = "+ex.r2.toFixed(5)+". Bundan \\(F\\) = "+ex.g.F.toFixed(4)+" bo'lganda \\(\\rho\\) ≈ "+sci(ex.rhoCm,3)+" Ω·cm.");
+      if(p2&&p2.length>=2){var f2=linfit(p2), lo=p2[0][1]/p2[0][0], hi=p2[p2.length-1][1]/p2[p2.length-1][0];
+        L.push("2 zondli o'lchash \\(V/I\\) ni "+Math.round(f2.m/ex.k)+" marta katta ko'rsatadi. Kichik tokda \\(V/I\\) = "+sci(lo,3)+" Ω, katta tokda "+sci(hi,3)+" Ω: kontakt qarshiligi nochiziqli.");}
+      else if(c4>=3) next=next||"Xuddi shu toklarda 2 zondli sxemada o'lchab, ikkala grafikni solishtiring.";
+      var fb=[diagVal("\\(F\\)",$("#inF").value,ex.g.F),diagVal("\\(\\rho\\)",$("#inRho").value,ex.rhoCm),diagVal("\\(\\sigma\\)",$("#inSig").value,ex.sig),ex.intr?null:diagVal("Konsentratsiya",$("#inN").value,ex.n)].filter(Boolean);
+      if(fb.length) L.push("Kiritgan javoblaringiz:<ul><li>"+fb.join("</li><li>")+"</li></ul>");
+      else next=next||"A jadvali ostida \\(F\\), \\(\\rho\\), \\(\\sigma\\), \\(n\\) ni hisoblab kiriting. Avval \\(F_1(t/s)\\) va \\(F_2(d/s)\\) ni toping.";
+    }
+    if(c4<5) next=next||"4 zondli sxemada yana "+(5-c4)+" ta tok qiymatini o'lchang (kamida 5 ta).";
+  }
+  var rb=st.tabB.rows;
+  if(rb.length){var ts={};rb.forEach(function(r){ts[r.t]=1;});var nt=Object.keys(ts).length, ok=rb.filter(rowDone);
+    var s="B jadvali: "+rb.length+" qator, "+nt+" xil qalinlik.";
+    if(ok.length>=2){var rr2=ok.map(function(r){return 2*Math.PI*SP*rowR(r)*geomF(r.t,r.d).F*100;}),mn=Math.min.apply(null,rr2),mx=Math.max.apply(null,rr2);
+      var r0=ok.map(function(r){return 2*Math.PI*SP*rowR(r)*100;}); s+=" Tuzatishsiz \\(\\rho_0\\): "+sci(Math.min.apply(null,r0),3)+"–"+sci(Math.max.apply(null,r0),3)+" Ω·cm. Tuzatilgan \\(\\rho\\) tarqoqligi "+((mx/mn-1)*100).toFixed(1)+" %.";}
+    if(nt<6) s+=" Kamida 6–8 xil qalinlik (0.1–5 mm) oling.";
+    L.push(s);
+  }
+  var rc=st.tabC.rows;
+  if(rc.length){var Ts=rc.map(function(r){return r.T;}), tmin=Math.min.apply(null,Ts), tmax=Math.max.apply(null,Ts);
+    var s3="C jadvali: "+rc.length+" nuqta, "+tmin+"–"+tmax+" K.";
+    if(tmax<450) s3+=" Xususiy sohani ko'rish uchun 500–600 K gacha o'lchang.";
+    if(rc.length<8) s3+=" Grafiklar uchun 10–15 nuqta tavsiya etiladi.";
+    var eg=$("#egOut").textContent; if(eg&&eg!=="—") s3+=" Baho: "+eg+".";
+    if(MATS[st.tabC.meta.mat].Eg>1&&tmax>=550) s3+=" Kremniyda 600 K da ham xususiy soha endi boshlanadi, shuning uchun \\(E_g\\) aniq chiqmasligi mumkin.";
+    L.push(s3);
+  } else if(st.mode==="C") next=next||"Haroratni 150 K dan boshlab 25 K qadam bilan o'zgartirib, har safar «Avtomatik» ni bosing.";
+  if(!next){ if(!rb.length) next="B bosqichida geometrik tuzatishlarni tekshiring."; else if(!rc.length) next="C bosqichida \\(\\rho(T)\\) ni o'lchang (i-Ge yoki n-Ge)."; else next="Lupada yupqa va qalin namunadagi tok chiziqlarini solishtirib, hisobotga tavsif yozing."; }
+  return "<ul><li>"+L.join("</li><li>")+"</li></ul><b>Keyingi qadam:</b> "+next;
+}
+/* hisoblagich */
+var NUM="([-+−–]?\\s*\\d+(?:[.,]\\d+)?(?:\\s*(?:e|[·x×*]\\s*10\\^?)\\s*\\(?[-+−–]?\\d+\\)?)?)";
+var UNIT="(k\\s*om|k\\s*ohm|kω|om\\s*[·*]?\\s*sm|ohm\\s*[·*]?\\s*cm|ω\\s*[·*]?\\s*cm|om\\s*[·*]?\\s*m|ohm\\s*[·*]?\\s*m|ω\\s*[·*]?\\s*m|om|ohm|ω|mkv|mv|uv|μv|mka|ma|ua|μa|mkm|um|μm|mm|sm2\\/vs|cm2\\/vs|m2\\/vs|s\\/m|s\\/sm|s\\/cm|sm|cm|v|a|m)?";
+var VAR_RE=new RegExp("(ρ|σ|μ|\\brho\\b|\\bsigma\\b|\\bmu\\b|\\br_?s\\b|\\bv\\b|\\bi\\b|\\bt\\b|\\bs\\b|\\bd\\b|\\br\\b)\\s*=\\s*"+NUM+"\\s*"+UNIT+"(?![a-z])","gi");
+function parseVars(text){
+  var out={}, m; VAR_RE.lastIndex=0;
+  var s=String(text).replace(/[−–]/g,"-");
+  while((m=VAR_RE.exec(s))){
+    var name=m[1].toLowerCase().replace("_","").replace("ρ","rho").replace("σ","sigma").replace("μ","mu");
+    var val=parseNum(m[2]), u=(m[3]||"").toLowerCase().replace(/\s/g,""); if(!isFinite(val))continue;
+    var f=1, note="";
+    if(name==="v"){f={mv:1e-3,uv:1e-6,mkv:1e-6,"μv":1e-6,v:1}[u]||1;if(!u)note="V";}
+    else if(name==="i"){f={ma:1e-3,ua:1e-6,mka:1e-6,"μa":1e-6,a:1}[u]||1;if(!u)note="A";}
+    else if(name==="t"||name==="s"||name==="d"){f=u?({mm:1e-3,um:1e-6,mkm:1e-6,"μm":1e-6,sm:1e-2,cm:1e-2,m:1}[u]||1e-3):1e-3;if(!u)note="mm";}
+    else if(name==="rho"){f=/sm|cm/.test(u)?1e-2:(u?1:1e-2);if(!u)note="Ω·cm";}
+    else if(name==="r"||name==="rs"){f=/^k/.test(u)?1e3:1;}
+    else if(name==="mu"){f=/sm|cm/.test(u)?1e-4:1;}
+    else if(name==="sigma"){f=/sm|cm/.test(u)?100:1;}
+    out[name]={v:val*f,raw:m[0].trim(),note:note};
+  }
+  return out;
+}
+function calcLab(vars){
+  var g=function(k){return vars[k]?vars[k].v:undefined;}, steps=[], V=g("v"),I=g("i"),t=g("t"),s=g("s")||SP,d=g("d"),R=g("r"),rho=g("rho"),mu=g("mu"),sig=g("sigma"),Rs=g("rs");
+  steps.push("Qabul qilindi: "+Object.keys(vars).map(function(x){return vars[x].raw;}).join(", ")+".");
+  var nn=Object.keys(vars).filter(function(x){return vars[x].note;}); if(nn.length) steps.push("Birligi yozilmagan qiymatlar: "+nn.map(function(x){return x+" → "+vars[x].note;}).join(", ")+" deb olindi.");
+  if(!g("s")&&(V!==undefined||R!==undefined)) steps.push("\\(s\\) berilmagan, \\(s\\) = 1.00 mm deb olindi.");
+  if(R===undefined&&V!==undefined&&I){R=V/I;steps.push("\\(V/I\\) = "+sci(V)+" / "+sci(I)+" = <b>"+sci(R,4)+" Ω</b>");}
+  if(R!==undefined&&rho===undefined){
+    var r0=2*Math.PI*s*R; steps.push("\\(\\rho_0 = 2\\pi s\\,V/I\\) = <b>"+sci(r0,4)+" Ω·m</b> = "+sci(r0*100,4)+" Ω·cm (qalin namuna uchun)");
+    var F=1;
+    if(t!==undefined){var f1=F1(t/s);F*=f1;steps.push("\\(t/s\\) = "+(t/s).toFixed(3)+" → \\(F_1\\) = "+f1.toFixed(4));}
+    if(d!==undefined){if(d/s<=Math.sqrt(3)){steps.push("\\(d/s\\) juda kichik: zondlar namunaga sig'maydi.");}else{var f2=F2(d/s);F*=f2;steps.push("\\(d/s\\) = "+(d/s).toFixed(1)+" → \\(F_2\\) = "+f2.toFixed(4));}}
+    if(F!==1){rho=r0*F;steps.push("\\(\\rho = \\rho_0F_1F_2\\) = <b>"+sci(rho,4)+" Ω·m = "+sci(rho*100,4)+" Ω·cm</b>");}
+    else if(t===undefined) steps.push("Qalinlik \\(t\\) berilmasa, tuzatish kiritilmaydi. Yupqa namuna bo'lsa, \\(t\\) ni yozing.");
+    if(t!==undefined&&t/s<0.4){steps.push("Yupqa namuna: \\(R_\\square = 4.532\\,V/I\\) = <b>"+sci(4.532*R,4)+" Ω/□</b>");}
+    if(rho===undefined) rho=r0;
+  }
+  if(Rs!==undefined&&t!==undefined&&rho===undefined){rho=Rs*t;steps.push("\\(\\rho = R_\\square t\\) = <b>"+sci(rho,4)+" Ω·m</b>");}
+  if(rho!==undefined&&sig===undefined){sig=1/rho;steps.push("\\(\\sigma = 1/\\rho\\) = <b>"+sci(sig,4)+" S/m</b>");}
+  if(sig!==undefined&&mu!==undefined){steps.push("\\(n = \\sigma/(e\\mu)\\) = <b>"+sci(sig/(E*mu),3)+" m⁻³</b> (bitta turdagi tashuvchilar uchun)");}
+  else if(sig!==undefined) steps.push("Konsentratsiya uchun harakatchanlikni ham yozing, masalan «mu=0.142».");
+  if(steps.length<=2) steps.push("Bu qiymatlardan hech narsa hisoblay olmadim. Misollar: «V=12.4 mV, I=0.5 mA, t=0.5 mm, d=50 mm», «R=42.8, t=0.5 mm», «rho=9.3 Om*sm, mu=0.142».");
+  return steps.join("<br>");
+}
+var AI={log:$("#aiLog"),busy:false};
+function aiChips(){
+  var c=["Keyingi qadam nima?","Ma'lumotlarimni tekshir","Lupada nima bo'lyapti?"];
+  if(st.mode==="A") c=c.concat(["Nega to'rt zond kerak?","Tokni qanday tanlayman?","V=12.4 mV, I=0.5 mA, t=0.5 mm, d=50 mm"]);
+  if(st.mode==="B") c=c.concat(["F1 va F2 nima?","Yupqa namuna formulasi"]);
+  if(st.mode==="C") c=c.concat(["Harorat sohalari","E_g qanday topiladi?"]);
+  $("#aiChips").innerHTML=c.map(function(x){return "<button type='button' class='chip'>"+x.replace(/</g,"&lt;")+"</button>";}).join("");
+}
+function aiAdd(who,html){var d=document.createElement("div");d.className="msg "+who;if(who==="user")d.textContent=html;else d.innerHTML=html;AI.log.appendChild(d);AI.log.scrollTop=AI.log.scrollHeight;if(who!=="user")mjx(d);return d;}
+function aiAnswer(q){
+  var vars=parseVars(q); if(Object.keys(vars).length) return calcLab(vars);
+  var nt=norm(q), toks=nt.split(" "), best=null, bs=0;
+  if(/\bhisobla/.test(nt)) return "Hisoblash uchun qiymatlarni «nom=qiymat birlik» ko'rinishida yozing. Masalan:<br>«V=12.4 mV, I=0.5 mA, t=0.5 mm, d=50 mm»<br>«R=42.8, t=0.5 mm»<br>«rho=9.3 Om*sm, mu=0.142»";
+  KBASE.forEach(function(e){var sc=kscore(nt,toks,e.k)*(e.w||1);if(sc>bs){bs=sc;best=e;}});
+  if(best&&bs>=1) return typeof best.a==="function"?best.a():best.a;
+  return "Bu savolni tushunmadim. Men to'rt zondli usul va shu laboratoriya bo'yicha javob beraman. Masalan: «Nega to'rt zond kerak?», «Yupqa namuna formulasi», «Ma'lumotlarimni tekshir».";
+}
+function aiAsk(q){q=String(q||"").trim();if(!q||AI.busy)return;aiAdd("user",q);AI.busy=true;var typing=aiAdd("bot typing","…");
+  setTimeout(function(){typing.remove();var a;try{a=aiAnswer(q);}catch(err){a="Javob tayyorlashda xato yuz berdi. Savolni boshqacha yozib ko'ring.";}aiAdd("bot",a);AI.busy=false;aiChips();},280);}
+function aiOpen(open){var p=$("#aiPanel"),b=$("#aiFab");p.hidden=!open;b.setAttribute("aria-expanded",String(open));b.hidden=open;
+  if(open){aiChips();if(!AI.log.children.length)aiAdd("bot",KBASE[0].a());setTimeout(function(){$("#aiIn").focus();},50);}}
+$("#aiFab").addEventListener("click",function(){aiOpen(true);});
+$("#aiClose").addEventListener("click",function(){aiOpen(false);});
+$("#aiForm").addEventListener("submit",function(e){e.preventDefault();var i=$("#aiIn");aiAsk(i.value);i.value="";});
+$("#aiChips").addEventListener("click",function(e){var b=e.target.closest(".chip");if(b)aiAsk(b.textContent);});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!$("#aiPanel").hidden)aiOpen(false);});
+
+/* ---------- ishga tushirish ---------- */
+function renderAll(){syncLabels();updateLocks();renderData();renderSlots();}
+load();
+var startMeta=st.tabA.meta; if(startMeta&&st.tabA.rows.length){st.mat=startMeta.mat;st.tmm=startMeta.t;st.dmm=startMeta.d;st.T=startMeta.T;}else{st.tmm=MATS[st.mat].t;st.dmm=MATS[st.mat].d;}
+applyInputs();
+renderQuiz();
+updateMeters();
+try{T3=init3D();}catch(err){T3=null;try{console.error(err);$("#app3d").hidden=true;appCv.hidden=false;$("#lensCv").hidden=true;$("#viewBtns").hidden=true;}catch(_){}}
+updateMeters();
+showTab();
+setMode(st.mode);
+resizeAll();
+requestAnimationFrame(frame);})();
+</script>

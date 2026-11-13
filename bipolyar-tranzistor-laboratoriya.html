@@ -1,0 +1,1379 @@
+<title>Bipolyar tranzistor laboratoriyasi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=STIX+Two+Text:ital@0;1&display=swap">
+<style>
+/* Layout: laboratoriya stoli — chapda 3D stend va lupa, o'ngda boshqaruv tokchasi, pastda o'lchov jurnali */
+:root{
+  --bg:#edf0f2; --surface:#ffffff; --surface2:#f5f7f8; --ink:#17212b; --muted:#5a6672; --line:#d5dbe0;
+  --accent:#0d6e7a; --accent-ink:#ffffff; --accent-soft:#dcedef;
+  --electron:#2563d9; --hole:#d9412f; --copper:#b26a2e; --steel:#7f8c97;
+  --fb:#c77700; --fe:#7a3fd1;
+  --lcd-bg:#121a20; --lcd-fg:#ffb23e; --lcd-dim:#7d6338;
+  --ok:#1e8449; --bad:#c0392b; --warn:#a86a00;
+  --f-display:"Archivo","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --f-math:"STIX Two Text","Cambria Math",Cambria,Georgia,serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1317; --surface:#151c22; --surface2:#1b242b; --ink:#e2e8ed; --muted:#93a0ab; --line:#2a353e;
+    --accent:#45b8c6; --accent-ink:#06191c; --accent-soft:#163238;
+    --electron:#6ea2ff; --hole:#ff6d5c; --copper:#d1884a; --steel:#9aa7b2;
+    --fb:#f0a030; --fe:#b18cff;
+    --lcd-bg:#070b0e; --lcd-fg:#ffb23e; --lcd-dim:#6a5228;
+    --ok:#4cc27e; --bad:#ff6b5e; --warn:#e0a33a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1317; --surface:#151c22; --surface2:#1b242b; --ink:#e2e8ed; --muted:#93a0ab; --line:#2a353e;
+  --accent:#45b8c6; --accent-ink:#06191c; --accent-soft:#163238;
+  --electron:#6ea2ff; --hole:#ff6d5c; --copper:#d1884a; --steel:#9aa7b2;
+  --fb:#f0a030; --fe:#b18cff;
+  --lcd-bg:#070b0e; --lcd-fg:#ffb23e; --lcd-dim:#6a5228;
+  --ok:#4cc27e; --bad:#ff6b5e; --warn:#e0a33a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1260px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.5rem,3.2vw,2.1rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.35rem;font-weight:700;margin-bottom:.6rem}
+h3{font-size:1.02rem;font-weight:700}
+h4{font-size:.98rem;font-weight:700}
+p{margin:.4rem 0 .8rem}
+a{color:var(--accent)}
+.top{border-bottom:1px solid var(--line);background:var(--surface)}
+.top .wrap{padding-block:18px 0}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.title-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.title-row p{margin:.2rem 0 0;color:var(--muted);max-width:66ch}
+nav.tabs{display:flex;gap:2px;margin-top:16px;overflow-x:auto;scrollbar-width:thin}
+nav.tabs a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-weight:500;padding:10px 14px;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs a:hover{color:var(--ink)}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.tabs a:focus-visible,.btn:focus-visible,button:focus-visible,canvas:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main .wrap{padding-block:22px 48px}
+[hidden]{display:none!important}
+.prose{max-width:78ch}
+.prose h2{margin-top:1.6rem}
+.prose h2:first-child{margin-top:0}
+.prose h3{margin-top:1.2rem;margin-bottom:.3rem}
+.prose ul,.prose ol{padding-left:1.3rem;margin:.4rem 0 .9rem}
+.prose li{margin:.25rem 0}
+.prose table{margin:.5rem 0 1rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.card-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-bottom:12px}
+.hint{font-size:.84rem;color:var(--muted);margin:.5rem 0 0}
+.eq{font-family:var(--f-math);font-size:1.18rem;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:.6rem 0 .9rem;overflow-x:auto;white-space:nowrap}
+.eq mjx-container[display="true"]{margin:0!important;display:inline-block!important}
+.tbl-wrap{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.78rem;letter-spacing:.02em}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.simgrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+.col-main,.col-side{display:grid;gap:16px;min-width:0}
+@media (max-width:980px){.simgrid{grid-template-columns:minmax(0,1fr)}}
+#appCv{width:100%;aspect-ratio:760/440;display:block;border-radius:8px;max-width:100%}
+.stage{position:relative;border-radius:8px;outline-offset:2px}
+#app3d{width:100%;aspect-ratio:760/500;border-radius:8px;overflow:hidden;touch-action:none;background:var(--surface2);max-width:100%}
+#app3d canvas{display:block;width:100%!important;height:100%!important}
+#lensCv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.viewbtns{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:10px}
+.lens-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:.86rem}
+#microCv{width:100%;aspect-ratio:640/340;display:block;border-radius:8px;border:1px solid var(--line);max-width:100%}
+.micro-ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:10px;font-size:.86rem}
+.micro-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:14px}
+.phase{border-left:3px solid var(--accent);padding:2px 0 2px 12px}
+.phase-step{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.phase h4{margin:.15rem 0 .25rem}
+.phase p{margin:0;font-size:.92rem}
+#ivCv{width:100%;height:170px;display:block;border:1px solid var(--line);border-radius:6px;background:var(--surface2)}
+dl.live{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:10px 0 0;font-size:.84rem}
+dl.live dt{color:var(--muted)}
+dl.live dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--muted);margin-top:8px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+.sw.e{background:var(--electron)}
+.sw.h{border:2px dashed var(--hole)}
+.sw.ve{width:7px;height:7px;background:var(--electron)}
+.sw.ionp{border-radius:1px;border:1.5px solid var(--hole)}
+.sw.ionn{border-radius:1px;border:1.5px solid var(--electron)}
+.sw.ph{background:#e8402a;border-radius:2px;height:3px;width:16px;vertical-align:3px}
+.ctl{display:grid;gap:12px}
+.ctl label.f,.ctl .f{display:grid;gap:4px;font-size:.86rem;font-weight:500}
+.ctl .row{display:flex;align-items:center;gap:8px}
+.ctl .row input[type=range]{flex:1;min-width:0}
+.val{font-family:var(--f-mono);font-size:.84rem;min-width:66px;text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{accent-color:var(--accent)}
+select,input[type=text]{font:inherit;font-size:.9rem;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
+select:disabled,input:disabled{opacity:.55}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg.two{grid-template-columns:repeat(2,1fr)}
+.seg button{font:inherit;font-size:.82rem;font-weight:500;padding:8px 6px;border:0;background:var(--surface2);color:var(--muted);cursor:pointer;line-height:1.25}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.pol{font:inherit;font-size:.8rem;font-family:var(--f-mono);border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:6px;padding:6px 8px;cursor:pointer;white-space:nowrap}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:.86rem}
+.check input{margin-top:3px;accent-color:var(--accent)}
+.lockmsg{font-size:.78rem;color:var(--warn)}
+.lcds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.lcd{background:var(--lcd-bg);border-radius:7px;padding:7px 10px 8px;min-width:0}
+.lcd .lab{font-size:.7rem;color:var(--lcd-dim);font-family:var(--f-mono);letter-spacing:.04em;display:flex;justify-content:space-between;gap:6px}
+.lcd .dig{font-family:var(--f-mono);font-weight:500;font-size:1.32rem;color:var(--lcd-fg);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lcd.off .dig{color:var(--lcd-dim)}
+.lcd.warn .dig{color:#ff5a4a}
+.btn{font:inherit;font-weight:600;font-size:.9rem;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:7px;padding:9px 14px;cursor:pointer}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.sm{font-size:.8rem;padding:5px 10px}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:#fff}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.status{font-size:.86rem;margin-top:10px;min-height:1.3em}
+.status.ok{color:var(--ok)} .status.bad{color:var(--bad)} .status.info{color:var(--muted)}
+.data{display:grid;gap:16px;margin-top:16px}
+.data-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.data-grid{grid-template-columns:minmax(0,1fr)}}
+.tbl-scroll{max-height:330px;overflow:auto}
+canvas.plot{width:100%;height:270px;display:block;border:1px solid var(--line);border-radius:8px;background:var(--surface2)}
+.delbtn{border:0;background:none;color:var(--muted);cursor:pointer;font-size:.95rem;padding:0 4px}
+.delbtn:hover{color:var(--bad)}
+.analysis{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.given{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.86rem;margin:.4rem 0 .8rem}
+.given span b{font-family:var(--f-mono);font-weight:500}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 14px}
+.form-grid label{display:grid;gap:4px;font-size:.84rem;font-weight:500}
+.fb-list{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:4px;font-size:.88rem}
+.fb-list li.ok::before{content:"✓ ";color:var(--ok);font-weight:700}
+.fb-list li.bad::before{content:"✗ ";color:var(--bad);font-weight:700}
+.callout{background:var(--accent-soft);border-radius:8px;padding:10px 14px;font-size:.9rem;margin:.6rem 0}
+.callout.warn{background:color-mix(in srgb,var(--warn) 14%,var(--surface))}
+.quiz{display:grid;gap:14px;max-width:820px}
+.q{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:14px 16px}
+.q legend{font-weight:600;padding:0;margin-bottom:6px}
+.q fieldset{border:0;margin:0;padding:0;min-width:0}
+.q label{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:.92rem;cursor:pointer}
+.q label input{margin-top:4px;accent-color:var(--accent)}
+.q .ex{font-size:.86rem;margin-top:6px;padding-left:10px;border-left:3px solid var(--line)}
+.q.right .ex{border-color:var(--ok)} .q.wrong .ex{border-color:var(--bad)}
+.score{font-family:var(--f-display);font-size:1.1rem;font-weight:700}
+.fig{margin:1rem 0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;overflow-x:auto}
+.fig svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto}
+.fig figcaption{font-size:.82rem;color:var(--muted);text-align:center;margin-top:6px}
+.s-ink{stroke:var(--ink)} .s-e{stroke:var(--electron)} .s-h{stroke:var(--hole)} .s-fb{stroke:var(--fb)} .s-fe{stroke:var(--fe)} .s-acc{stroke:var(--accent)} .s-mut{stroke:var(--muted)}
+.f-ink{fill:var(--ink)} .f-e{fill:var(--electron)} .f-h{fill:var(--hole)} .f-surf{fill:var(--surface2)} .f-none{fill:none} .f-fb{fill:var(--fb)} .f-fe{fill:var(--fe)} .f-mut{fill:var(--muted)} .f-acc{fill:var(--accent)}
+.svgtxt{font-family:var(--f-body);font-size:13px}
+.svgmath{font-family:var(--f-math);font-style:italic;font-size:15px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ai-fab{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;align-items:center;gap:8px;font:inherit;font-weight:600;font-size:.92rem;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:11px 16px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.ai-fab:focus-visible,.ai-x:focus-visible,.chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ai-panel{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:41;width:min(410px,calc(100vw - 32px));height:min(640px,calc(100vh - 32px));background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}
+.ai-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--surface2)}
+.ai-head b{font-family:var(--f-display);display:block}
+.ai-sub{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);letter-spacing:.04em}
+.ai-x{border:0;background:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px}
+.ai-log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.msg{max-width:92%;padding:9px 12px;border-radius:10px;font-size:.9rem;line-height:1.5;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:3px;white-space:pre-wrap}
+.msg.bot{align-self:flex-start;background:var(--surface2);border:1px solid var(--line);border-bottom-left-radius:3px}
+.msg.bot ul,.msg.bot ol{margin:.3rem 0;padding-left:1.1rem}
+.msg.typing{color:var(--muted);letter-spacing:.2em}
+.ai-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-top:1px solid var(--line)}
+.chip{font:inherit;font-size:.78rem;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:999px;padding:4px 10px;cursor:pointer;text-align:left}
+.chip:hover{background:var(--accent-soft)}
+.ai-form{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.ai-form input{flex:1;min-width:0;font:inherit;font-size:.9rem;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:8px 10px}
+@media (max-width:520px){.ai-panel{right:0;left:0;bottom:0;width:100%;height:min(78vh,640px);border-radius:12px 12px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">Yarimo'tkazgichlar fizikasi · Virtual laboratoriya ishi</div>
+    <div class="title-row">
+      <div>
+        <h1>Bipolyar tranzistorning statik xarakteristikalarini o'rganish</h1>
+        <p>Umumiy emitter sxemasi, 3D o'lchash stendi, uchta tranzistor (2N2222A, 2N2907A, Ge p-n-p), kirish va chiqish xarakteristikalari, h-parametrlar, \(\beta\) ning tok va haroratga bog'liqligi, tranzistor ichini ko'rsatuvchi lupa.</p>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Laboratoriya bo'limlari">
+      <a href="#maqsad" data-t="maqsad">Maqsad</a>
+      <a href="#nazariya" data-t="nazariya">Nazariya</a>
+      <a href="#tartib" data-t="tartib">Ish tartibi</a>
+      <a href="#simulyator" data-t="simulyator">Simulyator</a>
+      <a href="#sinov" data-t="sinov">O'z-o'zini tekshirish</a>
+      <a href="#adabiyot" data-t="adabiyot">Adabiyotlar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<!-- ============ MAQSAD ============ -->
+<section class="tab" id="tab-maqsad" hidden>
+  <div class="prose">
+    <h2>Ishning maqsadi</h2>
+    <ol>
+      <li>Bipolyar tranzistorning tuzilishi va ishlash prinsipi bilan tanishish: emitterdan injeksiya, bazadan diffuziya, kollektor tomonidan yig'ib olish.</li>
+      <li>Umumiy emitter (UE) sxemasida kirish xarakteristikalari \(I_B(V_{BE})\) ni \(V_{CE}\) = 0 va 5 V da o'lchash.</li>
+      <li>Chiqish xarakteristikalari oilasi \(I_C(V_{CE})\) ni bir nechta \(I_B\) uchun o'lchash. Kesish, aktiv va to'yinish rejimlarini ajratish.</li>
+      <li>h-parametrlarni aniqlash: \(h_{11e}\), \(h_{21e} = \beta\), \(h_{22e}\). Erli kuchlanishi \(V_A\) ni topish.</li>
+      <li>Tok kuchaytirish koeffitsiyenti \(\beta\) ning kollektor toki va haroratga bog'liqligini o'rganish.</li>
+      <li>Kremniy va germaniy, n-p-n va p-n-p tranzistorlarni solishtirish.</li>
+    </ol>
+    <h2>Virtual jihozlar</h2>
+    <ul>
+      <li><b>Baza toki manbai</b> (stabil tok): 0–300 μA, μA ko'rsatkichli.</li>
+      <li><b>Baza-emitter voltmetri</b> \(V_{BE}\): 0.1 mV aniqlik.</li>
+      <li><b>Kollektor kuchlanish manbai</b> \(V_{CE}\): 0–15 V.</li>
+      <li><b>Kollektor milliampermetri</b> \(I_C\): 0–200 mA.</li>
+      <li><b>Termostolik va harorat regulyatori:</b> 230–400 K.</li>
+      <li><b>Tranzistorlar:</b> 2N2222A (n-p-n, Si), 2N2907A (p-n-p, Si), МП42 tipidagi p-n-p germaniy tranzistor.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ NAZARIYA ============ -->
+<section class="tab" id="tab-nazariya" hidden>
+  <div class="prose">
+    <h2>1. Tuzilishi va ishlash prinsipi</h2>
+    <p>Bipolyar tranzistor ikkita p-n o'tishdan iborat: emitter–baza (EB) va baza–kollektor (BK). n-p-n tranzistorda:</p>
+    <ul>
+      <li>emitter kuchli legirlangan (n⁺);</li>
+      <li>baza yupqa (\(W_B \sim 0.1\text{–}1\ \mu\text{m}\)) va o'rtacha legirlangan (p);</li>
+      <li>kollektor kuchsizroq legirlangan (n).</li>
+    </ul>
+    <p><b>Aktiv rejimda</b> EB o'tish to'g'ri, BK o'tish teskari yo'nalishda ulanadi:</p>
+    <ol>
+      <li>Emitter bazaga juda ko'p elektron injeksiyalaydi.</li>
+      <li>Baza yupqa bo'lgani uchun elektronlarning deyarli hammasi rekombinatsiyalanishga ulgurmay diffuziya bilan BK o'tishga yetib keladi.</li>
+      <li>BK o'tishning kuchli maydoni ularni kollektorga suradi.</li>
+      <li>Bazada faqat kichik ulush rekombinatsiyalanadi. Uning o'rnini va emitterga qaytgan kovaklarni baza toki to'ldiradi.</li>
+    </ol>
+    <div class="eq">\[ I_E = I_B + I_C,\qquad I_C = \alpha I_E = \beta I_B,\qquad \beta = \frac{\alpha}{1-\alpha} \]</div>
+    <p>Masalan, \(\alpha = 0.995\) bo'lsa, \(\beta = 199\): baza tokining kichik o'zgarishi kollektor tokini 200 marta katta o'zgartiradi.</p>
+    <p>\(\alpha\) ikki ko'paytuvchidan iborat:</p>
+    <ul>
+      <li>emitter samaradorligi \(\gamma\) — injeksiyalangan tokning qancha qismi elektronlar;</li>
+      <li>bazadan o'tish koeffitsiyenti \(\alpha_T \approx 1 - W_B^2/2L_n^2\).</li>
+    </ul>
+
+    <h2>2. Ish rejimlari</h2>
+    <div class="tbl-wrap"><table><thead><tr><th>Rejim</th><th>EB o'tish</th><th>BK o'tish</th><th>Xususiyati</th></tr></thead><tbody>
+      <tr><td>Kesish</td><td>teskari / yopiq</td><td>teskari</td><td>\(I_B \approx 0\), \(I_C \approx I_{CEO}\) (kichik)</td></tr>
+      <tr><td>Aktiv</td><td>to'g'ri</td><td>teskari</td><td>\(I_C \approx \beta I_B\), kuchaytirish</td></tr>
+      <tr><td>To'yinish</td><td>to'g'ri</td><td>to'g'ri</td><td>\(V_{CE} \lesssim 0.2\ \text{V}\), \(I_C < \beta I_B\), kalit «yopiq»</td></tr>
+    </tbody></table></div>
+
+    <h2>3. Ebers–Moll va Gummel–Poon modeli</h2>
+    <p>Simulyatorda SPICE dasturlaridagi Gummel–Poon modeli ishlatiladi (n-p-n uchun yozilgan; p-n-p da barcha ishoralar teskari):</p>
+    <div class="eq">\[ I_F = I_s\left(e^{V_{BE}/V_T}-1\right),\qquad I_R = I_s\left(e^{V_{BC}/V_T}-1\right),\qquad V_T = \frac{kT}{q} \]</div>
+    <div class="eq">\[ I_C = \frac{I_F - I_R}{q_b} - \frac{I_R}{\beta_R},\qquad I_B = \frac{I_F}{\beta_F} + I_{SE}\left(e^{V_{BE}/n_EV_T}-1\right) + \frac{I_R}{\beta_R} \]</div>
+    <div class="eq">\[ q_b = \frac{q_1}{2}\left(1+\sqrt{1+\frac{4I_F}{I_{KF}}}\right),\qquad q_1 = \frac{1}{1 + V_{CB}/V_A} \]</div>
+    <ul>
+      <li>\(I_{SE}\) had — kichik toklarda bazadagi rekombinatsiya. Shu sababli \(\beta\) kichik toklarda kamayadi.</li>
+      <li>\(I_{KF}\) — katta injeksiya. Shu sababli \(\beta\) katta toklarda ham kamayadi.</li>
+      <li>\(q_1\) — Erli effekti.</li>
+    </ul>
+
+    <h2>4. Kirish xarakteristikasi</h2>
+    <p>\(I_B(V_{BE})\) oddiy diodning to'g'ri tarmog'iga o'xshaydi:</p>
+    <ul>
+      <li>Kremniy uchun ochilish kuchlanishi ~0.6–0.7 V, germaniy uchun ~0.15–0.3 V.</li>
+      <li>\(V_{CE}\) = 0 da BK o'tish ham to'g'ri yo'nalishda, tok ikkala o'tish orqali bazaga oqadi va egri chiziq chapga suriladi.</li>
+      <li>\(V_{CE} > 1\ \text{V}\) da egri chiziqlar deyarli ustma-ust tushadi.</li>
+    </ul>
+    <div class="eq">\[ h_{11e} = \left.\frac{\Delta V_{BE}}{\Delta I_B}\right|_{V_{CE}=\text{const}} \approx \frac{\beta\,V_T}{I_C} + r_b \]</div>
+
+    <h2>5. Chiqish xarakteristikalari va Erli effekti</h2>
+    <ul>
+      <li>\(I_C(V_{CE})\) oilasida \(V_{CE} \lesssim 0.2\ \text{V}\) — to'yinish sohasi: tok tez ortadi.</li>
+      <li>Undan keyin aktiv soha: tok deyarli gorizontal, lekin biroz ortadi.</li>
+      <li>Sababi <b>Erli effekti</b>: \(V_{CB}\) ortsa, BK kambag'allashgan sohasi kengayadi va samarali baza torayadi. Natijada diffuziya gradienti va \(I_C\) ortadi.</li>
+      <li>Aktiv sohadagi chiziqlarni chapga davom ettirsak, ular \(V_{CE} \approx -V_A\) nuqtada kesishadi.</li>
+    </ul>
+    <div class="eq">\[ I_C \approx \beta I_B\left(1+\frac{V_{CE}}{V_A}\right),\qquad h_{22e} = \left.\frac{\Delta I_C}{\Delta V_{CE}}\right|_{I_B} \approx \frac{I_C}{V_A + V_{CE}} \]</div>
+    <div class="eq">\[ h_{21e} = \left.\frac{\Delta I_C}{\Delta I_B}\right|_{V_{CE}=\text{const}},\qquad \beta_{DC} = \frac{I_C}{I_B} \]</div>
+
+    <h2>6. Haroratga bog'liqlik</h2>
+    <ul>
+      <li>\(I_s \propto T^3\exp(-E_g/kT)\), shuning uchun o'zgarmas tokda \(V_{BE}\) taxminan −2 mV/K ga kamayadi.</li>
+      <li>\(\beta\) harorat bilan ortadi (taxminan +0.5…1 %/K).</li>
+      <li>Kollektor o'tishining teskari toki \(I_{CBO}\) har 10 K da ~2 marta ortadi, uzilgan bazada esa \(I_{CEO} = (\beta+1)I_{CBO}\).</li>
+      <li>Germaniy tranzistorlarda \(I_{CBO}\) μA tartibida. Shuning uchun ular qizishga juda sezgir va issiqlik «qochishi» xavfi bor.</li>
+    </ul>
+
+    <h2>7. Tranzistorlar parametrlari (simulyator modeli, 300 K)</h2>
+    <div class="tbl-wrap"><table><thead><tr><th>Tranzistor</th><th class="num">\(\beta_F\)</th><th class="num">\(\beta\) (1 mA)</th><th class="num">\(V_A\), V</th><th class="num">\(V_{BE}\) (1 mA), V</th><th class="num">\(I_{CBO}\)</th><th class="num">\(P_{max}\), W</th></tr></thead><tbody id="dTable"></tbody></table></div>
+
+    <h2>8. Lupa nimani ko'rsatadi</h2>
+    <p>Lupa tranzistor kristallining kesimini ko'rsatadi: chapda emitter (n⁺), o'rtada yupqa baza (p, yuqorisida baza kontakti), o'ngda kollektor (n). Kuzatish mumkin bo'lgan jarayonlar:</p>
+    <ul>
+      <li>emitter elektronlari bazaga injeksiyalanadi va diffuziya bilan uni kesib o'tadi;</li>
+      <li>BK o'tish maydoni ularni kollektorga suradi;</li>
+      <li>bazada rekombinatsiyalanganlar chaqnash bilan ko'rsatiladi, ularning ulushi taxminan \(1/\beta\);</li>
+      <li>baza kontaktidan yangi kovaklar kirib keladi.</li>
+    </ul>
+    <p>Hisoblagich kollektorga yetgan va bazada rekombinatsiyalangan elektronlar nisbatini ko'rsatadi, u \(\beta\) ga yaqin. Pastda zonalar diagrammasi: emitter–baza to'sig'i pasaygan, baza–kollektor tomonida esa elektronlar «sharshara»dan tushadi.</p>
+    <p class="callout"><b>Kovak proton emas.</b> Kovak — kovalent bog'dagi bo'sh joy. U qo'shni valent elektronning unga sakrashi bilan ko'chadi. Atom yadrolari va ionlar joyida qoladi.</p>
+  </div>
+</section>
+
+<!-- ============ TARTIB ============ -->
+<section class="tab" id="tab-tartib" hidden>
+  <div class="prose">
+    <h2>Tayyorgarlik</h2>
+    <ol>
+      <li>3D stend bilan tanishing. Ulanish:
+        <ul>
+          <li>baza toki manbai B va E orasiga ulangan;</li>
+          <li>\(V_{BE}\) voltmetri B–E ga parallel;</li>
+          <li>kollektor manbai milliampermetr orqali K va E orasiga ulangan (umumiy emitter).</li>
+        </ul></li>
+      <li>p-n-p tranzistorda manbalar qutbi avtomatik almashtiriladi: ko'rsatkichlar manfiy, jadvalga modullar yoziladi.</li>
+    </ol>
+    <h2>A bosqich · Kirish xarakteristikalari</h2>
+    <ol>
+      <li>«A · Kirish» rejimi, \(V_{CE}\) = 0 V. \(I_B\) ni 0 dan 200 μA gacha o'zgartirib, 10–12 nuqtada \(V_{BE}\) ni yozing yoki «Avtomatik egri chiziq» tugmasini bosing.</li>
+      <li>\(V_{CE}\) = 5 V qo'yib takrorlang.</li>
+      <li>\(V_{CE}\) = 5 V egri chizig'idan \(I_B \approx 50\ \mu\text{A}\) atrofida \(h_{11e} = \Delta V_{BE}/\Delta I_B\) ni toping.</li>
+    </ol>
+    <h2>B bosqich · Chiqish xarakteristikalari</h2>
+    <ol>
+      <li>«B · Chiqish» rejimi. \(I_B\) = 20 μA qo'yib, \(V_{CE}\) ni 0 dan 12 V gacha o'zgartiring. To'yinish sohasida (0–0.5 V) qadam kichik bo'lsin. «Avtomatik egri chiziq» tugmasi buni bajaradi.</li>
+      <li>\(I_B\) = 40, 60, 80, 100 μA uchun takrorlang.</li>
+      <li>\(V_{CE}\) = 5 V da \(\beta\) va \(h_{21e}\) ni, aktiv sohadagi qiyalikdan \(h_{22e}\) ni, chiziqni chapga davom ettirib \(V_A\) ni toping.</li>
+    </ol>
+    <h2>C bosqich · \(\beta\) ning tok va haroratga bog'liqligi</h2>
+    <ol>
+      <li>«C · β(I_C)» rejimi, \(V_{CE}\) = 5 V. «Avtomatik: β(I_C)» tugmasi \(I_B\) ni 0.2–300 μA oralig'ida skanerlaydi.</li>
+      <li>Buni 250, 300, 350, 400 K da takrorlang. \(\beta\) maksimumini va uning harorat bilan o'zgarishini tahlil qiling.</li>
+    </ol>
+    <h2>Hisobot uchun</h2>
+    <ul>
+      <li>Kirish va chiqish xarakteristikalari oilalari (jadval va grafiklar).</li>
+      <li>\(h_{11e}\), \(h_{21e}\), \(\beta_{DC}\), \(h_{22e}\), \(V_A\).</li>
+      <li>\(\beta(I_C)\) grafiklari va harorat ta'siri.</li>
+      <li>Kremniy va germaniy, n-p-n va p-n-p tranzistorlarni solishtirish, lupa kuzatuvlari.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ SIMULYATOR ============ -->
+<section class="tab" id="tab-simulyator" hidden>
+  <div class="simgrid">
+    <div class="col-main">
+      <div class="card">
+        <div class="card-head">
+          <h3 id="appTitle">Laboratoriya stoli</h3>
+          <div class="lens-ctl">
+            <label class="check"><input type="checkbox" id="chkLens" checked> Lupa</label>
+            <button class="btn ghost sm" id="btnLensHome" type="button">Lupani tranzistorga qo'yish</button>
+          </div>
+        </div>
+        <div class="stage" id="stage" tabindex="0" aria-label="Laboratoriya qurilmasi. Lupani suring yoki strelka tugmalari bilan siljiting.">
+          <div id="app3d" hidden></div>
+          <canvas id="lensCv" hidden></canvas>
+          <canvas id="appCv" aria-label="O'lchash sxemasi"></canvas>
+        </div>
+        <div class="viewbtns" id="viewBtns" hidden>
+          <span class="eyebrow">Kamera:</span>
+          <button class="btn ghost sm" type="button" data-view="umumiy">Umumiy ko'rinish</button>
+          <button class="btn ghost sm" type="button" data-view="diod">Tranzistor</button>
+          <button class="btn ghost sm" type="button" data-view="asbob">Asboblar</button>
+        </div>
+        <p class="hint" id="appHint">Lupani suring (klaviaturada ← ↑ → ↓).</p>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Mikro-ko'rinish: tranzistor ichida</h3>
+          <span class="eyebrow" id="microTag">emitter · baza · kollektor kesimi</span>
+        </div>
+        <canvas id="microCv" aria-label="Tranzistor ichida elektronlar injeksiyasi, diffuziyasi va kollektorga surilishi, zonalar diagrammasi"></canvas>
+        <div class="micro-ctl">
+          <button class="btn sm" id="btnPlay" type="button">Pauza</button>
+          <button class="btn ghost sm" id="btnReset" type="button">Qaytadan</button>
+          <label style="display:flex;gap:6px;align-items:center">Tezlik <input type="range" id="speedR" min="0.25" max="2" step="0.25" value="1" style="width:90px"></label>
+          <label class="check"><input type="checkbox" id="chkBand" checked> Zonalar diagrammasi</label>
+        </div>
+        <div class="micro-info">
+          <div>
+            <div class="phase">
+              <span class="phase-step" id="phaseStep"></span>
+              <h4 id="phaseTitle"></h4>
+              <p id="phaseText"></p>
+            </div>
+            <div class="legend">
+              <span><i class="sw e"></i>elektron</span>
+              <span><i class="sw h"></i>kovak — bog'dagi bo'sh joy</span>
+              <span><i class="sw ve"></i>valent elektron sakrashi</span>
+              <span><i class="sw ionp"></i>akseptor ioni (−)</span>
+              <span><i class="sw ionn"></i>donor ioni (+)</span>
+              <span><i class="sw ph" style="background:#ff9a3a"></i>rekombinatsiya</span>
+            </div>
+            <p class="hint">Kesim sxematik va masshtabsiz. Injeksiya jadalligi \(I_C\) ga logarifmik bog'langan, rekombinatsiya ehtimoli esa aynan \(1/\beta\).</p>
+          </div>
+          <div>
+            <canvas id="ivCv" aria-label="Chiqish xarakteristikalari oilasi va ish nuqtasi"></canvas>
+            <dl class="live" id="liveNums"></dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="col-side">
+      <div class="card ctl">
+        <h3>Boshqaruv paneli</h3>
+        <div class="seg" role="group" aria-label="Tajriba bosqichi">
+          <button type="button" data-mode="A" aria-pressed="true">A · Kirish</button>
+          <button type="button" data-mode="B" aria-pressed="false">B · Chiqish</button>
+          <button type="button" data-mode="C" aria-pressed="false">C · β(I_C)</button>
+        </div>
+        <label class="f">Tranzistor
+          <select id="selD"></select>
+        </label>
+        <div class="f">
+          <span>Baza toki \(I_B\)</span>
+          <span class="row"><input type="range" id="rngIB" min="0" max="300" step="0.5" value="20" aria-label="Baza toki"><span class="val" id="valIB">20.0 μA</span></span>
+          <span class="row" style="flex-wrap:wrap"><button type="button" class="pol" data-dib="-10">−10</button><button type="button" class="pol" data-dib="-1">−1</button><button type="button" class="pol" data-dib="1">+1</button><button type="button" class="pol" data-dib="10">+10 μA</button></span>
+        </div>
+        <div class="f">
+          <span>Kollektor–emitter kuchlanishi \(V_{CE}\)</span>
+          <span class="row"><input type="range" id="rngVC" min="0" max="15" step="0.01" value="5" aria-label="Kollektor-emitter kuchlanishi"><span class="val" id="valVC">5.00 V</span></span>
+          <span class="row" style="flex-wrap:wrap"><button type="button" class="pol" data-dvc="-1">−1</button><button type="button" class="pol" data-dvc="-0.05">−0.05</button><button type="button" class="pol" data-dvc="0.05">+0.05</button><button type="button" class="pol" data-dvc="1">+1 V</button></span>
+        </div>
+        <label class="f"><span>Harorat \(T\)</span>
+          <span class="row"><input type="range" id="rngTemp" min="230" max="400" step="5" value="300"><span class="val" id="valTemp">300 K</span></span>
+        </label>
+        <label class="check"><input type="checkbox" id="chkIdeal"> <span>Ideal asboblar (shovqinsiz, qizishsiz). Faqat taqqoslash uchun.</span></label>
+        <div class="lockmsg" id="lockMsg" hidden></div>
+        <p class="hint" id="pnpNote" hidden style="margin:0">p-n-p tranzistor: manbalar qutbi teskari, asboblar manfiy qiymat ko'rsatadi. Jadvalga modullar yoziladi.</p>
+        <button class="btn danger" type="button" id="btnNew" hidden>Yangi tranzistor o'rnatish</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:10px">O'lchov asboblari</h3>
+        <div class="lcds">
+          <div class="lcd" id="lcdIB"><div class="lab"><span>BAZA TOKI</span><span>μA</span></div><div class="dig">0.0</div></div>
+          <div class="lcd" id="lcdVB"><div class="lab"><span>V_BE</span><span>V</span></div><div class="dig">0.0000</div></div>
+          <div class="lcd" id="lcdVC"><div class="lab"><span>V_CE</span><span>V</span></div><div class="dig">0.00</div></div>
+          <div class="lcd" id="lcdIC"><div class="lab"><span>KOLLEKTOR TOKI</span><span>mA</span></div><div class="dig">0.000</div></div>
+          <div class="lcd" id="lcdB"><div class="lab"><span>β = I_C / I_B</span><span></span></div><div class="dig">—</div></div>
+          <div class="lcd" id="lcdT"><div class="lab"><span>KRISTALL T</span><span>K</span></div><div class="dig">300.0</div></div>
+        </div>
+        <div class="btnrow">
+          <button class="btn" type="button" id="btnRec">Yozib olish</button>
+          <button class="btn" type="button" id="btnAuto">Avtomatik egri chiziq</button>
+        </div>
+        <div class="status info" id="status" role="status"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="data">
+    <div class="card" id="dataA">
+      <div class="card-head">
+        <h3>A bosqich · Kirish xarakteristikalari \(I_B(V_{BE})\)</h3>
+        <button class="btn ghost sm" type="button" id="clrA">Jadvalni tozalash</button>
+      </div>
+      <div class="data-grid">
+        <div class="tbl-wrap tbl-scroll"><table id="tblA"></table></div>
+        <canvas class="plot" id="plotA" aria-label="Kirish xarakteristikalari"></canvas>
+      </div>
+      <div class="analysis">
+        <div class="given" id="givenA"></div>
+        <div class="form-grid">
+          <label><span>\(h_{11e}\) (\(V_{CE}\) = 5 V, \(I_B \approx 50\ \mu\text{A}\)), kΩ</span><input type="text" id="inH11" inputmode="decimal" placeholder="masalan 0.9"></label>
+        </div>
+        <div class="btnrow"><button class="btn" type="button" id="btnCheckA">Tekshirish</button></div>
+        <div id="feedA"></div>
+      </div>
+    </div>
+
+    <div class="card" id="dataB">
+      <div class="card-head">
+        <h3>B bosqich · Chiqish xarakteristikalari \(I_C(V_{CE})\)</h3>
+        <button class="btn ghost sm" type="button" id="clrB">Jadvalni tozalash</button>
+      </div>
+      <div class="data-grid">
+        <div class="tbl-wrap tbl-scroll"><table id="tblB"></table></div>
+        <div style="display:grid;gap:12px"><canvas class="plot" id="plotB1" aria-label="Chiqish xarakteristikalari oilasi"></canvas><canvas class="plot" id="plotB2" aria-label="V_CE = 5 V dagi I_C(I_B)"></canvas></div>
+      </div>
+      <div class="analysis">
+        <div class="given" id="givenB"></div>
+        <div class="form-grid">
+          <label><span>\(h_{21e} = \Delta I_C/\Delta I_B\) (5 V da)</span><input type="text" id="inH21" inputmode="decimal" placeholder="masalan 210"></label>
+          <label><span>\(\beta_{DC} = I_C/I_B\) (o'rta egri chiziq, 5 V)</span><input type="text" id="inBdc" inputmode="decimal" placeholder="masalan 200"></label>
+          <label><span>\(h_{22e}\) (eng kichik \(I_B\) chizig'i), μS</span><input type="text" id="inH22" inputmode="decimal" placeholder="masalan 60"></label>
+          <label><span>Erli kuchlanishi \(V_A\), V</span><input type="text" id="inVA" inputmode="decimal" placeholder="masalan 75"></label>
+        </div>
+        <p class="hint">\(h_{21e}\), \(\beta_{DC}\) ±10 %, \(h_{22e}\), \(V_A\) ±25 % aniqlikda sizning jadvalingiz bo'yicha tekshiriladi.</p>
+        <div class="btnrow"><button class="btn" type="button" id="btnCheckB">Tekshirish</button></div>
+        <div id="feedB"></div>
+      </div>
+    </div>
+
+    <div class="card" id="dataC">
+      <div class="card-head">
+        <h3>C bosqich · \(\beta\) ning kollektor toki va haroratga bog'liqligi</h3>
+        <button class="btn ghost sm" type="button" id="clrC">Jadvalni tozalash</button>
+      </div>
+      <div class="data-grid">
+        <div class="tbl-wrap tbl-scroll"><table id="tblC"></table></div>
+        <canvas class="plot" id="plotC" aria-label="Beta ning kollektor tokiga bog'liqligi turli haroratlarda"></canvas>
+      </div>
+      <p class="hint" id="resC"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SINOV ============ -->
+<section class="tab" id="tab-sinov" hidden>
+  <div class="prose"><h2>O'z-o'zini tekshirish</h2><p>Har bir savolga javob belgilang va oxirida natijani tekshiring. Har bir javobga izoh beriladi.</p></div>
+  <form class="quiz" id="quiz"></form>
+  <div class="btnrow"><button class="btn" type="button" id="btnQuiz">Javoblarni tekshirish</button><button class="btn ghost" type="button" id="btnQuizReset">Qaytadan</button></div>
+  <p class="score" id="quizScore" role="status"></p>
+</section>
+
+<!-- ============ ADABIYOTLAR ============ -->
+<section class="tab" id="tab-adabiyot" hidden>
+  <div class="prose">
+    <h2>Adabiyotlar</h2>
+    <ol>
+      <li>J. Bardeen, W. H. Brattain. The transistor, a semi-conductor triode. <i>Physical Review</i>, 74 (1948), 230–231.</li>
+      <li>W. Shockley. The theory of p-n junctions in semiconductors and p-n junction transistors. <i>Bell System Technical Journal</i>, 28 (1949), 435–489.</li>
+      <li>J. J. Ebers, J. L. Moll. Large-signal behavior of junction transistors. <i>Proceedings of the IRE</i>, 42 (1954), 1761–1772.</li>
+      <li>H. K. Gummel, H. C. Poon. An integral charge control model of bipolar transistors. <i>Bell System Technical Journal</i>, 49 (1970), 827–852.</li>
+      <li>J. M. Early. Effects of space-charge layer widening in junction transistors. <i>Proceedings of the IRE</i>, 40 (1952), 1401–1406.</li>
+      <li>S. M. Sze, K. K. Ng. <i>Physics of Semiconductor Devices</i>, 3-nashr. Wiley, 2007. 5-bob (Bipolar transistors).</li>
+      <li>P. Horowitz, W. Hill. <i>The Art of Electronics</i>, 3-nashr. Cambridge University Press, 2015. 2-bob.</li>
+      <li>2N2222A, 2N2907A texnik ma'lumotnomalari va SPICE modellari (ON Semiconductor).</li>
+    </ol>
+  </div>
+</section>
+
+</div>
+</main>
+
+<button class="ai-fab" id="aiFab" type="button" aria-expanded="false" aria-controls="aiPanel">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="10.5" r="1.2" fill="currentColor"/><circle cx="12" cy="10.5" r="1.2" fill="currentColor"/><circle cx="15" cy="10.5" r="1.2" fill="currentColor"/></svg>
+  <span>Yordamchi</span>
+</button>
+<aside class="ai-panel" id="aiPanel" hidden aria-label="Laboratoriya yordamchisi">
+  <div class="ai-head">
+    <div><b>Laboratoriya yordamchisi</b><span class="ai-sub">oflayn · internet kerak emas</span></div>
+    <button type="button" class="ai-x" id="aiClose" aria-label="Yordamchini yopish">✕</button>
+  </div>
+  <div class="ai-log" id="aiLog" role="log" aria-live="polite"></div>
+  <div class="ai-chips" id="aiChips"></div>
+  <form class="ai-form" id="aiForm" autocomplete="off">
+    <label for="aiIn" class="sr">Savol</label>
+    <input type="text" id="aiIn" placeholder="Savol yoki qiymatlar: IB1=40 uA, IC1=8 mA…">
+    <button class="btn" type="submit">Yuborish</button>
+  </form>
+</aside>
+
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},svg:{fontCache:"global"},options:{enableMenu:false}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+"use strict";
+/* ---------- konstantalar va tranzistorlar ---------- */
+var E=1.602176634e-19, KB=8.617333262e-5;
+// Gummel–Poon (SPICE) parametrlari, n-p-n ekvivalentida (p-n-p uchun modullar)
+var DIODES={
+  n2222:{label:"2N2222A — n-p-n, kremniy",short:"2N2222A (n-p-n, Si)",pnp:false,Is:14.34e-15,BF:255.9,VAF:74.03,IKF:0.2847,ISE:14.34e-15,NE:1.307,BR:6.092,RB:10,Eg:1.11,XTI:3,XTB:1.5,Icbo:2e-12,Pmax:0.5,Rth:300,can:"to18",col:"#c9ced3",Vbi:0.9,W0:0.2},
+  p2907:{label:"2N2907A — p-n-p, kremniy",short:"2N2907A (p-n-p, Si)",pnp:true,Is:650.6e-18,BF:231.7,VAF:115.7,IKF:1.079,ISE:54.81e-15,NE:1.829,BR:3.563,RB:10,Eg:1.11,XTI:3,XTB:1.5,Icbo:2e-12,Pmax:0.4,Rth:300,can:"to18",col:"#c9ced3",Vbi:0.9,W0:0.2},
+  ge:{label:"МП42 tipidagi p-n-p, germaniy",short:"Ge p-n-p (МП42 tipi)",pnp:true,Is:4e-7,BF:60,VAF:30,IKF:0.15,ISE:1e-7,NE:2.0,BR:2,RB:100,Eg:0.67,XTI:3,XTB:1.0,Icbo:4e-6,Pmax:0.2,Rth:400,can:"ge",col:"#6d7378",Vbi:0.45,W0:1.0}
+};
+function bjt(d,VBE,VCE,T){ // ichki o'tish kuchlanishlari bo'yicha toklar (modullar)
+  var Vt=KB*T, r=T/300, ex=Math.exp(d.Eg/KB*(1/300-1/T));
+  var Is=d.Is*Math.pow(r,d.XTI)*ex, BF=d.BF*Math.pow(r,d.XTB), BR=d.BR*Math.pow(r,d.XTB);
+  var ISE=d.ISE*Math.pow(Math.pow(r,d.XTI)*ex,1/d.NE)*Math.pow(r,-d.XTB);
+  var VBC=VBE-VCE;
+  var IF=Is*(Math.exp(Math.min(80,VBE/Vt))-1), IR=Is*(Math.exp(Math.min(80,VBC/Vt))-1);
+  var q1=1/Math.max(0.05,1-VBC/d.VAF), q2=IF/d.IKF, qb=q1/2*(1+Math.sqrt(1+4*Math.max(0,q2)));
+  var IC=(IF-IR)/qb-IR/BR, IB=IF/BF+ISE*(Math.exp(Math.min(80,VBE/(d.NE*Vt)))-1)+IR/BR;
+  var Icbo=d.Icbo*Math.pow(2,(T-300)/10)*(1-Math.exp(-Math.max(0,VCE-VBE)/0.05));
+  return {IC:IC+Icbo,IBi:IB,Icbo:Icbo,IF:IF,IR:IR,BF:BF,VBC:VBC};
+}
+// berilgan I_B (tashqi) va V_CE uchun V_BE ni topish
+function operate(d,IB,VCE,T){
+  var lo=-0.6, hi=1.4, m=null;
+  for(var k=0;k<70;k++){var mid=(lo+hi)/2; m=bjt(d,mid,VCE,T); if(m.IBi-m.Icbo>IB) hi=mid; else lo=mid;}
+  var VBEi=(lo+hi)/2; m=bjt(d,VBEi,VCE,T);
+  return {VBEi:VBEi,VBE:VBEi+IB*d.RB,IB:IB,IC:m.IC,VCE:VCE,IF:m.IF,IR:m.IR,Icbo:m.Icbo,VBC:VBEi-VCE};
+}
+function gauss(){var u=1-Math.random(),v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+/* ---------- formatlash ---------- */
+var SUP={"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+function minus(s){return String(s).replace(/^-/,"−");}
+function sci(x,d){
+  d=d||3; if(x===null||x===undefined||!isFinite(x)) return "—"; if(x===0) return "0";
+  var e=Math.floor(Math.log10(Math.abs(x)));
+  if(e>=-2&&e<=3) return minus(String(+x.toPrecision(d)));
+  var m=x/Math.pow(10,e); if(Math.abs(m)>=9.995){m/=10;e+=1;}
+  return minus(m.toFixed(d-1))+"·10"+String(e).split("").map(function(c){return SUP[c];}).join("");
+}
+function ua(i){return minus((i*1e6).toFixed(1));}
+function ma(i){var a=Math.abs(i*1e3);return minus((i*1e3).toFixed(a<20?3:2));}
+function vstr(v){return minus(v.toFixed(4));}
+function istr(i){var a=Math.abs(i);if(a<1e-3)return minus((i*1e6).toFixed(2))+" μA";return minus((i*1e3).toFixed(3))+" mA";}
+function parseNum(s){
+  if(!s) return NaN;
+  s=String(s).trim().replace(/\s+/g,"").replace(/[−–]/g,"-").replace(/,/g,".");
+  s=s.replace(/[×x·*]10\^?\(?([-+]?\d+)\)?$/i,"e$1");
+  if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+  return Number(s);
+}
+
+/* ---------- holat ---------- */
+var st={mode:"A",di:"n2222",IB:20e-6,VCE:5,T:300,ideal:false,lensOn:true,burned:false,
+  tabA:{meta:null,rows:[]},tabB:{meta:null,rows:[]},tabC:{meta:null,rows:[]},read:null};
+var heat=0;
+var SAVE_KEY="bipolyar-tranzistor-lab-v1";
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({tabA:st.tabA,tabB:st.tabB,tabC:st.tabC}));}catch(e){}}
+function load(){try{var d=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");if(d){["tabA","tabB","tabC"].forEach(function(k){if(d[k]&&d[k].rows)st[k]=d[k];});}}catch(e){}}
+
+function measureAt(IB,VCE,T,noisy){
+  var d=DIODES[st.di], o=st.burned?{VBEi:0,VBE:IB*1e5,IB:IB,IC:0,VCE:VCE,IF:0,IR:0,Icbo:0,VBC:-VCE}:operate(d,IB,VCE,T);
+  o.Tj=T; o.P=Math.abs(o.VCE*o.IC+o.VBE*o.IB);
+  o.VBm=o.VBE; o.ICm=o.IC; o.IBm=IB;
+  if(noisy&&!st.ideal){o.VBm+=gauss()*5e-5; o.ICm+=gauss()*(2e-7+3e-4*Math.abs(o.IC)); o.IBm+=gauss()*(5e-9+2e-4*IB);}
+  return o;
+}
+function measure(noisy){var Tj=st.T+(st.ideal?0:heat); return measureAt(st.IB,st.VCE,Tj,noisy);}
+
+var $=function(s){return document.querySelector(s);};
+var mjQ=null;
+function mjx(el){
+  if(!el||!window.MathJax) return;
+  if(!mjQ) mjQ=(MathJax.startup&&MathJax.startup.promise)||Promise.resolve();
+  mjQ=mjQ.then(function(){ return MathJax.typesetPromise?MathJax.typesetPromise([el]):null; }).catch(function(){});
+}
+function setMath(el,html){ if(!el||el._raw===html) return; el._raw=html; el.innerHTML=html; mjx(el); }
+
+/* ---------- ranglar ---------- */
+var C={};
+function readColors(){
+  var cs=getComputedStyle(document.documentElement);
+  ["bg","surface","surface2","ink","muted","line","accent","electron","hole","copper","steel","fb","fe","ok","bad","warn"].forEach(function(k){C[k]=cs.getPropertyValue("--"+k).trim()||"#888";});
+}
+readColors();
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",readColors);}catch(e){}
+new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme","class","style"]});
+var FONT='"IBM Plex Sans","Segoe UI",system-ui,sans-serif', MONO='"IBM Plex Mono",Consolas,monospace', MATHF='"STIX Two Text",Cambria,Georgia,serif';
+
+/* ---------- bo'limlar ---------- */
+var TABS=["maqsad","nazariya","tartib","simulyator","sinov","adabiyot"], curTab="simulyator";
+function showTab(){
+  var h=(location.hash||"").replace("#","");
+  curTab=TABS.indexOf(h)>=0?h:"simulyator";
+  TABS.forEach(function(t){$("#tab-"+t).hidden=(t!==curTab);});
+  document.querySelectorAll("nav.tabs a").forEach(function(a){if(a.dataset.t===curTab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
+  if(curTab==="simulyator"){resizeAll();renderAll();}
+}
+window.addEventListener("hashchange",showTab);
+
+/* ---------- nazariya jadvali ---------- */
+function ibForIc(d,IC,VCE,T){var lo=0,hi=2e-3;for(var k=0;k<60;k++){var m=(lo+hi)/2;if(operate(d,m,VCE,T).IC>IC)hi=m;else lo=m;}return (lo+hi)/2;}
+(function(){
+  var rows="";
+  Object.keys(DIODES).forEach(function(k){var d=DIODES[k], ib=ibForIc(d,1e-3,5,300), o=operate(d,ib,5,300);
+    rows+="<tr><td>"+d.label+"</td><td class='num'>"+d.BF+"</td><td class='num'>"+(1e-3/ib).toFixed(0)+"</td><td class='num'>"+d.VAF+"</td><td class='num'>"+o.VBE.toFixed(3)+"</td><td class='num'>"+istr(d.Icbo)+"</td><td class='num'>"+d.Pmax+"</td></tr>";});
+  $("#dTable").innerHTML=rows;
+  var sel=$("#selD"); Object.keys(DIODES).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=DIODES[k].label;sel.appendChild(o);});
+})();
+
+/* ---------- canvas o'lchamlari ---------- */
+var appCv=$("#appCv"), actx=appCv.getContext("2d"), microCv=$("#microCv"), mctx=microCv.getContext("2d"), ivCv=$("#ivCv"), ictx=ivCv.getContext("2d");
+var AW=760, AH=440, MW=640, MH=340, aS=1, mS=1;
+function resizeAll(){
+  var dpr=Math.min(2,window.devicePixelRatio||1);
+  var w=appCv.clientWidth; if(w>0){appCv.width=Math.round(w*dpr);appCv.height=Math.round(w*AH/AW*dpr);aS=appCv.width/AW;}
+  var mw=microCv.clientWidth; if(mw>0){microCv.width=Math.round(mw*dpr);microCv.height=Math.round(mw*MH/MW*dpr);mS=microCv.width/MW;}
+  if(ivCv.clientWidth>0){ivCv.width=Math.round(ivCv.clientWidth*dpr);ivCv.height=Math.round(ivCv.clientHeight*dpr);}
+  renderData();
+}
+if(window.ResizeObserver){new ResizeObserver(function(){resizeAll();}).observe(document.body);}else window.addEventListener("resize",resizeAll);
+
+/* ---------- boshqaruv ---------- */
+var el={selD:$("#selD"),rngIB:$("#rngIB"),valIB:$("#valIB"),rngVC:$("#rngVC"),valVC:$("#valVC"),rngTemp:$("#rngTemp"),valTemp:$("#valTemp"),chkIdeal:$("#chkIdeal"),lockMsg:$("#lockMsg"),status:$("#status"),btnNew:$("#btnNew")};
+var MODE_NAME={A:"A · Kirish xarakteristikalari",B:"B · Chiqish xarakteristikalari",C:"C · β ning tok va haroratga bog'liqligi"};
+function setStatus(msg,kind){el.status.textContent=msg||"";el.status.className="status "+(kind||"info");}
+function sg(){return DIODES[st.di].pnp?-1:1;}
+function applyInputs(){el.selD.value=st.di;el.rngIB.value=st.IB*1e6;el.rngVC.value=st.VCE;el.rngTemp.value=st.T;el.chkIdeal.checked=st.ideal;}
+function syncLabels(){
+  var s=sg()<0?"−":"";
+  el.valIB.textContent=s+(st.IB*1e6).toFixed(1)+" μA"; el.valVC.textContent=s+st.VCE.toFixed(2)+" V"; el.valTemp.textContent=st.T+" K";
+  document.querySelectorAll("[data-mode]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.mode===st.mode));});
+  el.btnNew.hidden=!st.burned; $("#pnpNote").hidden=!DIODES[st.di].pnp;
+  $("#btnAuto").textContent=st.mode==="A"?"Avtomatik: kirish egri chizig'i":st.mode==="B"?"Avtomatik: chiqish egri chizig'i":"Avtomatik: β(I_C)";
+}
+function tableFor(m){return m==="A"?st.tabA:m==="B"?st.tabB:st.tabC;}
+function updateLocks(){
+  var tb=tableFor(st.mode), L={};
+  if(tb.rows.length){ L=st.mode==="C"?{di:1}:{di:1,T:1}; }
+  el.selD.disabled=!!L.di; el.rngTemp.disabled=!!L.T;
+  var nm=[]; if(L.di)nm.push("tranzistor"); if(L.T)nm.push("harorat");
+  el.lockMsg.hidden=!nm.length; el.lockMsg.textContent=nm.length?"Bu bosqich jadvalida ma'lumot bor, shuning uchun "+nm.join(", ")+" qulflangan. O'zgartirish uchun jadvalni tozalang.":"";
+}
+function setMode(m){
+  st.mode=m; var tb=tableFor(m);
+  if(tb.meta&&tb.rows.length){st.di=tb.meta.di; if(tb.meta.T!==undefined) st.T=tb.meta.T;}
+  else { if(m==="A"){st.VCE=0;st.IB=50e-6;} if(m==="B"){st.IB=20e-6;st.VCE=5;} if(m==="C"){st.VCE=5;} }
+  applyInputs(); renderAll(); updateMeters(); M.need=true;
+}
+document.querySelectorAll("[data-mode]").forEach(function(b){b.addEventListener("click",function(){setMode(b.dataset.mode);});});
+function setIB(v){st.IB=Math.max(0,Math.min(300,Math.round(v*10)/10))*1e-6; el.rngIB.value=st.IB*1e6; syncLabels(); updateMeters();}
+function setVC(v){st.VCE=Math.max(0,Math.min(15,Math.round(v*100)/100)); el.rngVC.value=st.VCE; syncLabels(); updateMeters();}
+document.querySelectorAll("[data-dib]").forEach(function(b){b.addEventListener("click",function(){setIB(st.IB*1e6+parseFloat(b.dataset.dib));});});
+document.querySelectorAll("[data-dvc]").forEach(function(b){b.addEventListener("click",function(){setVC(st.VCE+parseFloat(b.dataset.dvc));});});
+el.rngIB.addEventListener("input",function(){setIB(parseFloat(this.value));});
+el.rngVC.addEventListener("input",function(){setVC(parseFloat(this.value));});
+el.selD.addEventListener("change",function(){st.di=this.value;st.burned=false;heat=0;syncLabels();updateMeters();M.need=true;if(T3)buildDiode();renderAll();});
+el.rngTemp.addEventListener("input",function(){st.T=parseInt(this.value,10);syncLabels();updateMeters();});
+el.chkIdeal.addEventListener("change",function(){st.ideal=this.checked;if(st.ideal)heat=0;updateMeters();});
+el.btnNew.addEventListener("click",function(){st.burned=false;heat=0;st.IB=0;st.VCE=0;applyInputs();syncLabels();updateMeters();if(T3)buildDiode();setStatus("Yangi tranzistor o'rnatildi.","ok");});
+
+function setLcd(id,txt,cls){var d=$(id);d.querySelector(".dig").textContent=txt;d.className="lcd"+(cls?" "+cls:"");}
+function updateMeters(){
+  var r=measure(true), d=DIODES[st.di], s=sg(); st.read=r;
+  if(!st.burned&&!st.ideal&&r.P>2*d.Pmax){
+    st.burned=true; heat=0; syncLabels(); if(T3)buildDiode();
+    setStatus("Tranzistor kuydi! Quvvat "+(r.P*1000).toFixed(0)+" mW, ruxsat etilgani "+(d.Pmax*1000)+" mW edi (P = V_CE·I_C). «Yangi tranzistor o'rnatish» ni bosing.","bad");
+    r=measure(true); st.read=r;
+  }
+  setLcd("#lcdIB",minus((s*r.IBm*1e6).toFixed(1))); setLcd("#lcdVB",vstr(s*r.VBm)); setLcd("#lcdVC",minus((s*st.VCE).toFixed(2)));
+  setLcd("#lcdIC",Math.abs(r.ICm)>0.2?"OL":ma(s*r.ICm),Math.abs(r.ICm)>0.2?"warn":""); setLcd("#lcdB",st.IB>0.5e-6&&!st.burned?(r.ICm/st.IB).toFixed(1):"—");
+  setLcd("#lcdT",r.Tj.toFixed(1),r.P>d.Pmax?"warn":"");
+  if(!st.burned&&r.P>d.Pmax) setStatus("Tranzistor quvvati "+(r.P*1000).toFixed(0)+" mW — ruxsat etilganidan ("+(d.Pmax*1000)+" mW) katta! Kristall qizimoqda.","bad");
+  else if(/quvvati/.test(el.status.textContent)) setStatus("","info");
+  panels3D(r);
+}
+
+/* ---------- yozib olish ---------- */
+function metaNow(m){ return m==="C"?{di:st.di}:{di:st.di,T:st.T}; }
+function addRow(o,T){
+  var tb=tableFor(st.mode); if(!tb.meta||!tb.rows.length) tb.meta=metaNow(st.mode);
+  if(st.mode==="A") tb.rows.push({IB:o.IBm,VBE:o.VBm,VCE:o.VCE});
+  else if(st.mode==="B") tb.rows.push({IB:o.IB,VCE:o.VCE,IC:o.ICm});
+  else tb.rows.push({T:T,IB:o.IBm,IC:o.ICm,beta:o.ICm/o.IBm});
+}
+function sortRows(){
+  if(st.mode==="A") st.tabA.rows.sort(function(a,b){return (a.VCE-b.VCE)||(a.IB-b.IB);});
+  if(st.mode==="B") st.tabB.rows.sort(function(a,b){return (a.IB-b.IB)||(a.VCE-b.VCE);});
+  if(st.mode==="C") st.tabC.rows.sort(function(a,b){return (a.T-b.T)||(a.IC-b.IC);});
+}
+$("#btnRec").addEventListener("click",function(){
+  if(st.burned){setStatus("Tranzistor kuygan — avval yangisini o'rnating.","bad");return;}
+  var r=measure(true);
+  if(Math.abs(r.ICm)>0.2){setStatus("Milliampermetr diapazonidan chiqdi (OL).","bad");return;}
+  if(st.mode==="C"&&st.IB<0.1e-6){setStatus("I_B > 0 bo'lishi kerak.","bad");return;}
+  addRow(r,st.T); sortRows(); save(); renderAll();
+  setStatus("Yozildi: I_B = "+(r.IBm*1e6).toFixed(1)+" μA, V_BE = "+r.VBm.toFixed(4)+" V, V_CE = "+st.VCE.toFixed(2)+" V, I_C = "+istr(r.ICm)+".","ok");
+});
+$("#btnAuto").addEventListener("click",function(){
+  if(st.burned){setStatus("Tranzistor kuygan — avval yangisini o'rnating.","bad");return;}
+  var Tj=st.T, n=0, tb=tableFor(st.mode);
+  if(st.mode==="A"){
+    tb.rows=tb.rows.filter(function(x){return Math.abs(x.VCE-st.VCE)>0.005||!tb.meta||tb.meta.di!==st.di;});
+    [1,2,5,10,20,30,50,70,100,150,200].forEach(function(ib){addRow(measureAt(ib*1e-6,st.VCE,Tj,true),Tj);n++;});
+  } else if(st.mode==="B"){
+    tb.rows=tb.rows.filter(function(x){return Math.abs(x.IB-st.IB)>1e-8;});
+    [0,0.02,0.05,0.1,0.15,0.2,0.3,0.5,0.8,1,1.5,2,3,4,5,6,8,10,12].forEach(function(v){var o=measureAt(st.IB,v,Tj,true); if(Math.abs(o.ICm)<=0.2&&o.P<=2*DIODES[st.di].Pmax){addRow(o,Tj);n++;}});
+  } else {
+    tb.rows=tb.rows.filter(function(x){return x.T!==st.T;});
+    [0.2,0.5,1,2,5,10,20,50,100,200,300].forEach(function(ib){var o=measureAt(ib*1e-6,5,Tj,true); if(Math.abs(o.ICm)<=0.2){addRow(o,Tj);n++;}});
+  }
+  sortRows(); save(); renderAll();
+  setStatus("Avtomatik o'lchash (qisqa impulslar, kristall qizimaydi): "+n+" nuqta yozildi"+(st.mode==="A"?" (V_CE = "+st.VCE.toFixed(2)+" V)":st.mode==="B"?" (I_B = "+(st.IB*1e6).toFixed(1)+" μA)":" (T = "+st.T+" K, V_CE = 5 V)")+".","ok");
+});
+["A","B","C"].forEach(function(t){$("#clr"+t).addEventListener("click",function(){var tb=tableFor(t);if(!tb.rows.length)return;if(!confirm("Jadvaldagi barcha qatorlar o'chiriladi. Davom etasizmi?"))return;tb.rows=[];tb.meta=null;save();renderAll();});});
+document.addEventListener("click",function(e){var b=e.target.closest("[data-del]");if(!b)return;var tb=tableFor(b.dataset.del);tb.rows.splice(+b.dataset.i,1);if(!tb.rows.length)tb.meta=null;save();renderAll();});
+
+/* ---------- grafiklar ---------- */
+function niceStep(range,n){var raw=range/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),r=raw/mag;return (r<1.5?1:r<3?2:r<7?5:10)*mag;}
+function tickFmt(v,step){if(Math.abs(v)<step*1e-6)return "0";var a=Math.abs(v);if(a>=1e4||a<1e-2)return sci(v,2);var dec=Math.max(0,-Math.floor(Math.log10(step)));return minus(v.toFixed(Math.min(dec,4)));}
+function linfit(pts){var n=pts.length;if(n<2)return null;var sx=0,sy=0,sxx=0,sxy=0;pts.forEach(function(p){sx+=p[0];sy+=p[1];sxx+=p[0]*p[0];sxy+=p[0]*p[1];});var d=n*sxx-sx*sx;if(Math.abs(d)<1e-30)return null;var m=(n*sxy-sx*sy)/d;return {m:m,b:(sy-m*sx)/n};}
+function plot(cv,o){
+  if(!cv.clientWidth) return;
+  var dpr=Math.min(2,window.devicePixelRatio||1); if(cv.width!==Math.round(cv.clientWidth*dpr)){cv.width=Math.round(cv.clientWidth*dpr);cv.height=Math.round(cv.clientHeight*dpr);}
+  var g=cv.getContext("2d"),W=cv.width,H=cv.height; if(!W||!H) return;
+  var s=W/cv.clientWidth; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,W,H); g.setTransform(s,0,0,s,0,0);
+  var w=cv.clientWidth,h=cv.clientHeight,L=62,R=14,T=26,Bm=40;
+  g.fillStyle=C.ink; g.font="600 12px "+FONT; g.textAlign="left"; g.fillText(o.title||"",L,16);
+  var all=[]; o.series.forEach(function(se){se.pts.forEach(function(p){all.push(p);});});
+  if(!all.length){g.fillStyle=C.muted;g.font="13px "+FONT;g.textAlign="center";g.fillText(o.empty||"Hali ma'lumot yo'q",w/2,h/2);return;}
+  var xs_=all.map(function(p){return p[0];}), ys_=all.map(function(p){return p[1];});
+  var x0=Math.min.apply(null,xs_), x1=Math.max.apply(null,xs_), y0=Math.min.apply(null,ys_), y1=Math.max.apply(null,ys_);
+  if(o.xmin!==undefined)x0=Math.min(x0,o.xmin); if(o.xmax!==undefined)x1=Math.max(x1,o.xmax); if(o.ymin!==undefined)y0=Math.min(y0,o.ymin); if(o.ymax!==undefined)y1=Math.max(y1,o.ymax);
+  if(o.fixY){y0=o.fixY[0];y1=o.fixY[1];}
+  if(x1-x0<1e-30){x0-=1;x1+=1;} if(y1-y0<1e-30){var dy=Math.abs(y0)*0.2||1;y0-=dy;y1+=dy;}
+  var px=(x1-x0)*0.05,py=(y1-y0)*0.08; if(o.xmin===undefined)x0-=px; if(o.xmax===undefined)x1+=px; if(o.ymin===undefined&&!o.fixY)y0-=py; if(!o.fixY)y1+=py;
+  var X=function(v){return L+(v-x0)/(x1-x0)*(w-L-R);}, Y=function(v){return h-Bm-(v-y0)/(y1-y0)*(h-Bm-T);};
+  var xs=niceStep(x1-x0,5), ys=niceStep(y1-y0,5);
+  g.font="11px "+MONO; g.lineWidth=1;
+  for(var v=Math.ceil(x0/xs)*xs;v<=x1+1e-12;v+=xs){g.strokeStyle=C.line;g.globalAlpha=.7;g.beginPath();g.moveTo(X(v),T);g.lineTo(X(v),h-Bm);g.stroke();g.globalAlpha=1;g.fillStyle=C.muted;g.textAlign="center";g.fillText(tickFmt(v,xs),X(v),h-Bm+15);}
+  for(var u=Math.ceil(y0/ys)*ys;u<=y1+1e-12*Math.abs(y1);u+=ys){g.strokeStyle=C.line;g.globalAlpha=.7;g.beginPath();g.moveTo(L,Y(u));g.lineTo(w-R,Y(u));g.stroke();g.globalAlpha=1;g.fillStyle=C.muted;g.textAlign="right";g.fillText(tickFmt(u,ys),L-6,Y(u)+4);}
+  if(y0<0&&y1>0){g.strokeStyle=C.ink;g.globalAlpha=.5;g.beginPath();g.moveTo(L,Y(0));g.lineTo(w-R,Y(0));g.stroke();g.globalAlpha=1;}
+  if(x0<0&&x1>0){g.strokeStyle=C.ink;g.globalAlpha=.5;g.beginPath();g.moveTo(X(0),T);g.lineTo(X(0),h-Bm);g.stroke();g.globalAlpha=1;}
+  g.strokeStyle=C.ink; g.globalAlpha=.8; g.beginPath(); g.moveTo(L,T); g.lineTo(L,h-Bm); g.lineTo(w-R,h-Bm); g.stroke(); g.globalAlpha=1;
+  g.fillStyle=C.muted; g.font="12px "+FONT; g.textAlign="center"; g.fillText(o.xlabel,L+(w-L-R)/2,h-8);
+  g.save(); g.translate(13,T+(h-Bm-T)/2); g.rotate(-Math.PI/2); g.fillText(o.ylabel,0,0); g.restore();
+  g.save(); g.beginPath(); g.rect(L,T,w-L-R,h-Bm-T); g.clip();
+  o.series.forEach(function(se){
+    if(se.fit){g.strokeStyle=se.fitColor||se.color;g.lineWidth=1.6;g.setLineDash([6,4]);g.beginPath();g.moveTo(X(se.fit.xa),Y(se.fit.m*se.fit.xa+se.fit.b));g.lineTo(X(se.fit.xb),Y(se.fit.m*se.fit.xb+se.fit.b));g.stroke();g.setLineDash([]);}
+    if(se.line&&se.pts.length>1){g.strokeStyle=se.color;g.lineWidth=1.5;g.beginPath();se.pts.forEach(function(p,i){if(i)g.lineTo(X(p[0]),Y(p[1]));else g.moveTo(X(p[0]),Y(p[1]));});g.stroke();}
+    se.pts.forEach(function(p){g.fillStyle=se.color;g.beginPath();if(se.sq)g.rect(X(p[0])-3.4,Y(p[1])-3.4,6.8,6.8);else g.arc(X(p[0]),Y(p[1]),3.6,0,7);g.fill();g.strokeStyle=C.surface;g.lineWidth=1;g.stroke();});
+  });
+  g.restore();
+  if(o.legend){var lx=L+10,ly=T+14;g.font="11px "+FONT;g.textAlign="left";o.series.forEach(function(se){if(!se.name)return;g.fillStyle=se.color;if(se.sq)g.fillRect(lx,ly-7,7,7);else{g.beginPath();g.arc(lx+3.5,ly-3.5,3.6,0,7);g.fill();}g.fillStyle=C.ink;g.fillText(se.name,lx+12,ly);ly+=15;});}
+}
+
+/* ---------- natijalar ---------- */
+var PAL=function(i){return [C.accent,C.hole,C.fe,C.electron,C.fb,C.ok,C.steel][i%7];};
+function groupBy(rows,key,prec){var g={};rows.forEach(function(r){var k=(Math.round(r[key]/prec)*prec).toFixed(10);(g[k]=g[k]||[]).push(r);});return Object.keys(g).map(function(k){return {k:+k,rows:g[k]};}).sort(function(a,b){return a.k-b.k;});}
+function expA(){
+  var tb=st.tabA; if(!tb.meta) return null;
+  var p=tb.rows.filter(function(r){return Math.abs(r.VCE-5)<0.05;}).slice().sort(function(a,b){return a.IB-b.IB;});
+  if(p.length<2) return null;
+  var i=0; while(i<p.length-2&&p[i+1].IB<50e-6) i++;
+  var a=p[i], b=p[i+1]; if(b.IB-a.IB<1e-9) return null;
+  return {h11:(b.VBE-a.VBE)/(b.IB-a.IB),a:a,b:b};
+}
+function interpIC(rows,V){var s=rows.slice().sort(function(a,b){return a.VCE-b.VCE;});for(var i=0;i<s.length-1;i++){if(s[i].VCE<=V&&s[i+1].VCE>=V){var t=(V-s[i].VCE)/(s[i+1].VCE-s[i].VCE||1);return s[i].IC+t*(s[i+1].IC-s[i].IC);}}return null;}
+function expB(){
+  var tb=st.tabB; if(!tb.meta) return null;
+  var gs=groupBy(tb.rows,"IB",1e-7).map(function(g){var act=g.rows.filter(function(r){return r.VCE>=2&&r.VCE<=12;}).map(function(r){return [r.VCE,r.IC];});var f=act.length>=2?linfit(act):null;return {IB:g.k,rows:g.rows,IC5:interpIC(g.rows,5),fit:f};});
+  var v=gs.filter(function(g){return g.IC5!==null&&g.IB>0;});
+  var res={groups:gs,h21:null,bdc:null,h22:null,VA:null};
+  if(v.length>=2){var f=linfit(v.map(function(g){return [g.IB,g.IC5];}));res.h21=f.m;res.tf=f;var mid=v[Math.floor((v.length-1)/2)];res.bdc=mid.IC5/mid.IB;res.mid=mid;}
+  var lo=gs.filter(function(g){return g.fit&&g.IB>0;})[0];
+  if(lo){res.h22=lo.fit.m;res.VA=lo.fit.b/lo.fit.m;res.lo=lo;}
+  return res;
+}
+function renderData(){
+  // A
+  var ta="<thead><tr><th>№</th><th class='num'>\\(V_{CE}\\), V</th><th class='num'>\\(I_B\\), μA</th><th class='num'>\\(V_{BE}\\), V</th><th></th></tr></thead><tbody>";
+  if(!st.tabA.rows.length) ta+="<tr><td colspan='5' style='color:var(--muted)'>V_CE = 0 V va 5 V da I_B ni 0–200 μA oralig'ida o'zgartirib, V_BE ni yozing («Avtomatik egri chiziq» tugmasi ham bor).</td></tr>";
+  st.tabA.rows.forEach(function(r,i){ta+="<tr><td>"+(i+1)+"</td><td class='num'>"+r.VCE.toFixed(2)+"</td><td class='num'>"+(r.IB*1e6).toFixed(1)+"</td><td class='num'>"+r.VBE.toFixed(4)+"</td><td><button class='delbtn' data-del='A' data-i='"+i+"' aria-label='Qatorni o`chirish'>✕</button></td></tr>";});
+  $("#tblA").innerHTML=ta+"</tbody>";
+  var gA=groupBy(st.tabA.rows,"VCE",0.01);
+  plot($("#plotA"),{title:"Kirish xarakteristikalari I_B(V_BE)",xlabel:"|V_BE|, V",ylabel:"|I_B|, μA",legend:true,series:gA.map(function(g,i){return {name:"V_CE = "+g.k.toFixed(2)+" V",pts:g.rows.slice().sort(function(a,b){return a.VBE-b.VBE;}).map(function(r){return [r.VBE,r.IB*1e6];}),color:PAL(i),line:true,sq:i%2===1};}),ymin:0});
+  var ea=expA(), ma_=st.tabA.meta;
+  setMath($("#givenA"),ma_?"<span>Tranzistor: <b>"+DIODES[ma_.di].short+"</b></span><span>\\(T\\) = <b>"+ma_.T+" K</b></span><span>Egri chiziqlar: <b>"+gA.map(function(g){return g.k.toFixed(2)+" V";}).join(", ")+"</b></span>"+(ea?"<span>50 μA atrofidagi nuqtalar: <b>"+(ea.a.IB*1e6).toFixed(1)+" va "+(ea.b.IB*1e6).toFixed(1)+" μA</b></span>":"<span>\\(V_{CE}\\) = 5 V egri chizig'i kerak.</span>"):"<span>Avval A bosqichida o'lchang.</span>");
+  // B
+  var tbb="<thead><tr><th>№</th><th class='num'>\\(I_B\\), μA</th><th class='num'>\\(V_{CE}\\), V</th><th class='num'>\\(I_C\\), mA</th><th class='num'>\\(I_C/I_B\\)</th><th></th></tr></thead><tbody>";
+  if(!st.tabB.rows.length) tbb+="<tr><td colspan='6' style='color:var(--muted)'>I_B = 20, 40, 60, 80, 100 μA uchun V_CE ni 0–12 V oralig'ida o'zgartiring («Avtomatik egri chiziq»).</td></tr>";
+  st.tabB.rows.forEach(function(r,i){tbb+="<tr><td>"+(i+1)+"</td><td class='num'>"+(r.IB*1e6).toFixed(1)+"</td><td class='num'>"+r.VCE.toFixed(2)+"</td><td class='num'>"+ma(r.IC)+"</td><td class='num'>"+(r.IB>0?(r.IC/r.IB).toFixed(1):"—")+"</td><td><button class='delbtn' data-del='B' data-i='"+i+"' aria-label='Qatorni o`chirish'>✕</button></td></tr>";});
+  $("#tblB").innerHTML=tbb+"</tbody>";
+  var eb=expB(), gB=eb?eb.groups:[];
+  plot($("#plotB1"),{title:"Chiqish xarakteristikalari I_C(V_CE)",xlabel:"|V_CE|, V",ylabel:"|I_C|, mA",legend:true,series:gB.map(function(g,i){return {name:"I_B = "+(g.IB*1e6).toFixed(0)+" μA",pts:g.rows.slice().sort(function(a,b){return a.VCE-b.VCE;}).map(function(r){return [r.VCE,r.IC*1e3];}),color:PAL(i),line:true,fit:g.fit?{m:g.fit.m*1e3,b:g.fit.b*1e3,xa:0,xb:12}:null};}),xmin:0,ymin:0});
+  plot($("#plotB2"),{title:"V_CE = 5 V da I_C(I_B): qiyalik = h₂₁ₑ",xlabel:"|I_B|, μA",ylabel:"|I_C|, mA",series:[{pts:eb&&eb.groups?eb.groups.filter(function(g){return g.IC5!==null;}).map(function(g){return [g.IB*1e6,g.IC5*1e3];}):[],color:C.accent,fit:eb&&eb.tf?{m:eb.tf.m*1e-3,b:eb.tf.b*1e3,xa:0,xb:Math.max.apply(null,eb.groups.map(function(g){return g.IB*1e6;}))}:null,fitColor:C.hole}],xmin:0,ymin:0});
+  var mb=st.tabB.meta;
+  setMath($("#givenB"),mb?"<span>Tranzistor: <b>"+DIODES[mb.di].short+"</b></span><span>\\(T\\) = <b>"+mb.T+" K</b></span><span>Egri chiziqlar: <b>"+gB.length+"</b> (\\(I_B\\) = "+gB.map(function(g){return (g.IB*1e6).toFixed(0);}).join(", ")+" μA)</span>"+(eb&&eb.lo?"<span>Eng kichik \\(I_B\\) chizig'i aktiv sohada: qiyalik <b>"+sci(eb.lo.fit.m*1e6,3)+" μA/V</b>, kesishma <b>"+ma(eb.lo.fit.b)+" mA</b></span>":""):"<span>Avval B bosqichida o'lchang.</span>");
+  // C
+  var tc="<thead><tr><th>№</th><th class='num'>\\(T\\), K</th><th class='num'>\\(I_B\\), μA</th><th class='num'>\\(I_C\\), mA</th><th class='num'>\\(\\beta\\)</th><th></th></tr></thead><tbody>";
+  if(!st.tabC.rows.length) tc+="<tr><td colspan='6' style='color:var(--muted)'>Har bir haroratda «Avtomatik: β(I_C)» tugmasini bosing (250, 300, 350, 400 K).</td></tr>";
+  st.tabC.rows.forEach(function(r,i){tc+="<tr><td>"+(i+1)+"</td><td class='num'>"+r.T+"</td><td class='num'>"+(r.IB*1e6).toFixed(2)+"</td><td class='num'>"+ma(r.IC)+"</td><td class='num'>"+r.beta.toFixed(1)+"</td><td><button class='delbtn' data-del='C' data-i='"+i+"' aria-label='Qatorni o`chirish'>✕</button></td></tr>";});
+  $("#tblC").innerHTML=tc+"</tbody>";
+  var gC=groupBy(st.tabC.rows,"T",1);
+  plot($("#plotC"),{title:"β(I_C) turli haroratlarda (V_CE = 5 V)",xlabel:"lg(I_C / A)",ylabel:"β",legend:true,series:gC.map(function(g,i){return {name:g.k+" K",pts:g.rows.filter(function(r){return r.IC>0;}).map(function(r){return [Math.log10(r.IC),r.beta];}),color:PAL(i),line:true};}),ymin:0});
+  setMath($("#resC"),gC.length?gC.map(function(g){var b=g.rows.reduce(function(a,r){return r.beta>a.beta?r:a;},g.rows[0]);return g.k+" K: \\(\\beta_{max}\\) ≈ "+b.beta.toFixed(0)+" (\\(I_C\\) ≈ "+istr(b.IC)+")";}).join("; ")+". \\(\\beta\\) kichik toklarda bazadagi rekombinatsiya, katta toklarda yuqori injeksiya tufayli kamayadi; harorat ortishi bilan ortadi.":"");
+  mjx($("#tblA")); mjx($("#tblB")); mjx($("#tblC"));
+}
+function chk(id,exp,name,tol,hint){var raw=$(id).value;if(!raw)return null;var v=parseNum(raw);if(!isFinite(v))return {ok:false,t:name+": sonni o'qib bo'lmadi."};var ok=Math.abs(v-exp)/Math.abs(exp)<=tol;return {ok:ok,t:name+(ok?": to'g'ri ("+sci(v,3)+").":": noto'g'ri. "+hint)};}
+function showFb(box,L,extra){if(!L.length){box.innerHTML="<p class='callout warn'>Hech bo'lmasa bitta qiymatni kiriting.</p>";return;}box.innerHTML="<ul class='fb-list'>"+L.map(function(x){return "<li class='"+(x.ok?"ok":"bad")+"'>"+x.t+"</li>";}).join("")+"</ul>"+(extra||"");mjx(box);}
+$("#btnCheckA").addEventListener("click",function(){
+  var ea=expA(), fb=$("#feedA"); if(!ea){fb.innerHTML="<p class='callout warn'>\\(V_{CE}\\) = 5 V da kamida 2 ta nuqta (50 μA atrofida) kerak.</p>";mjx(fb);return;}
+  showFb(fb,[chk("#inH11",ea.h11/1000,"\\(h_{11e}\\)",0.15,"\\(\\Delta V_{BE}/\\Delta I_B\\) ni 50 μA atrofidagi ikki nuqta bo'yicha hisoblang va kΩ da yozing.")].filter(Boolean),"<p class='hint'>Jadvalingizdan: \\(h_{11e}\\) = "+(ea.h11/1000).toFixed(3)+" kΩ.</p>");
+});
+$("#btnCheckB").addEventListener("click",function(){
+  var eb=expB(), fb=$("#feedB"); if(!eb||eb.h21===null){fb.innerHTML="<p class='callout warn'>Kamida ikkita \\(I_B\\) uchun \\(V_{CE}\\) = 5 V ni o'z ichiga olgan egri chiziq kerak.</p>";mjx(fb);return;}
+  var L=[chk("#inH21",eb.h21,"\\(h_{21e}\\)",0.1,"\\(\\Delta I_C/\\Delta I_B\\) — ikki egri chiziqning 5 V dagi toklari farqini \\(I_B\\) farqiga bo'ling."),chk("#inBdc",eb.bdc,"\\(\\beta_{DC}\\)",0.1,"O'rta egri chiziq ("+(eb.mid.IB*1e6).toFixed(0)+" μA) uchun \\(I_C/I_B\\), 5 V da.")];
+  if(eb.h22!==null){L.push(chk("#inH22",eb.h22*1e6,"\\(h_{22e}\\)",0.25,"Eng kichik \\(I_B\\) chizig'ining aktiv sohadagi (2–12 V) qiyaligi, μS = μA/V."));L.push(chk("#inVA",eb.VA,"\\(V_A\\)",0.25,"Aktiv sohadagi to'g'ri chiziqni \\(I_C = 0\\) gacha chapga davom ettiring: \\(V_A\\) = kesishma/qiyalik."));}
+  showFb(fb,L.filter(Boolean),"<p class='hint'>Jadvalingizdan: \\(h_{21e}\\) = "+eb.h21.toFixed(1)+", \\(\\beta_{DC}\\) = "+eb.bdc.toFixed(1)+(eb.h22!==null?", \\(h_{22e}\\) = "+(eb.h22*1e6).toFixed(2)+" μS, \\(V_A\\) ≈ "+eb.VA.toFixed(1)+" V (model: "+DIODES[st.tabB.meta.di].VAF+" V)":"")+".</p>");
+});
+
+/* ---------- mikro-ko'rinish: emitter · baza · kollektor ---------- */
+var CY0=40, CY1=196, GX=14, XEB=200, XBC=372;
+var M={need:true,running:true,speed:1,e:[],h:[],fx:[],acc:{i:0,r:0,b:0},nc:0,nr:0,g:null,text:null};
+function geom(){
+  var r=st.read, VBE=r?r.VBEi:0, VCB=r?(r.VCE-r.VBEi):0;
+  var wE=Math.max(6,Math.min(18,12*Math.sqrt(Math.max(0.05,0.9-VBE)/0.9))), wC=Math.max(10,Math.min(170,18+16*Math.sqrt(Math.max(0,VCB+0.7))));
+  M.g={eR:XEB-wE/2, bL:XEB+wE/2, bR:XBC-0.2*wC, cL:XBC+0.8*wC, wE:wE, wC:wC};
+}
+function hsx(i){return M.g.bL+6+i*GX;} function hsy(j){return CY0+10+j*GX;}
+function hCols(){return Math.max(1,Math.floor((M.g.bR-M.g.bL-12)/GX)+1);}
+var NJ=11;
+function setupMicro(){
+  geom(); M.e=[]; M.h=[]; M.fx=[]; M.acc={i:0,r:0,b:0}; M.nc=0; M.nr=0;
+  for(var k=0;k<55;k++) M.e.push({x:18+Math.random()*(M.g.eR-24),y:CY0+6+Math.random()*(CY1-CY0-12),mode:"E"});
+  for(var q=0;q<36;q++) M.e.push({x:M.g.cL+6+Math.random()*(616-M.g.cL),y:CY0+6+Math.random()*(CY1-CY0-12),mode:"C"});
+  for(var h=0;h<16;h++){var o={i:Math.floor(Math.random()*hCols()),j:Math.floor(Math.random()*NJ),hop:null,ax:0,ay:0,mode:"maj"};o.x=hsx(o.i);o.y=hsy(o.j);M.h.push(o);}
+  M.key=st.di; M.need=false;
+}
+function flash(x,y,type){M.fx.push({x:x,y:y,t:0,type:type});}
+function extreme(mode,sign){var b=null;M.e.forEach(function(p){if(p.mode!==mode)return;if(!b||(sign>0?p.x>b.x:p.x<b.x))b=p;});return b;}
+function stepMicro(dt){
+  var r=st.read; if(!r) return; geom(); var d=DIODES[st.di], g=M.g;
+  var beta=r.IB>1e-9?Math.max(1,r.IC/r.IB):d.BF;
+  if(!st.burned){
+    var ri=r.IF>1e-9?Math.max(0,Math.min(16,2.0*Math.log10(r.IF/1e-9))):0;
+    var rb=r.IR>1e-9?Math.max(0,Math.min(14,2.0*Math.log10(r.IR/1e-9))):0;
+    M.acc.i+=ri*dt; M.acc.r+=rb*dt;
+    var c=0; while(M.acc.i>=1&&c<6){M.acc.i-=1;c++; var e=extreme("E",1); if(e){e.mode="B";e.x=g.bL+1;e.rec=Math.random()<1/beta;e.life=e.rec?0.25+Math.random()*0.5:99;}}
+    c=0; while(M.acc.r>=1&&c<4){M.acc.r-=1;c++; var e2=extreme("C",-1); if(e2){e2.mode="BR";e2.x=g.bR-1;e2.life=0.3+Math.random()*0.5;}}
+  }
+  var jit=55*Math.sqrt(r.Tj/300)*Math.sqrt(dt);
+  for(var k=M.e.length-1;k>=0;k--){var p=M.e[k];
+    if(p.mode==="E"){p.x+=gauss()*jit;p.y+=gauss()*jit;p.x=Math.max(18,Math.min(g.eR-3,p.x));}
+    else if(p.mode==="C"){p.x+=gauss()*jit;p.y+=gauss()*jit;if(p.x<g.cL+3)p.x=g.cL+3+Math.random()*20;if(p.x>622){p.x=622;}}
+    else if(p.mode==="B"){p.x+=gauss()*jit*0.8+170*dt;p.y+=gauss()*jit*0.8;
+      if(p.rec){p.life-=dt; if(p.life<=0||p.x>=g.bR-4){var hh=null,bd=1e9;M.h.forEach(function(h){if(h.mode!=="maj")return;var dd=Math.hypot(h.x-p.x,h.y-p.y);if(dd<bd){bd=dd;hh=h;}});
+        flash(p.x,p.y,"rec"); M.nr++; if(hh){hh.mode="bin";hh.i=Math.floor(Math.random()*hCols());hh.j=0;hh.x=hsx(hh.i);hh.y=CY0-6;hh.hop=null;} p.mode="E"; p.x=18+Math.random()*6; p.y=CY0+6+Math.random()*(CY1-CY0-12); continue;}}
+      if(p.x<g.bL+1)p.x=g.bL+1;
+      if(!p.rec&&p.x>=g.bR){p.mode="S";}}
+    else if(p.mode==="S"){p.x+=320*dt; if(p.x>=g.cL+4){p.mode="C";M.nc++; var o=extreme("C",1); if(o&&o!==p){o.mode="E";o.x=18+Math.random()*6;o.y=CY0+6+Math.random()*(CY1-CY0-12);}}}
+    else if(p.mode==="BR"){p.x-=60*dt;p.y+=gauss()*jit;p.life-=dt; if(p.life<=0||p.x<=g.bL+2){flash(p.x,p.y,"rec"); p.mode="C"; p.x=618; }}
+    p.y=Math.max(CY0+5,Math.min(CY1-5,p.y));
+  }
+  var cols=hCols();
+  M.h.forEach(function(h){
+    if(h.hop){h.hop.k+=dt/0.16; if(h.hop.k>=1)h.hop=null; else return;}
+    if(h.mode==="bin"){ if(h.y<hsy(0)-1){h.hop={fx:h.x,fy:h.y,k:0};h.y=hsy(0);h.j=0;return;} h.mode="maj"; }
+    h.ax+=gauss()*jit*0.5; h.ay+=gauss()*jit*0.5; var dx=0,dy=0;
+    if(Math.abs(h.ax)>=GX){dx=h.ax>0?1:-1;h.ax-=dx*GX;} if(Math.abs(h.ay)>=GX){dy=h.ay>0?1:-1;h.ay-=dy*GX;}
+    var ni=Math.max(0,Math.min(cols-1,h.i+dx)), nj=Math.max(0,Math.min(NJ-1,h.j+dy));
+    if(h.i>cols-1){ni=cols-1;}
+    if(ni!==h.i||nj!==h.j){h.hop={fx:h.x,fy:h.y,k:0};h.i=ni;h.j=nj;h.x=hsx(ni);h.y=hsy(nj);}
+  });
+  M.fx.forEach(function(f){f.t+=dt;}); M.fx=M.fx.filter(function(f){return f.t<0.6;});
+}
+function drawMicro(){
+  var g=mctx; if(!microCv.width) return; g.setTransform(mS,0,0,mS,0,0); g.clearRect(0,0,MW,MH);
+  var d=DIODES[st.di], r=st.read, G=M.g||(geom(),M.g); g.fillStyle=C.surface; g.fillRect(0,0,MW,MH);
+  var np=d.pnp;
+  // sohalar
+  g.globalAlpha=0.14; g.fillStyle=C.electron; g.fillRect(14,CY0,G.eR-14,CY1-CY0); g.globalAlpha=0.08; g.fillRect(G.cL,CY0,626-G.cL,CY1-CY0);
+  g.globalAlpha=0.1; g.fillStyle=C.hole; g.fillRect(G.bL,CY0,G.bR-G.bL,CY1-CY0); g.globalAlpha=1;
+  g.fillStyle=C.surface2; g.fillRect(G.eR,CY0,G.bL-G.eR,CY1-CY0); g.fillRect(G.bR,CY0,G.cL-G.bR,CY1-CY0);
+  g.strokeStyle=C.muted; g.setLineDash([3,3]); g.lineWidth=1; g.beginPath(); [G.eR,G.bL,G.bR,G.cL].forEach(function(x){g.moveTo(x,CY0);g.lineTo(x,CY1);}); g.stroke(); g.setLineDash([]);
+  g.strokeStyle=C.ink; g.lineWidth=1.2; g.strokeRect(14,CY0,612,CY1-CY0);
+  g.fillStyle="#8e979f"; g.fillRect(0,CY0-6,14,CY1-CY0+12); g.fillRect(626,CY0-6,14,CY1-CY0+12); g.fillRect(G.bL+4,CY0-9,Math.max(10,G.bR-G.bL-8),9);
+  // ionlar (kambag'allashgan sohalarda)
+  [[G.eR,XEB,1],[XEB,G.bL,-1],[G.bR,XBC,-1],[XBC,G.cL,1]].forEach(function(z){for(var x=z[0]+5;x<z[1]-3;x+=12)for(var y=CY0+10;y<CY1-6;y+=18){g.strokeStyle=z[2]<0?C.hole:C.electron;g.lineWidth=1.2;g.strokeRect(x-4,y-4,8,8);g.beginPath();g.moveTo(x-2.3,y);g.lineTo(x+2.3,y);if(z[2]>0){g.moveTo(x,y-2.3);g.lineTo(x,y+2.3);}g.stroke();}});
+  // BK maydoni
+  if(G.cL-G.bR>24){var ay=CY0+(CY1-CY0)/2;g.strokeStyle=C.fe;g.fillStyle=C.fe;g.lineWidth=2;g.globalAlpha=0.5;g.beginPath();g.moveTo(G.cL-4,ay);g.lineTo(G.bR+10,ay);g.stroke();g.beginPath();g.moveTo(G.bR+3,ay);g.lineTo(G.bR+12,ay-5);g.lineTo(G.bR+12,ay+5);g.fill();g.globalAlpha=1;}
+  // tashuvchilar
+  M.e.forEach(function(p){g.fillStyle=C.electron;g.beginPath();g.arc(p.x,p.y,p.mode==="E"?2.6:3.1,0,7);g.fill(); if(p.mode==="B"||p.mode==="BR"){g.strokeStyle=C.electron;g.lineWidth=1;g.beginPath();g.arc(p.x,p.y,6,0,7);g.stroke();}});
+  M.h.forEach(function(h){
+    function ring(x,y,a){g.globalAlpha=a;g.strokeStyle=C.hole;g.lineWidth=1.5;g.setLineDash([2.5,2.2]);g.beginPath();g.arc(x,y,4.4,0,7);g.stroke();g.setLineDash([]);g.globalAlpha=1;}
+    if(h.hop){var k=h.hop.k;ring(h.hop.fx,h.hop.fy,1-k);ring(h.x,h.y,k);g.fillStyle=C.electron;g.globalAlpha=0.85;g.beginPath();g.arc(h.x+(h.hop.fx-h.x)*k,h.y+(h.hop.fy-h.y)*k,1.8,0,7);g.fill();g.globalAlpha=1;} else ring(h.x,h.y,1);
+  });
+  M.fx.forEach(function(f){var a=Math.max(0,1-f.t/0.6);g.fillStyle="#ff9a3a";g.globalAlpha=a*0.75;g.beginPath();g.arc(f.x,f.y,4+12*(1-a),0,7);g.fill();g.globalAlpha=1;});
+  g.fillStyle=C.ink; g.font="600 12px "+FONT; g.textAlign="left"; g.fillText(np?"Emitter (p⁺)":"Emitter (n⁺)",18,CY0-12);
+  g.textAlign="center"; g.fillText(np?"Baza (n)":"Baza (p)",(G.bL+G.bR)/2,CY0-13); g.textAlign="right"; g.fillText(np?"Kollektor (p)":"Kollektor (n)",622,CY0-12);
+  g.textAlign="center"; g.fillStyle=C.muted; g.font="11px "+FONT;
+  g.fillText("samarali baza kengligi W_B ≈ "+((G.bR-G.bL)/(XBC-XEB-6)*d.W0).toFixed(2)+" μm",(G.bL+G.bR)/2,CY1+12);
+  if(np){g.fillStyle=C.warn;g.font="11px "+FONT;g.textAlign="left";g.fillText("p-n-p: rollar almashgan (tashuvchilar — kovaklar), sxema n-p-n ekvivalentida ko'rsatilgan",18,CY1+26);}
+  if(st.burned){g.fillStyle=C.bad;g.font="600 14px "+FONT;g.textAlign="center";g.fillText("Tranzistor kuygan",MW/2,(CY0+CY1)/2);}
+  g.fillStyle=C.ink; g.font="600 11px "+MONO; g.textAlign="right"; g.fillText("kollektorga: "+M.nc+"   bazada rekomb.: "+M.nr+(M.nr?"   nisbat ≈ "+(M.nc/M.nr).toFixed(0):""),622,CY1+12);
+  if(!$("#chkBand").checked) return;
+  // zonalar diagrammasi
+  var Eg=40, s=34, VBE=r?r.VBEi:0, VCB=r?r.VCE-r.VBEi:0, d1=Math.max(4,s*(d.Vbi-VBE)), d2=Math.min(64,Math.max(-s*0.6,s*(d.Vbi+VCB)*0.55)), base=226;
+  var yE=base+d1+6, yB=base+6, yC=yB+d1+d2; var sc=1; if(yC+Eg>336){sc=(336-Eg-yB)/(yC-yB);yE=yB+d1*sc;yC=yB+(d1+d2)*sc;}
+  g.strokeStyle=C.line; g.beginPath(); g.moveTo(0,214); g.lineTo(MW,214); g.stroke();
+  function Ec(x){if(x<=G.eR)return yE; if(x<G.bL)return yE+(yB-yE)*(x-G.eR)/(G.bL-G.eR); if(x<=G.bR)return yB; if(x<G.cL){var t=(x-G.bR)/(G.cL-G.bR);return yB+(yC-yB)*t*t*(3-2*t);} return yC;}
+  g.lineWidth=2; [[C.electron,0],[C.hole,Eg]].forEach(function(c){g.strokeStyle=c[0];g.beginPath();for(var x=14;x<=626;x+=3){var y=Ec(x)+c[1];if(x===14)g.moveTo(x,y);else g.lineTo(x,y);}g.stroke();});
+  M.e.forEach(function(p){var y=Ec(p.x);g.fillStyle=C.electron;g.beginPath();g.arc(p.x,y-4,2,0,7);g.fill();});
+  M.h.forEach(function(h){var y=Ec(h.x)+Eg;g.strokeStyle=C.hole;g.lineWidth=1.2;g.beginPath();g.arc(h.x,y+4,2.4,0,7);g.stroke();});
+  g.font="italic 12px "+MATHF; g.textAlign="left"; g.fillStyle=C.electron; g.fillText("E_c",604,yC-4); g.fillStyle=C.hole; g.fillText("E_v",604,Math.min(336,yC+Eg+13));
+  g.fillStyle=C.muted; g.font="10px "+FONT; g.textAlign="center";
+  g.fillText("EB: to'siq q(V_bi − V_BE)",XEB,base-2); if(d2>8) g.fillText("BK: «sharshara»",(G.bR+G.cL)/2,Math.min(334,(yB+yC)/2+Eg+16));
+}
+function drawIV(){
+  var cv=ivCv,g=ictx,W=cv.width; if(!W||!cv.clientWidth) return; var s=W/cv.clientWidth,w=cv.clientWidth,h=cv.clientHeight; g.setTransform(s,0,0,s,0,0); g.clearRect(0,0,w,h);
+  var d=DIODES[st.di], r=st.read; if(!r) return; var T=r.Tj;
+  g.fillStyle=C.ink; g.font="600 11px "+FONT; g.textAlign="left"; g.fillText("Chiqish xarakteristikalari va ish nuqtasi",8,14);
+  if(st.burned){g.fillStyle=C.muted;g.textAlign="center";g.fillText("Tranzistor kuygan",w/2,h/2);return;}
+  var base=st.IB>2e-6?st.IB:20e-6, ibs=[0.5,1,1.5,2].map(function(k){return base*k;}), x1=Math.max(6,st.VCE*1.2), y1=0;
+  var curves=ibs.map(function(ib){var pts=[];for(var k=0;k<=40;k++){var v=x1*k/40,o=operate(d,ib,v,T);pts.push([v,o.IC]);y1=Math.max(y1,o.IC);}return {ib:ib,pts:pts};});
+  y1=Math.max(y1,r.IC)*1.1||1e-3;
+  var L=8,R=8,Tp=22,B=16, X=function(v){return L+v/x1*(w-L-R);}, Y=function(v){return h-B-v/y1*(h-B-Tp);};
+  g.strokeStyle=C.line; g.lineWidth=1; g.beginPath(); g.moveTo(L,Y(0)); g.lineTo(w-R,Y(0)); g.moveTo(L,Tp); g.lineTo(L,h-B); g.stroke();
+  curves.forEach(function(c,i){var cur=Math.abs(c.ib-st.IB)<1e-9; g.strokeStyle=cur?C.accent:C.steel; g.globalAlpha=cur?1:0.6; g.lineWidth=cur?2.2:1.2; g.beginPath(); c.pts.forEach(function(p,k){if(k)g.lineTo(X(p[0]),Y(p[1]));else g.moveTo(X(p[0]),Y(p[1]));}); g.stroke(); g.globalAlpha=1;
+    g.fillStyle=cur?C.accent:C.muted; g.font="10px "+FONT; g.textAlign="right"; var lp=c.pts[c.pts.length-1]; g.fillText((c.ib*1e6).toFixed(0)+" μA",w-R-2,Math.max(Tp+8,Y(lp[1])-3));});
+  g.fillStyle=C.hole; g.beginPath(); g.arc(X(st.VCE),Y(r.IC),5,0,7); g.fill();
+  g.fillStyle=C.muted; g.font="10px "+FONT; g.textAlign="right"; g.fillText("V_CE →",w-R,h-4); g.textAlign="left"; g.fillText("I_C",L+4,Tp+8);
+  g.fillStyle=C.fe; g.globalAlpha=0.08; g.fillRect(X(0),Tp,X(Math.min(0.25,x1))-X(0),h-B-Tp); g.globalAlpha=1;
+  g.fillStyle=C.fe; g.font="9px "+FONT; g.textAlign="left"; g.fillText("to'yinish",X(0)+2,h-B-4);
+}
+function updateMicroText(){
+  var r=st.read; if(!r) return; var d=DIODES[st.di], step, title, text, sat=r.VBC>0.35, beta=r.IB>1e-9?r.IC/r.IB:null;
+  if(st.burned){step="nosozlik";title="Tranzistor kuydi";text="Kollektorda ajralgan quvvat \\(P = V_{CE}I_C\\) ruxsat etilganidan oshib ketdi. Real sxemalarda kollektor zanjiriga rezistor qo'yiladi va radiatorlar ishlatiladi.";}
+  else if(r.IB<0.3e-6){step="kesish rejimi";title="Baza toki yo'q: tranzistor yopiq";text="Emitter–baza o'tishi deyarli yopiq, injeksiya yo'q. Kollektor toki faqat \\(I_{CEO}\\) ≈ "+istr(r.IC)+(d.Icbo>1e-7?" (germaniyda katta: \\(I_{CEO} = (\\beta+1)I_{CBO}\\))":"")+".";}
+  else if(sat){step="to'yinish rejimi";title="Ikkala o'tish ham to'g'ri yo'nalishda";text="\\(V_{CE}\\) = "+st.VCE.toFixed(2)+" V juda kichik, kollektor–baza o'tishi ham ochildi. Kollektor ham bazaga elektron injeksiyalaydi (chapga harakatlanayotganlar), shuning uchun \\(I_C\\) = "+istr(r.IC)+" bu \\(\\beta I_B\\) dan kichik. Tranzistor «yopiq kalit» kabi ishlaydi.";}
+  else {step="aktiv rejim";title="Injeksiya → diffuziya → kollektorga surilish";text="Emitter bazaga elektronlar injeksiyalaydi (to'siq \\(qV_{BE}\\) ga pasaygan). Ular yupqa baza orqali diffuziyalanadi (halqali nuqtalar) va BK o'tishning kuchli maydoni ularni kollektorga suradi (zonalar diagrammasidagi «sharshara»). Taxminan \\(1/\\beta\\) ≈ 1/"+(beta?beta.toFixed(0):"—")+" qismi bazada kovak bilan rekombinatsiyalanadi (to'q sariq chaqnash), uning o'rniga baza kontaktidan yangi kovak kiradi — bu baza toki. \\(V_{CE}\\) ortsa, BK sohasi kengayadi va baza torayadi (Erli effekti).";}
+  $("#phaseStep").textContent=step; setMath($("#phaseTitle"),title); setMath($("#phaseText"),text); M.text={title:title,text:text};
+  var lv=$("#liveNums");
+  if(!lv._b){lv.innerHTML="<dt>\\(I_B\\) / \\(I_C\\)</dt><dd id='lv1'></dd><dt>\\(V_{BE}\\) / \\(V_{CB}\\)</dt><dd id='lv2'></dd><dt>\\(\\beta = I_C/I_B\\)</dt><dd id='lv3'></dd><dt>\\(\\alpha = I_C/I_E\\)</dt><dd id='lv4'></dd><dt>\\(g_m = I_C/V_T\\)</dt><dd id='lv5'></dd><dt>\\(P\\) / \\(T_j\\)</dt><dd id='lv6'></dd>";lv._b=1;mjx(lv);}
+  $("#lv1").textContent=istr(r.IB)+" / "+istr(r.IC); $("#lv2").textContent=r.VBE.toFixed(4)+" / "+minus((st.VCE-r.VBE).toFixed(3))+" V";
+  $("#lv3").textContent=beta?beta.toFixed(1):"—"; $("#lv4").textContent=beta?(r.IC/(r.IC+r.IB)).toFixed(4):"—";
+  $("#lv5").textContent=(r.IC/(KB*r.Tj)*1000).toFixed(1)+" mS"; $("#lv6").textContent=(r.P*1000).toFixed(1)+" mW / "+r.Tj.toFixed(1)+" K";
+}
+$("#btnPlay").addEventListener("click",function(){M.running=!M.running;this.textContent=M.running?"Pauza":"Davom etish";});
+$("#btnReset").addEventListener("click",function(){M.need=true;});
+$("#speedR").addEventListener("input",function(){M.speed=parseFloat(this.value);});
+
+function drawApp(){
+  var g=actx; if(!appCv.width) return; g.setTransform(aS,0,0,aS,0,0); g.clearRect(0,0,AW,AH); g.fillStyle=C.surface2; g.fillRect(0,0,AW,AH);
+  g.fillStyle=C.muted; g.font="13px "+FONT; g.textAlign="center"; g.fillText("Brauzerda 3D grafika (WebGL) ishlamadi. Quyida p-n o'tish kesimi ko'rsatilgan.",AW/2,28);
+  if(microCv.width) g.drawImage(microCv,0,0,microCv.width,microCv.height,40,50,AW-80,(AW-80)*MH/MW);
+}
+
+/* ---------- 3D laboratoriya ---------- */
+var T3=null, L3={x:0,y:0,r:70,init:false,drag:null};
+function m3(color,o){return new THREE.MeshStandardMaterial(Object.assign({color:color,roughness:0.6,metalness:0.1},o||{}));}
+function box3(w,h,d,m,x,y,z){var me=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);me.position.set(x||0,y||0,z||0);me.castShadow=true;me.receiveShadow=true;return me;}
+function cyl3(rt,rb,h,m,seg){var me=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||40),m);me.castShadow=true;me.receiveShadow=true;return me;}
+function ctex(w,h,draw){var c=document.createElement("canvas");c.width=w;c.height=h;if(draw)draw(c.getContext("2d"),w,h);var t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return {c:c,t:t};}
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function V3(x,y,z){return new THREE.Vector3(x,y,z);}
+function tube(parent,pts,color,r,noTable){
+  r=r||0.3; var v=pts.map(function(p){return p.clone();}), dense=[];
+  v.forEach(function(p,i){ if(!noTable&&p.y<=0.6)p.y=r+0.03;
+    if(i>0){var q=v[i-1];if(q.y<=r+0.04&&p.y<=r+0.04){var d=q.distanceTo(p),n=Math.floor(d/4);for(var k=1;k<n;k++)dense.push(q.clone().lerp(p,k/n));}}
+    dense.push(p);});
+  var me=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(dense,false,"centripetal"),Math.max(60,dense.length*12),r,8,false),m3(color,{roughness:0.4,metalness:noTable?0.8:0.1}));
+  me.castShadow=true; parent.add(me); return me;
+}
+function instrument3(S,o){
+  var g=new THREE.Group(); g.position.set(o.x,o.y+o.h/2+0.6,o.z); g.rotation.y=o.ry||0;
+  g.add(box3(o.w,o.h,o.d,m3("#3a4047",{roughness:0.5,metalness:0.25})));
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(a){g.add(box3(1.8,0.6,1.8,m3("#15181b"),a[0]*(o.w/2-1.6),-o.h/2-0.3,a[1]*(o.d/2-1.6)));});
+  g.add(box3(o.w+0.3,0.5,o.d+0.3,m3("#2b3036",{metalness:0.3}),0,o.h/2-0.1,0));
+  var pw=o.w-0.9, ph=o.h-0.9, cw=640, ch=Math.round(640*ph/pw), tx=ctex(cw,ch);
+  var front=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),new THREE.MeshStandardMaterial({map:tx.t,roughness:0.55,metalness:0.05})); front.position.z=o.d/2+0.02; g.add(front);
+  var kx=pw*0.33, ky=-ph*0.04, z0=o.d/2+0.02, knob=new THREE.Group(); knob.position.set(kx,ky,z0);
+  var kb=cyl3(1.15,1.35,1.2,m3("#1b1f24",{roughness:0.35,metalness:0.3})); kb.rotation.x=Math.PI/2; kb.position.z=0.6; knob.add(kb);
+  var kc=cyl3(0.9,0.9,0.15,m3("#9aa3ac",{metalness:0.7,roughness:0.3})); kc.rotation.x=Math.PI/2; kc.position.z=1.25; knob.add(kc);
+  knob.add(box3(0.2,0.75,0.1,m3("#ffffff",{emissive:"#ffffff",emissiveIntensity:0.3}),0,0.45,1.36)); g.add(knob);
+  var lever=null;
+  if(o.lever){g.add(box3(1.5,1.1,0.4,m3("#202429"),pw*0.15,ky,z0+0.2)); lever=new THREE.Group(); lever.position.set(pw*0.15,ky,z0+0.4);
+    var stick=cyl3(0.16,0.2,1.5,m3("#c8ced4",{metalness:0.8,roughness:0.25})); stick.position.y=0.7; lever.add(stick);
+    var tip=new THREE.Mesh(new THREE.SphereGeometry(0.28,12,10),m3("#d63b2a")); tip.position.y=1.45; lever.add(tip); lever.rotation.x=Math.PI/2.6; g.add(lever);}
+  var posts=[];
+  [["#c0392b",0.20],["#1a1a1a",0.36]].forEach(function(pc){var p=cyl3(0.42,0.42,0.9,m3(pc[0],{roughness:0.35}));p.rotation.x=Math.PI/2;p.position.set(pw*pc[1],-ph*0.36,z0+0.45);g.add(p);posts.push(p);});
+  var led=new THREE.Mesh(new THREE.SphereGeometry(0.3,12,8),new THREE.MeshStandardMaterial({color:"#1b5e2a",emissive:"#2bff6a",emissiveIntensity:1.2})); led.position.set(-pw*0.43,-ph*0.36,z0+0.1); g.add(led);
+  S.scene.add(g); return {g:g,o:o,tx:tx,cw:cw,ch:ch,pw:pw,ph:ph,knob:knob,lever:lever,posts:posts};
+}
+function drawPanel3(P,val,unit,warn,sub){
+  var g=P.tx.c.getContext("2d"),w=P.cw,h=P.ch,o=P.o;
+  var gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,"#eef0f2");gr.addColorStop(1,"#cfd4d9");g.fillStyle=gr;g.fillRect(0,0,w,h);
+  g.strokeStyle="rgba(0,0,0,0.18)";g.lineWidth=3;g.strokeRect(1.5,1.5,w-3,h-3);
+  g.fillStyle="#1b2530";g.textAlign="left";g.font="600 "+Math.round(h*0.085)+"px "+FONT;g.fillText(o.title,w*0.05,h*0.15);
+  g.fillStyle="#5b6670";g.font=Math.round(h*0.058)+"px "+MONO;g.fillText(o.model,w*0.05,h*0.245);
+  var lx=w*0.05,ly=h*0.31,lw=w*0.52,lh=h*0.38; g.fillStyle="#0c1115";rr(g,lx,ly,lw,lh,12);g.fill();
+  g.fillStyle=warn?"#ff4a3a":"#ffb23e";g.textAlign="right";g.font="500 "+Math.round(lh*0.48)+"px "+MONO;g.fillText(val,lx+lw-w*0.1,ly+lh*0.66);
+  g.font=Math.round(lh*0.22)+"px "+MONO;g.fillText(unit,lx+lw-w*0.015,ly+lh*0.66);
+  if(sub){g.textAlign="left";g.font=Math.round(lh*0.17)+"px "+MONO;g.fillText(sub,lx+w*0.02,ly+lh*0.92);}
+  g.fillStyle="#3c4651";g.textAlign="center";g.font="600 "+Math.round(h*0.052)+"px "+FONT; var ky=h*0.54+(1.9/P.ph)*h;
+  g.fillText(o.knobLabel||"SOZLASH",w*0.83,ky); if(o.lever)g.fillText(o.lever,w*0.65,ky);
+  g.font=Math.round(h*0.045)+"px "+FONT;g.fillStyle="#5b6670";g.fillText("+",w*0.70,h*0.97);g.fillText("−",w*0.86,h*0.97);g.textAlign="left";g.fillText("TARMOQ",w*0.1,h*0.97);
+  P.tx.t.needsUpdate=true;
+}
+function buildDiode(){
+  var S=T3; if(!S) return; if(S.diodeG){S.scene.remove(S.diodeG);} var G=new THREE.Group(); S.scene.add(G); S.diodeG=G;
+  var d=DIODES[st.di], burnt=st.burned, z=2, lead="#cfd3d6", top=3.2;
+  S.ledMat=null;
+  var mat=m3(burnt?"#2d241c":d.col,{metalness:d.can==="ge"?0.5:0.85,roughness:d.can==="ge"?0.45:0.22});
+  var hgt=d.can==="ge"?0.85:0.5, rad=d.can==="ge"?0.32:0.24;
+  var body=new THREE.Mesh(new THREE.CylinderGeometry(rad,rad,hgt,32),mat); body.position.set(0,top+0.08+hgt/2,z); G.add(body);
+  var fl=new THREE.Mesh(new THREE.CylinderGeometry(rad+0.04,rad+0.04,0.06,32),mat); fl.position.set(0,top+0.11,z); G.add(fl);
+  var tab=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.06,0.12),mat); tab.position.set(-rad*0.75,top+0.11,z-rad*0.75); tab.rotation.y=Math.PI/4; G.add(tab);
+  var cap=new THREE.Mesh(new THREE.CylinderGeometry(rad*0.92,rad,0.04,32),m3(burnt?"#222":"#e8ecef",{metalness:0.9,roughness:0.2})); cap.position.set(0,top+0.08+hgt+0.02,z); G.add(cap);
+  // oyoqlar: B (chap), E (orqa), K (o'ng)
+  tube(G,[V3(-0.09,top+0.08,z),V3(-0.2,top+0.05,z),V3(-1.4,top+0.05,z),V3(-4.3,top-0.1,z),V3(-5,2.75,z)],lead,0.03,true);
+  tube(G,[V3(0,top+0.08,z-0.09),V3(0,top+0.05,z-0.3),V3(0,top+0.05,z-1.6),V3(0,top-0.2,z-2.6),V3(0,2.75,z-3.2)],lead,0.03,true);
+  tube(G,[V3(0.09,top+0.08,z),V3(0.2,top+0.05,z),V3(1.4,top+0.05,z),V3(4.3,top-0.1,z),V3(5,2.75,z)],lead,0.03,true);
+  if(burnt){for(var k=0;k<3;k++){var sm=new THREE.Mesh(new THREE.SphereGeometry(0.25+k*0.12,12,8),new THREE.MeshStandardMaterial({color:"#555",transparent:true,opacity:0.35-k*0.08}));sm.position.set(0.1*k,4.2+k*0.5,z);G.add(sm);}}
+}
+function init3D(){
+  if(!window.THREE||!THREE.OrbitControls) return null;
+  var host=$("#app3d"), renderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});}catch(e){return null;}
+  if(!renderer||!renderer.getContext()) return null;
+  host.hidden=false; appCv.hidden=true; $("#lensCv").hidden=false; $("#viewBtns").hidden=false;
+  $("#appTitle").textContent="Laboratoriya stoli (3D)";
+  $("#appHint").textContent="Sichqoncha bilan aylantiring (chap tugma), suring (o'ng tugma), yaqinlashtiring (g'ildirak). Telefonda: bir barmoq bilan aylantirish, ikki barmoq bilan yaqinlashtirish. Lupani tortib tranzistorga olib boring (yoki ← ↑ → ↓).";
+  host.appendChild(renderer.domElement); renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+  renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputEncoding=THREE.sRGBEncoding;
+  var scene=new THREE.Scene(); scene.background=new THREE.Color(C.surface2);
+  var camera=new THREE.PerspectiveCamera(36,1.5,0.05,700); camera.position.set(0,40,74);
+  var controls=new THREE.OrbitControls(camera,renderer.domElement); controls.target.set(0,5,0); controls.enableDamping=true; controls.dampingFactor=0.08; controls.minDistance=2; controls.maxDistance=200; controls.maxPolarAngle=Math.PI*0.49;
+  var S={renderer:renderer,scene:scene,camera:camera,controls:controls,host:host,P:{},over:false,anim:null,w:0,h:0};
+  T3=S;
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8d7a64,0.8));
+  var dl=new THREE.DirectionalLight(0xffffff,0.9); dl.position.set(35,80,50); dl.castShadow=true; dl.shadow.mapSize.set(2048,2048);
+  var sc=dl.shadow.camera; sc.left=-70;sc.right=70;sc.top=55;sc.bottom=-55;sc.near=10;sc.far=220; dl.shadow.bias=-0.0004; scene.add(dl);
+  var fl=new THREE.DirectionalLight(0xcfe0ff,0.35); fl.position.set(-60,40,-40); scene.add(fl);
+  var wood=ctex(1024,256,function(g,w,h){g.fillStyle="#b58756";g.fillRect(0,0,w,h);for(var i=0;i<160;i++){var y=Math.random()*h;g.strokeStyle="rgba("+(85+Math.random()*45|0)+","+(52+Math.random()*28|0)+",28,"+(0.08+Math.random()*0.2)+")";g.lineWidth=0.6+Math.random()*1.8;g.beginPath();g.moveTo(0,y);for(var x=0;x<=w;x+=32)g.lineTo(x,y+Math.sin(x/90+i)*3);g.stroke();}});
+  wood.t.wrapS=wood.t.wrapT=THREE.RepeatWrapping; wood.t.repeat.set(1.3,1);
+  scene.add(box3(120,3,64,m3("#ffffff",{map:wood.t,roughness:0.75}),0,-1.5,0));
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(a){scene.add(box3(4,60,4,m3("#5b4a38"),a[0]*55,-33,a[1]*28));});
+  var floor=new THREE.Mesh(new THREE.PlaneGeometry(500,500),m3("#9aa0a6",{roughness:0.95})); floor.rotation.x=-Math.PI/2; floor.position.y=-63; floor.receiveShadow=true; scene.add(floor);
+  scene.add(box3(12,0.8,8,m3("#5a3b28",{roughness:0.55}),0,0.4,2));
+  var heatMat=m3("#b9c0c7",{metalness:0.75,roughness:0.3,emissive:"#000000"}); scene.add(box3(5,2.4,4,heatMat,0,2.0,2)); S.heatMat=heatMat;
+  [-1,1].forEach(function(s){scene.add(box3(0.3,2.0,3.6,m3("#8e979f",{metalness:0.8,roughness:0.3}),s*2.65,1.8,2));});
+  [["#e0b02a",-5,2],["#1a1a1a",0,-1.2],["#c0392b",5,2]].forEach(function(p){var b=cyl3(0.45,0.45,1.4,m3(p[0],{roughness:0.35}),24);b.position.set(p[1],1.5,p[2]);scene.add(b);var cap=cyl3(0.26,0.26,0.4,m3("#d4a83a",{metalness:0.85,roughness:0.25}),16);cap.position.set(p[1],2.4,p[2]);scene.add(cap);});
+  var plT=ctex(512,64,function(g,w,h){g.fillStyle="#d9dde1";g.fillRect(0,0,w,h);g.fillStyle="#1b2530";g.font="600 24px "+FONT;g.textAlign="center";g.fillText("B (baza)   UMUMIY EMITTER (E)   K (kollektor)",w/2,42);});
+  var np=new THREE.Mesh(new THREE.PlaneGeometry(11,1.0),m3("#ffffff",{map:plT.t,metalness:0.3,roughness:0.4})); np.position.set(0,0.42,6.02); scene.add(np);
+  var pl=new THREE.PointLight(0xff3a20,0,14,2); pl.position.set(0,4.4,2); scene.add(pl); S.ledLight=pl;
+  S.P.ib=instrument3(S,{x:-34,y:0,z:-16,w:24,h:12,d:16,title:"Baza toki manbai",model:"0–300 μA · stabil tok",knobLabel:"I_B"});
+  S.P.vb=instrument3(S,{x:-34,y:13.2,z:-17,w:22,h:10,d:14,title:"Voltmetr V_BE",model:"0.1 mV",knobLabel:"DIAPAZON"});
+  S.P.vc=instrument3(S,{x:34,y:0,z:-16,w:24,h:12,d:16,title:"Kollektor manbai V_CE",model:"0–15 V",knobLabel:"V_CE"});
+  S.P.ic=instrument3(S,{x:34,y:13.2,z:-17,w:22,h:10,d:14,title:"Milliampermetr I_C",model:"0–200 mA",knobLabel:"DIAPAZON"});
+  S.P.th=instrument3(S,{x:40,y:0,z:14,ry:-0.35,w:20,h:10,d:14,title:"Harorat regulyatori",model:"230–400 K · Pt100",knobLabel:"HARORAT"});
+  scene.updateMatrixWorld(true);
+  function term(P,i){var c=new THREE.Vector3();P.posts[i].getWorldPosition(c);var n=new THREE.Vector3(0,0,1).applyQuaternion(P.g.quaternion);return {p:c.clone().addScaledVector(n,0.45),n:n};}
+  function fwd(t,d,y){var v=t.p.clone().addScaledVector(t.n,d);if(y!==undefined)v.y=y;return v;}
+  var T=0, a, b;
+  // baza toki manbai: (+) → B, (−) → E
+  a=term(S.P.ib,0); b=term(S.P.ib,1);
+  tube(scene,[a.p,fwd(a,1.4),V3(a.p.x,1.2,a.p.z+3.6),V3(a.p.x+1.5,T,-2.2),V3(-21,T,-2.2),V3(-10,T,-1),V3(-8,T,2),V3(-6.6,1.3,2),V3(-5.3,2.75,2)],"#e0b02a",0.22);
+  tube(scene,[b.p,fwd(b,1.4),V3(b.p.x,T,-5.5),V3(-1,T,-5.5),V3(-1,T,-3.4),V3(-0.5,1.3,-2.4),V3(-0.25,2.75,-1.3)],"#1f1f1f",0.22);
+  // V_BE voltmetri: B va E ga orqadan
+  a=term(S.P.vb,0); b=term(S.P.vb,1);
+  tube(scene,[a.p,fwd(a,1.5),V3(-31.5,8,-6.5),V3(-31.5,1,-4.6),V3(-31.5,T,-4.2),V3(-5.6,T,-4.2),V3(-5.6,T,-3.2),V3(-5.6,1.3,-1.6),V3(-5.3,2.75,1.6)],"#e67e22",0.2);
+  tube(scene,[b.p,fwd(b,1.5),V3(b.p.x+2.5,b.p.y-3,b.p.z+2),V3(-24,4,-6.8),V3(-23,T,-6.5),V3(-0.2,T,-6.5),V3(-0.2,T,-3.6),V3(0,1.3,-2.6),V3(0,2.75,-1.6)],"#2c3e50",0.2);
+  // kollektor manbai (+) → milliampermetr (+); milliampermetr (−) → K; manba (−) → E
+  a=term(S.P.vc,0); b=term(S.P.ic,0);
+  tube(scene,[a.p,fwd(a,1.5),V3(a.p.x-2.2,(a.p.y+b.p.y)/2,a.p.z+2.4),fwd(b,1.5),b.p],"#c0392b",0.24);
+  a=term(S.P.ic,1);
+  tube(scene,[a.p,fwd(a,1.5),V3(a.p.x+3,a.p.y-3,a.p.z+2.2),V3(45.5,4,-4.5),V3(45,T,-3),V3(10,T,-3),V3(7.5,T,-0.5),V3(6.6,1.3,1.4),V3(5.3,2.75,2)],"#c0392b",0.22);
+  b=term(S.P.vc,1);
+  tube(scene,[b.p,fwd(b,1.4),V3(b.p.x,T,-4.6),V3(1,T,-4.6),V3(1,T,-3.4),V3(0.5,1.3,-2.4),V3(0.25,2.75,-1.3)],"#1f1f1f",0.22);
+  // harorat regulyatori
+  a=term(S.P.th,0); b=term(S.P.th,1);
+  tube(scene,[V3(6.05,0.4,4.6),V3(8,T,5),V3(20,T,15),fwd(a,3.5,T),fwd(a,1.6),a.p],"#8a929a",0.22);
+  tube(scene,[V3(6.05,0.4,3.6),V3(8.5,T,3.8),V3(22,T,14.6),fwd(b,3.5,T),fwd(b,1.6),b.p],"#c0392b",0.22);
+  buildDiode();
+  return S;
+}
+function panels3D(r){
+  if(!T3) return; var P=T3.P, s=sg();
+  drawPanel3(P.ib,minus((s*st.IB*1e6).toFixed(1)),"μA",false,DIODES[st.di].pnp?"qutb: p-n-p":"qutb: n-p-n");
+  drawPanel3(P.vb,minus((s*r.VBm).toFixed(4)),"V",false,"B–E");
+  drawPanel3(P.vc,minus((s*st.VCE).toFixed(2)),"V",false,"K–E");
+  drawPanel3(P.ic,Math.abs(r.ICm)>0.2?"OL":ma(s*r.ICm),"mA",Math.abs(r.ICm)>0.2,"");
+  drawPanel3(P.th,r.Tj.toFixed(1),"K",r.P>DIODES[st.di].Pmax,st.T<295?"sovutish":st.T>305?"qizdirish":"xona harorati");
+}
+var VIEWS={umumiy:{p:[0,40,74],t:[0,5,0]},diod:{p:[2.6,8,11],t:[0,3.2,2]},asbob:{p:[0,28,46],t:[0,7,-10]}};
+function goView(k){var v=VIEWS[k];if(!T3||!v)return;T3.anim={fp:T3.camera.position.clone(),ft:T3.controls.target.clone(),tp:V3(v.p[0],v.p[1],v.p[2]),tt:V3(v.t[0],v.t[1],v.t[2]),k:0};}
+document.querySelectorAll("[data-view]").forEach(function(b){b.addEventListener("click",function(){goView(b.dataset.view);});});
+function diodeRect3(){
+  if(!T3||!T3.diodeG) return null;
+  var bb=new THREE.Box3().setFromObject(T3.diodeG), w=T3.w, h=T3.h, x0=1e9,y0=1e9,x1=-1e9,y1=-1e9, ok=false;
+  for(var i=0;i<8;i++){var v=V3(i&1?bb.max.x:bb.min.x,i&2?bb.max.y:bb.min.y,i&4?bb.max.z:bb.min.z).project(T3.camera);if(v.z>1)continue;ok=true;var sx_=(v.x+1)/2*w,sy_=(1-v.y)/2*h;x0=Math.min(x0,sx_);x1=Math.max(x1,sx_);y0=Math.min(y0,sy_);y1=Math.max(y1,sy_);}
+  if(!ok) return null; var c=V3(0,3.55,2).project(T3.camera), pad=14;
+  return {x0:x0-pad,y0:y0-pad,x1:x1+pad,y1:y1+pad,cx:(c.x+1)/2*w,cy:(1-c.y)/2*h};
+}
+function lensHome3D(){var r=diodeRect3();if(r){L3.x=Math.max(L3.r+6,Math.min(T3.w-L3.r-6,r.cx));L3.y=Math.max(L3.r+20,Math.min(T3.h-L3.r-6,r.cy));}L3.init=true;}
+function render3D(dt){
+  var S=T3, w=S.host.clientWidth, h=S.host.clientHeight;
+  if(w!==S.w||h!==S.h){S.w=w;S.h=h;S.renderer.setSize(w,h,false);S.camera.aspect=w/Math.max(1,h);S.camera.updateProjectionMatrix();L3.r=Math.max(52,Math.min(92,w*0.11));}
+  if(!w||!h) return;
+  if(S.anim){S.anim.k=Math.min(1,S.anim.k+dt/0.9);var e=S.anim.k<0.5?2*S.anim.k*S.anim.k:1-Math.pow(-2*S.anim.k+2,2)/2;S.camera.position.lerpVectors(S.anim.fp,S.anim.tp,e);S.controls.target.lerpVectors(S.anim.ft,S.anim.tt,e);if(S.anim.k>=1)S.anim=null;}
+  S.controls.update(); S.scene.background.set(C.surface2);
+  var dT=st.T-300; S.heatMat.emissive.set(dT>0?"#ff3a10":"#5aa8ff"); S.heatMat.emissiveIntensity=Math.min(0.6,Math.abs(dT)/100*0.6);
+  var P=S.P;
+  P.ib.knob.rotation.z=2.36-(st.IB/300e-6)*4.72; P.vc.knob.rotation.z=2.36-(st.VCE/15)*4.72; P.th.knob.rotation.z=2.36-((st.T-230)/170)*4.72;
+  S.renderer.render(S.scene,S.camera); drawLens3D();
+}
+function tag(g,x,y,txt,col){g.font="600 11px "+FONT;var w=g.measureText(txt).width+12,x0=x-w/2;g.fillStyle=C.surface;g.globalAlpha=0.92;g.fillRect(x0,y-10,w,18);g.globalAlpha=1;g.strokeStyle=col;g.lineWidth=1;g.strokeRect(x0+0.5,y-9.5,w-1,17);g.fillStyle=col;g.textAlign="left";g.fillText(txt,x0+6,y+3);}
+function drawLens3D(){
+  var S=T3, cv=$("#lensCv"), w=S.w, h=S.h, pr=Math.min(2,window.devicePixelRatio||1);
+  if(cv.width!==Math.round(w*pr)||cv.height!==Math.round(h*pr)){cv.width=Math.round(w*pr);cv.height=Math.round(h*pr);}
+  var g=cv.getContext("2d"); g.setTransform(pr,0,0,pr,0,0); g.clearRect(0,0,w,h);
+  if(!L3.init){ if(L3.first===undefined){L3.first=1;L3.x=w*0.82;L3.y=Math.max(L3.r+22,h*0.2);L3.init=true;} else lensHome3D(); }
+  var r=diodeRect3(); S.over=!!(r&&st.lensOn&&L3.x>=r.x0&&L3.x<=r.x1&&L3.y>=r.y0&&L3.y<=r.y1);
+  if(!st.lensOn) return;
+  if(r&&!S.over){g.strokeStyle=C.accent;g.setLineDash([4,4]);g.lineWidth=1.5;g.strokeRect(r.x0,r.y0,r.x1-r.x0,r.y1-r.y0);g.setLineDash([]);}
+  var R=L3.r; g.save(); g.beginPath(); g.arc(L3.x,L3.y,R,0,7); g.clip();
+  if(S.over&&microCv.width){g.fillStyle=C.surface;g.fillRect(L3.x-R,L3.y-R,2*R,2*R);var hh=2*R*196/MW;g.drawImage(microCv,0,0,MW*mS,200*mS,L3.x-R,L3.y-hh/2,2*R,2*R*200/MW);}
+  else{var src=2*R/2.4, rp=S.renderer.getPixelRatio(); g.fillStyle=C.surface2; g.fillRect(L3.x-R,L3.y-R,2*R,2*R); try{g.drawImage(S.renderer.domElement,(L3.x-src/2)*rp,(L3.y-src/2)*rp,src*rp,src*rp,L3.x-R,L3.y-R,2*R,2*R);}catch(e){}}
+  var gr=g.createRadialGradient(L3.x-R*0.4,L3.y-R*0.5,2,L3.x,L3.y,R);gr.addColorStop(0,"rgba(255,255,255,0.22)");gr.addColorStop(0.5,"rgba(255,255,255,0)");g.fillStyle=gr;g.fillRect(L3.x-R,L3.y-R,2*R,2*R);
+  g.restore();
+  var ang=Math.PI/4, k=R/82, hx1=L3.x+Math.cos(ang)*(R+4),hy1=L3.y+Math.sin(ang)*(R+4),hx2=L3.x+Math.cos(ang)*(R+60*k),hy2=L3.y+Math.sin(ang)*(R+60*k);
+  g.lineCap="round"; g.strokeStyle=C.ink; g.lineWidth=12*k; g.beginPath(); g.moveTo(hx1,hy1); g.lineTo(hx2,hy2); g.stroke();
+  g.strokeStyle=C.copper; g.lineWidth=6*k; g.beginPath(); g.moveTo(hx1+Math.cos(ang)*16*k,hy1+Math.sin(ang)*16*k); g.lineTo(hx2,hy2); g.stroke();
+  g.strokeStyle=C.ink; g.lineWidth=6; g.beginPath(); g.arc(L3.x,L3.y,R+2,0,7); g.stroke();
+  g.strokeStyle=C.accent; g.lineWidth=2; g.beginPath(); g.arc(L3.x,L3.y,R-2,0,7); g.stroke();
+  tag(g,L3.x,L3.y-R-14,S.over?"p-n o'tish ichi":(r?"× 2.4 · diodga olib boring":"× 2.4"),C.accent);
+}
+var stage=$("#stage");
+function lpos(e){var b=stage.getBoundingClientRect();return {x:e.clientX-b.left,y:e.clientY-b.top};}
+function hitL3(p){if(Math.hypot(p.x-L3.x,p.y-L3.y)<=L3.r+8)return true;var ang=Math.PI/4,k=L3.r/82;for(var t=0;t<=60*k;t+=5){if(Math.hypot(p.x-(L3.x+Math.cos(ang)*(L3.r+t)),p.y-(L3.y+Math.sin(ang)*(L3.r+t)))<11)return true;}return false;}
+stage.addEventListener("pointerdown",function(e){if(!T3||!st.lensOn)return;var p=lpos(e);if(hitL3(p)){L3.drag={dx:p.x-L3.x,dy:p.y-L3.y};e.stopPropagation();e.preventDefault();try{stage.setPointerCapture(e.pointerId);}catch(_){}}},true);
+stage.addEventListener("pointermove",function(e){if(!T3)return;var p=lpos(e);if(L3.drag){L3.x=Math.max(10,Math.min(T3.w-10,p.x-L3.drag.dx));L3.y=Math.max(10,Math.min(T3.h-10,p.y-L3.drag.dy));e.stopPropagation();}else T3.renderer.domElement.style.cursor=(st.lensOn&&hitL3(p))?"grab":"";},true);
+function endL3(e){if(L3.drag){L3.drag=null;e.stopPropagation();}}
+stage.addEventListener("pointerup",endL3,true); stage.addEventListener("pointercancel",endL3,true);
+stage.addEventListener("keydown",function(e){var k={ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,-10],ArrowDown:[0,10]}[e.key];if(!k||!st.lensOn||!T3)return;e.preventDefault();L3.x+=k[0];L3.y+=k[1];});
+$("#chkLens").addEventListener("change",function(){st.lensOn=this.checked;});
+$("#btnLensHome").addEventListener("click",function(){st.lensOn=true;$("#chkLens").checked=true;if(T3){L3.init=false;goView("diod");setTimeout(lensHome3D,950);}});
+
+/* ---------- asosiy sikl ---------- */
+var last=performance.now(), txtT=0, metT=0;
+function frame(now){
+  var dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(curTab==="simulyator"){
+    var dpr=Math.min(2,window.devicePixelRatio||1); if(microCv.clientWidth>0&&microCv.width!==Math.round(microCv.clientWidth*dpr)) resizeAll();
+    var r=st.read, d=DIODES[st.di], tgt=(r&&!st.ideal&&!st.burned)?d.Rth*r.P:0; heat+=(tgt-heat)*Math.min(1,dt*0.6);
+    if(M.need||M.key!==st.di) setupMicro();
+    if(M.running) stepMicro(dt*M.speed);
+    drawMicro(); if(T3) render3D(dt); else drawApp();
+    $("#microTag").textContent=T3&&T3.over&&st.lensOn?"lupa diod ustida · p-n o'tish ichi":"kristall kesimi va zonalar diagrammasi";
+    metT+=dt; if(metT>0.3){metT=0;updateMeters();}
+    txtT+=dt; if(txtT>0.3){txtT=0;updateMicroText();drawIV();}
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- test ---------- */
+var QUIZ=[
+  {q:"Aktiv rejimda tranzistor o'tishlari qanday ulanadi?",o:["EB teskari, BK to'g'ri","EB to'g'ri, BK teskari","Ikkalasi ham to'g'ri","Ikkalasi ham teskari"],a:1,ex:"Emitter o'tishi to'g'ri yo'nalishda tashuvchilarni injeksiyalaydi, kollektor o'tishi teskari yo'nalishda ularni yig'ib oladi. Ikkalasi ham to'g'ri bo'lsa — to'yinish, ikkalasi ham teskari bo'lsa — kesish rejimi."},
+  {q:"Nima uchun baza juda yupqa qilinadi?",o:["Tranzistor arzonroq bo'lishi uchun","Injeksiyalangan elektronlar rekombinatsiyalanishga ulgurmay kollektorga yetishi uchun (\\(\\alpha \\to 1\\), \\(\\beta\\) katta)","Baza toki katta bo'lishi uchun","Kuchlanish oshishi uchun"],a:1,ex:"\\(\\alpha_T \\approx 1 - W_B^2/2L_n^2\\). \\(W_B \\ll L_n\\) bo'lsa, deyarli barcha elektronlar kollektorga yetadi."},
+  {q:"\\(\\alpha = 0.99\\). \\(\\beta\\) nimaga teng?",o:["0.99","99","100","9.9"],a:1,ex:"\\(\\beta = \\alpha/(1-\\alpha) = 0.99/0.01 = 99\\)."},
+  {q:"\\(V_{CE}\\) = 5 V da \\(I_B\\) 40 μA dan 60 μA ga oshganda \\(I_C\\) 8.0 mA dan 12.2 mA ga oshdi. \\(h_{21e}\\) qancha?",o:["200","210","4.2","300"],a:1,ex:"\\(h_{21e} = \\Delta I_C/\\Delta I_B = 4.2\\ \\text{mA}/20\\ \\mu\\text{A} = 210\\)."},
+  {q:"Chiqish xarakteristikasi aktiv sohada nima uchun biroz ko'tariladi?",o:["Kristall qiziydi","Erli effekti: \\(V_{CB}\\) ortsa, BK kambag'allashgan sohasi kengayib, samarali baza torayadi","Baza toki ortadi","Kontakt qarshiligi kamayadi"],a:1,ex:"Baza torayishi bilan diffuziya gradienti ortadi va \\(I_C\\) o'sadi. Chiziqlarni chapga davom ettirsak, ular \\(V_{CE} \\approx -V_A\\) da kesishadi."},
+  {q:"Aktiv sohada \\(I_C\\) = 2 mA, chiziq qiyaligi 25 μA/V. Erli kuchlanishi taxminan qancha (\\(V_{CE}\\) ≈ 5 V)?",o:["~75 V","~8 V","~800 V","~0.08 V"],a:0,ex:"\\(h_{22e} \\approx I_C/(V_A+V_{CE})\\), demak \\(V_A \\approx I_C/h_{22e} - V_{CE} = 2/0.025 - 5 = 75\\ \\text{V}\\)."},
+  {q:"Kirish xarakteristikasi \\(V_{CE}\\) = 0 da \\(V_{CE}\\) = 5 V dagiga nisbatan qanday joylashadi?",o:["O'ngda: bir xil \\(V_{BE}\\) da \\(I_B\\) kichikroq","Chapda: bir xil \\(V_{BE}\\) da \\(I_B\\) kattaroq, chunki BK o'tish ham ochiq va tok bazaga ikki o'tish orqali kiradi","Ustma-ust","Tok umuman bo'lmaydi"],a:1,ex:"\\(V_{CE} = 0\\) da ikkala o'tish ham to'g'ri yo'nalishda (to'yinish). Kollektor tomonidan ham bazaga injeksiya bo'ladi, shuning uchun baza toki kattaroq."},
+  {q:"Nima uchun \\(\\beta\\) juda kichik va juda katta toklarda kamayadi?",o:["Asboblar xatosi","Kichik toklarda kambag'allashgan sohadagi rekombinatsiya (\\(I_{SE}\\)), katta toklarda yuqori injeksiya (\\(I_{KF}\\)) tufayli","Harorat o'zgarmaydi","\\(V_{CE}\\) o'zgaradi"],a:1,ex:"Gummel–Poon modelida bu ikki effekt \\(I_{SE}\\) va \\(I_{KF}\\) parametrlari bilan beriladi. Natijada \\(\\beta(I_C)\\) grafigi gumbazsimon bo'ladi."},
+  {q:"Germaniy tranzistor qizishga nima uchun kremniynikidan sezgirroq?",o:["Germaniy og'irroq","\\(E_g\\) kichik: \\(I_{CBO}\\) μA tartibida va har 10 K da ikki marta ortadi, \\(I_{CEO} = (\\beta+1)I_{CBO}\\)","Germaniyda \\(\\beta\\) katta","Germaniy metall"],a:1,ex:"Qizish → \\(I_{CBO}\\) ortishi → \\(I_C\\) ortishi → yana qizish. Bu issiqlik «qochishi»ga olib kelishi mumkin. Kremniyda \\(I_{CBO}\\) nA tartibida."},
+  {q:"p-n-p tranzistorda o'lchov asboblari qanday ko'rsatadi?",o:["n-p-n dagidek musbat","Barcha kuchlanish va toklar ishorasi teskari: \\(V_{BE}, V_{CE}, I_B, I_C < 0\\)","Faqat \\(I_C\\) manfiy","Baza toki bo'lmaydi"],a:1,ex:"p-n-p da tashuvchilar — kovaklar, ish rejimi bir xil, lekin manbalar qutbi teskari. Xarakteristikalar odatda modullarda chiziladi."}
+];
+function renderQuiz(){
+  $("#quiz").innerHTML=QUIZ.map(function(q,i){return "<div class='q' id='q"+i+"'><fieldset><legend>"+(i+1)+". "+q.q+"</legend>"+q.o.map(function(o,j){return "<label><input type='radio' name='q"+i+"' value='"+j+"'> <span>"+o+"</span></label>";}).join("")+"<div class='ex' hidden></div></fieldset></div>";}).join("");
+  $("#quizScore").textContent=""; mjx($("#quiz"));
+}
+$("#btnQuiz").addEventListener("click",function(){var sc=0;
+  QUIZ.forEach(function(q,i){var box=$("#q"+i),sel=document.querySelector("input[name=q"+i+"]:checked"),ex=box.querySelector(".ex");box.classList.remove("right","wrong");
+    if(!sel){ex.hidden=false;ex.innerHTML="Javob tanlanmagan. "+q.ex;mjx(ex);box.classList.add("wrong");return;}
+    var ok=+sel.value===q.a;if(ok)sc++;box.classList.add(ok?"right":"wrong");ex.hidden=false;ex.innerHTML=(ok?"To'g'ri. ":"Noto'g'ri. To'g'ri javob: "+q.o[q.a]+". ")+q.ex;mjx(ex);});
+  $("#quizScore").textContent="Natija: "+sc+" / "+QUIZ.length;});
+$("#btnQuizReset").addEventListener("click",renderQuiz);
+
+/* ---------- oflayn yordamchi ---------- */
+var CYR={"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"j","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"x","ц":"ts","ч":"ch","ш":"sh","щ":"sh","ъ":"","ы":"i","ь":"","э":"e","ю":"yu","я":"ya","ў":"o","қ":"q","ғ":"g","ҳ":"h"};
+function norm(s){var o="";String(s).toLowerCase().split("").forEach(function(ch){o+=CYR[ch]!==undefined?CYR[ch]:ch;});return o.replace(/[‘’`ʻʼ']/g,"").replace(/_/g,"").replace(/β/g," beta ").replace(/[^a-z0-9\s]/g," ").replace(/\s+/g," ").trim();}
+function kscore(nt,toks,keys){var sc=0;keys.forEach(function(k){if(k.indexOf(" ")>=0){if((" "+nt+" ").indexOf(" "+k)>=0)sc+=2;}else if(toks.some(function(t){return k.length>=4?t.indexOf(k)===0:t===k;}))sc+=1;});return sc;}
+var KBASE=[
+ {k:["salom","assalom","hayrli","qalesan","qalaysiz","privet"],a:function(){return "Salom! Men shu laboratoriyaning oflayn yordamchisiman. Bipolyar tranzistor bo'yicha savollarga javob beraman, <b>o'lchovlaringizni tekshiraman</b> va <b>hisoblab beraman</b>. Masalan: «Ma'lumotlarimni tekshir» yoki «IB1=40 uA, IC1=8 mA, IB2=60 uA, IC2=12.2 mA».";}},
+ {k:["rahmat","raxmat","tashakkur","spasibo"],a:"Arzimaydi! Yana savol bo'lsa, yozing."},
+ {k:["nima qila","yordam ber","imkoniyat","kimsan","sen kim"],a:"Men internetsiz ishlayman va quyidagilarni qila olaman:<ul><li>Tranzistor nazariyasi bo'yicha savollarga javob beraman.</li><li>«Ma'lumotlarimni tekshir» desangiz, jadvallaringizni tahlil qilaman.</li><li>Hisoblayman:<ul><li>«IB1=..., IC1=..., IB2=..., IC2=...» → \\(h_{21e}\\);</li><li>«VBE1=..., IB1=..., VBE2=..., IB2=...» → \\(h_{11e}\\);</li><li>«IC=2 mA, h22=25 uS, VCE=5» → \\(V_A\\);</li><li>«alfa=0.99» → \\(\\beta\\).</li></ul></li></ul>"},
+ {k:["tranzistor nima","bipolyar","ishlash prinsip","qanday ishlaydi","tuzilishi"],a:"<b>Bipolyar tranzistor</b> ikkita p-n o'tishli asbob: emitter (kuchli legirlangan), yupqa baza va kollektor. Aktiv rejimda:<ol><li>EB o'tish to'g'ri yo'nalishda: emitter bazaga elektron injeksiyalaydi.</li><li>Elektronlar yupqa bazani diffuziya bilan kesib o'tadi.</li><li>Teskari yo'nalishdagi BK o'tish maydoni ularni kollektorga suradi.</li></ol>Kichik baza toki katta kollektor tokini boshqaradi: \\(I_C = \\beta I_B\\). Lupada bu jarayonni kuzating."},
+ {k:["beta","alfa","alpha","kuchaytirish","h21"],a:"<b>Tok kuchaytirish koeffitsiyentlari</b>: \\(\\alpha = I_C/I_E\\) (0.98–0.998), \\(\\beta = I_C/I_B = \\alpha/(1-\\alpha)\\) (50–500).<ul><li>Differensial: \\(h_{21e} = \\Delta I_C/\\Delta I_B\\) (\\(V_{CE}\\) = const).</li><li>Statik: \\(\\beta_{DC} = I_C/I_B\\).</li></ul>B bosqichida ikki egri chiziqning \\(V_{CE}\\) = 5 V dagi \\(I_C\\) qiymatlaridan toping."},
+ {k:["kirish xarakter","h11","kirish qarshilik","ibvbe","vbe"],a:"<b>Kirish xarakteristikasi</b> \\(I_B(V_{BE})\\) dioddagidek. \\(V_{CE}\\) = 0 da chiziq chapda (ikkala o'tish ochiq), \\(V_{CE}\\) ≥ 1 V da deyarli o'zgarmaydi.<br>\\(h_{11e} = \\Delta V_{BE}/\\Delta I_B \\approx \\beta V_T/I_C + r_b\\). Masalan, \\(I_B\\) = 50 μA, \\(\\beta\\) = 200 da \\(I_C\\) = 10 mA va \\(h_{11e}\\) ≈ 200·0.026/0.01 ≈ 0.5 kΩ."},
+ {k:["chiqish xarakter","h22","chiqish otkazuvchan","icvce","oila"],a:"<b>Chiqish xarakteristikalari</b> \\(I_C(V_{CE})\\) — har bir \\(I_B\\) uchun alohida egri chiziq. Ularda uch soha bor:<ul><li>to'yinish (\\(V_{CE} \\lesssim 0.2\\) V, tok tez o'sadi);</li><li>aktiv soha (deyarli gorizontal);</li><li>kesish (\\(I_B = 0\\)).</li></ul>\\(h_{22e} = \\Delta I_C/\\Delta V_{CE}\\) — aktiv sohadagi qiyalik (μS)."},
+ {k:["erli","early","va","baza kengligi modul"],a:"<b>Erli effekti</b>: \\(V_{CB}\\) ortsa, BK kambag'allashgan sohasi kengayadi, samarali baza torayadi va \\(I_C\\) ortadi. Aktiv sohadagi chiziqlarni chapga davom ettirsak, ular \\(V_{CE} \\approx -V_A\\) da kesishadi. Jadvaldan: \\(V_A\\) = kesishma/qiyalik, yoki \\(V_A \\approx I_C/h_{22e} - V_{CE}\\). 2N2222A uchun ~74 V."},
+ {k:["toyinish","kesish","rejim","kalit"],a:"<b>Ish rejimlari</b>:<ul><li><b>Kesish</b>: \\(I_B \\approx 0\\), tranzistor yopiq, \\(I_C \\approx I_{CEO}\\).</li><li><b>Aktiv</b>: EB to'g'ri, BK teskari, \\(I_C = \\beta I_B\\) — kuchaytirgichlar uchun.</li><li><b>To'yinish</b>: ikkala o'tish to'g'ri, \\(V_{CE} \\lesssim 0.2\\) V, \\(I_C < \\beta I_B\\) — ochiq kalit.</li></ul>Raqamli sxemalarda tranzistor kesish va to'yinish orasida «kalit» bo'lib ishlaydi."},
+ {k:["harorat","temperatura","icbo","iceo","qochish","germaniy"],a:"<b>Harorat ta'siri</b>:<ul><li>O'zgarmas tokda \\(V_{BE}\\) ≈ −2 mV/K;</li><li>\\(\\beta\\) ~+0.5…1 %/K;</li><li>\\(I_{CBO}\\) har 10 K da ×2.</li></ul>Uzilgan bazada \\(I_{CEO} = (\\beta+1)I_{CBO}\\). Germaniyda \\(I_{CBO}\\) ~μA, shuning uchun issiqlik qochishi xavfi bor. C bosqichida \\(\\beta(I_C)\\) ni 250–400 K da solishtiring."},
+ {k:["gummel","poon","ebers","moll","model","spice"],a:"<b>Model</b>: Gummel–Poon (SPICE).<br>\\(I_C = (I_F - I_R)/q_b - I_R/\\beta_R\\), \\(I_B = I_F/\\beta_F + I_{SE}(e^{V_{BE}/n_EV_T}-1) + I_R/\\beta_R\\).<ul><li>\\(q_b\\) Erli effekti (\\(V_A\\)) va yuqori injeksiyani (\\(I_{KF}\\)) hisobga oladi.</li><li>\\(I_{SE}\\) kichik toklardagi rekombinatsiyani beradi.</li></ul>Parametrlar ishlab chiqaruvchilarning SPICE modellaridan olingan."},
+ {k:["pnp","p n p","ishora","manfiy"],a:"<b>p-n-p tranzistor</b>: emitter va kollektor p-tip, baza n-tip. Tashuvchilar — kovaklar. Manbalar qutbi teskari: barcha kuchlanish va toklar manfiy. Xarakteristikalar shakli bir xil, jadvalga modullar yoziladi."},
+ {k:["kovak nima","kovak","proton","yadro"],a:"<b>Kovak proton emas.</b> Kovak — bog'dagi bo'sh joy. Lupada u bazada tugundan tugunga sakraydi. Bazada rekombinatsiya bo'lganda kovak yo'qoladi, baza kontaktidan esa yangisi kiradi (baza toki). Yadrolar va ionlar joyida qoladi."},
+ {k:["lupa","mikro","ichida nima","lupada","diagramma","sharshara"],a:function(){var t=M.text;return "<b>Lupa</b>: emitter (n⁺) → yupqa baza (p) → kollektor (n).<ul><li>Halqali nuqtalar — bazadagi injeksiyalangan elektronlar.</li><li>To'q sariq chaqnash — rekombinatsiya (ehtimoli aynan \\(1/\\beta\\)).</li><li>Hisoblagich kollektorga yetganlarni va rekombinatsiyalanganlarni sanaydi, ularning nisbati ≈ \\(\\beta\\).</li><li>Zonalar diagrammasida EB to'sig'i pasaygan, BK da «sharshara».</li></ul>"+(t?"<br><b>Hozir:</b> "+t.title+". "+t.text:"");}},
+ {k:["3d","kamera","aylantir","sichqoncha","ulanish"],a:"3D stend:<ul><li>chapda baza toki manbai va \\(V_{BE}\\) voltmetri;</li><li>o'ngda kollektor manbai va milliampermetr;</li><li>o'ng oldinda harorat regulyatori;</li><li>o'rtada tranzistor (oyoqlari B — sariq, E — qora (orqada), K — qizil).</li></ul>Boshqarish: chap tugma — aylantirish, o'ng tugma — surish, g'ildirak — yaqinlashtirish."},
+ {k:["a bosqich","birinchi"],a:"<b>A bosqich</b>:<ol><li>\\(V_{CE}\\) = 0 da «Avtomatik egri chiziq» ni bosing (yoki qo'lda 10–12 nuqta).</li><li>\\(V_{CE}\\) = 5 V da takrorlang.</li><li>5 V egri chizig'ida 50 μA atrofidagi ikki nuqtadan \\(h_{11e}\\) ni kΩ da hisoblang.</li></ol>"},
+ {k:["b bosqich","ikkinchi"],a:"<b>B bosqich</b>:<ol><li>\\(I_B\\) = 20, 40, 60, 80, 100 μA uchun «Avtomatik egri chiziq» ni bosing.</li><li>\\(V_{CE}\\) = 5 V da \\(h_{21e}\\) va \\(\\beta_{DC}\\) ni toping.</li><li>Eng kichik \\(I_B\\) chizig'ining 2–12 V dagi qiyaligidan \\(h_{22e}\\) va \\(V_A\\) ni toping.</li></ol>"},
+ {k:["c bosqich","uchinchi"],a:"<b>C bosqich</b>: 250, 300, 350, 400 K da «Avtomatik: β(I_C)» ni bosing. Grafikda \\(\\beta\\) ning gumbazsimon bog'liqligini va harorat bilan ortishini ko'ring."},
+ {k:["hisobot","otchet","xulosa"],a:"Hisobotga kiriting:<ol><li>maqsad, tuzilish va ish rejimlari;</li><li>kirish xarakteristikalari va \\(h_{11e}\\);</li><li>chiqish xarakteristikalari oilasi, \\(h_{21e}\\), \\(\\beta_{DC}\\), \\(h_{22e}\\), \\(V_A\\);</li><li>\\(\\beta(I_C, T)\\);</li><li>Si va Ge, n-p-n va p-n-p ni solishtirish;</li><li>lupa kuzatuvlari va xulosa.</li></ol>"},
+ {k:["tekshir","malumotlarim","xatom","xato qayer","keyingi qadam","keyin nima","notogri","togrimi","tahlil","maslahat"],w:1.6,a:function(){return analyzeLab();}}
+];
+function diagVal(name,raw,exp,tol){var v=parseNum(raw);if(!raw)return null;if(!isFinite(v))return name+": «"+raw+"» ni son sifatida o'qiy olmadim.";var err=Math.abs(v/exp-1);if(err<=tol)return name+": to'g'ri.";
+  var l=Math.log10(Math.abs(v/exp)),k=Math.round(l);if(k!==0&&Math.abs(l-k)<0.05)return name+": to'g'ri qiymatdan \\(10^{"+k+"}\\) marta farq qiladi. Birliklarni tekshiring (μA, mA, kΩ, μS).";
+  return name+": taxminan "+(err*100).toFixed(0)+" % farq qiladi.";}
+function analyzeLab(){
+  var L=[], next="", d=DIODES[st.di];
+  L.push("Hozirgi bosqich: <b>"+MODE_NAME[st.mode]+"</b>, tranzistor: <b>"+d.short+"</b>"+(st.ideal?" · <b style='color:var(--warn)'>ideal rejim</b>":"")+(st.burned?" · <b style='color:var(--bad)'>tranzistor kuygan</b>":"")+".");
+  var gA=groupBy(st.tabA.rows,"VCE",0.01);
+  if(!st.tabA.rows.length) next="A bosqichida V_CE = 0 va 5 V da kirish xarakteristikalarini o'lchang.";
+  else { L.push("A jadvali: "+st.tabA.rows.length+" nuqta, egri chiziqlar: "+gA.map(function(g){return g.k.toFixed(2)+" V";}).join(", ")+".");
+    if(!gA.some(function(g){return Math.abs(g.k)<0.01;})) next=next||"V_CE = 0 V dagi kirish egri chizig'ini ham o'lchang.";
+    if(!gA.some(function(g){return Math.abs(g.k-5)<0.05;})) next=next||"V_CE = 5 V dagi kirish egri chizig'ini o'lchang.";
+    var ea=expA(); if(ea){L.push("\\(h_{11e}\\) (jadvalingizdan) ≈ "+(ea.h11/1000).toFixed(3)+" kΩ."); var f=diagVal("\\(h_{11e}\\)",$("#inH11").value,ea.h11/1000,0.15); if(f)L.push(f); else next=next||"A jadvali ostida \\(h_{11e}\\) ni kiriting.";} }
+  var eb=expB();
+  if(st.tabB.rows.length&&eb){ L.push("B jadvali: "+eb.groups.length+" ta egri chiziq ("+eb.groups.map(function(g){return (g.IB*1e6).toFixed(0);}).join(", ")+" μA)."+(eb.h21!==null?" \\(h_{21e}\\) ≈ "+eb.h21.toFixed(0)+", \\(\\beta_{DC}\\) ≈ "+eb.bdc.toFixed(0)+".":"")+(eb.VA!==null?" \\(V_A\\) ≈ "+eb.VA.toFixed(0)+" V.":""));
+    if(eb.groups.length<4) next=next||"Yana "+(4-eb.groups.length)+" ta \\(I_B\\) qiymati uchun chiqish egri chizig'ini o'lchang.";
+    var fb=[diagVal("\\(h_{21e}\\)",$("#inH21").value,eb.h21,0.1),diagVal("\\(\\beta_{DC}\\)",$("#inBdc").value,eb.bdc,0.1),eb.h22!==null?diagVal("\\(h_{22e}\\)",$("#inH22").value,eb.h22*1e6,0.25):null,eb.VA!==null?diagVal("\\(V_A\\)",$("#inVA").value,eb.VA,0.25):null].filter(Boolean);
+    if(fb.length) L.push("Javoblaringiz:<ul><li>"+fb.join("</li><li>")+"</li></ul>"); }
+  else if(st.tabA.rows.length) next=next||"B bosqichida chiqish xarakteristikalari oilasini o'lchang.";
+  var gC=groupBy(st.tabC.rows,"T",1); if(gC.length) L.push("C jadvali: "+gC.length+" ta harorat ("+gC.map(function(g){return g.k;}).join(", ")+" K)."); else if(st.tabB.rows.length) next=next||"C bosqichida β(I_C) ni turli haroratlarda o'lchang.";
+  if(!next) next="Lupada aktiv, to'yinish va kesish rejimlarini solishtirib, hisobotga tavsif yozing.";
+  return "<ul><li>"+L.join("</li><li>")+"</li></ul><b>Keyingi qadam:</b> "+next;
+}
+var NUM="([-+−–]?\\s*\\d+(?:[.,]\\d+)?(?:\\s*(?:e|[·x×*]\\s*10\\^?)\\s*\\(?[-+−–]?\\d+\\)?)?)";
+var VAR_RE=new RegExp("\\b(ib1|ib2|ic1|ic2|vbe1|vbe2|ib|ic|vce|h22|alfa|alpha|beta)\\s*=\\s*"+NUM+"\\s*(mkv|mv|uv|μv|mka|ma|ua|μa|us|μs|mks|ms|v|a|s)?(?![a-z])","gi");
+function parseVars(text){var out={},m;VAR_RE.lastIndex=0;var s=String(text).replace(/[−–]/g,"-");
+  while((m=VAR_RE.exec(s))){var name=m[1].toLowerCase().replace("alpha","alfa"),val=parseNum(m[2]),u=(m[3]||"").toLowerCase();if(!isFinite(val))continue;var f=1;
+    if(/^v/.test(name)) f={mv:1e-3,uv:1e-6,mkv:1e-6,"μv":1e-6,v:1}[u]||1;
+    else if(/^ib/.test(name)) f=u?({ma:1e-3,ua:1e-6,mka:1e-6,"μa":1e-6,a:1}[u]||1):1e-6;
+    else if(/^ic/.test(name)) f=u?({ma:1e-3,ua:1e-6,mka:1e-6,"μa":1e-6,a:1}[u]||1):1e-3;
+    else if(name==="h22") f=u?({us:1e-6,"μs":1e-6,mks:1e-6,ms:1e-3,s:1}[u]||1e-6):1e-6;
+    out[name]={v:val*f,raw:m[0].trim()};}
+  return out;}
+function calcLab(vars){
+  var g=function(k){return vars[k]?vars[k].v:undefined;}, steps=[];
+  steps.push("Qabul qilindi: "+Object.keys(vars).map(function(x){return vars[x].raw;}).join(", ")+". (Birliksiz: I_B — μA, I_C — mA, h22 — μS.)");
+  var ib1=g("ib1"),ib2=g("ib2"),ic1=g("ic1"),ic2=g("ic2"),v1=g("vbe1"),v2=g("vbe2"),ib=g("ib"),ic=g("ic"),vce=g("vce"),h22=g("h22"),al=g("alfa"),be=g("beta");
+  if(ib1!==undefined&&ib2!==undefined&&ic1!==undefined&&ic2!==undefined&&ib2!==ib1) steps.push("\\(h_{21e} = \\Delta I_C/\\Delta I_B\\) = <b>"+((ic2-ic1)/(ib2-ib1)).toFixed(1)+"</b>; \\(\\beta_{DC}\\) = "+(ic1/ib1).toFixed(1)+" va "+(ic2/ib2).toFixed(1));
+  if(v1!==undefined&&v2!==undefined&&ib1!==undefined&&ib2!==undefined&&ib2!==ib1) steps.push("\\(h_{11e} = \\Delta V_{BE}/\\Delta I_B\\) = <b>"+((v2-v1)/(ib2-ib1)/1000).toFixed(3)+" kΩ</b>");
+  if(ib!==undefined&&ic!==undefined) steps.push("\\(\\beta_{DC} = I_C/I_B\\) = <b>"+(ic/ib).toFixed(1)+"</b>, \\(\\alpha = \\beta/(\\beta+1)\\) = "+((ic/ib)/(ic/ib+1)).toFixed(4));
+  if(ic!==undefined&&h22!==undefined){var va=ic/h22-(vce||0);steps.push("\\(V_A \\approx I_C/h_{22e} - V_{CE}\\) = <b>"+va.toFixed(1)+" V</b>");}
+  if(ic!==undefined&&ib===undefined&&h22===undefined) steps.push("\\(g_m = I_C/V_T\\) = <b>"+(ic/0.02585*1000).toFixed(1)+" mS</b> (300 K)");
+  if(al!==undefined) steps.push("\\(\\beta = \\alpha/(1-\\alpha)\\) = <b>"+(al/(1-al)).toFixed(1)+"</b>");
+  if(be!==undefined) steps.push("\\(\\alpha = \\beta/(\\beta+1)\\) = <b>"+(be/(be+1)).toFixed(4)+"</b>");
+  if(steps.length<=1) steps.push("Bu qiymatlardan hech narsa hisoblay olmadim. Misollar:<ul><li>«IB1=40 uA, IC1=8 mA, IB2=60 uA, IC2=12.2 mA»</li><li>«VBE1=0.652 V, IB1=40 uA, VBE2=0.661 V, IB2=60 uA»</li><li>«IC=2 mA, h22=25 uS, VCE=5»</li><li>«alfa=0.995»</li></ul>");
+  return steps.join("<br>");}
+var AI={log:$("#aiLog"),busy:false};
+function aiChips(){var c=["Keyingi qadam nima?","Ma'lumotlarimni tekshir","Lupada nima bo'lyapti?"];
+  if(st.mode==="A") c=c.concat(["Kirish xarakteristikasi","h11 qanday topiladi?"]);
+  if(st.mode==="B") c=c.concat(["Erli effekti","IB1=40 uA, IC1=8 mA, IB2=60 uA, IC2=12.2 mA"]);
+  if(st.mode==="C") c=c.concat(["Harorat ta'siri","Gummel-Poon modeli"]);
+  $("#aiChips").innerHTML=c.map(function(x){return "<button type='button' class='chip'>"+x.replace(/</g,"&lt;")+"</button>";}).join("");}
+function aiAdd(who,html){var d=document.createElement("div");d.className="msg "+who;if(who==="user")d.textContent=html;else d.innerHTML=html;AI.log.appendChild(d);AI.log.scrollTop=AI.log.scrollHeight;if(who!=="user")mjx(d);return d;}
+function aiAnswer(q){var vars=parseVars(q);if(Object.keys(vars).length)return calcLab(vars);
+  var nt=norm(q),toks=nt.split(" "),best=null,bs=0;
+  KBASE.forEach(function(e){var sc=kscore(nt,toks,e.k)*(e.w||1);if(sc>bs){bs=sc;best=e;}});
+  if(best&&bs>=1) return typeof best.a==="function"?best.a():best.a;
+  return "Bu savolni tushunmadim. Men bipolyar tranzistor va shu laboratoriya bo'yicha javob beraman. Masalan: «Tranzistor qanday ishlaydi?», «Erli effekti», «Ma'lumotlarimni tekshir».";}
+function aiAsk(q){q=String(q||"").trim();if(!q||AI.busy)return;aiAdd("user",q);AI.busy=true;var typing=aiAdd("bot typing","…");
+  setTimeout(function(){typing.remove();var a;try{a=aiAnswer(q);}catch(err){a="Javob tayyorlashda xato yuz berdi.";}aiAdd("bot",a);AI.busy=false;aiChips();},280);}
+function aiOpen(open){var p=$("#aiPanel"),b=$("#aiFab");p.hidden=!open;b.setAttribute("aria-expanded",String(open));b.hidden=open;if(open){aiChips();if(!AI.log.children.length)aiAdd("bot",KBASE[0].a());setTimeout(function(){$("#aiIn").focus();},50);}}
+$("#aiFab").addEventListener("click",function(){aiOpen(true);});
+$("#aiClose").addEventListener("click",function(){aiOpen(false);});
+$("#aiForm").addEventListener("submit",function(e){e.preventDefault();var i=$("#aiIn");aiAsk(i.value);i.value="";});
+$("#aiChips").addEventListener("click",function(e){var b=e.target.closest(".chip");if(b)aiAsk(b.textContent);});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!$("#aiPanel").hidden)aiOpen(false);});
+
+/* ---------- ishga tushirish ---------- */
+function renderAll(){syncLabels();updateLocks();renderData();}
+load();
+if(st.tabA.meta&&st.tabA.rows.length){st.di=st.tabA.meta.di;st.T=st.tabA.meta.T;}
+applyInputs(); renderQuiz(); updateMeters();
+try{T3=init3D();}catch(err){T3=null;try{console.error(err);$("#app3d").hidden=true;appCv.hidden=false;$("#lensCv").hidden=true;$("#viewBtns").hidden=true;}catch(_){}}
+showTab(); setMode(st.mode); resizeAll(); updateMicroText(); drawIV();
+requestAnimationFrame(frame);})();
+</script>
